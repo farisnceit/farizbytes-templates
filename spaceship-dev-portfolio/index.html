@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commander :: Dev Portfolio</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Tailwind Config for Sci-Fi Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        space: '#030508',
+                        hud: '#00f3ff',
+                        hud_dim: 'rgba(0, 243, 255, 0.1)',
+                        danger: '#ff2a6d',
+                        success: '#05ffa1',
+                        panel: 'rgba(11, 20, 38, 0.8)'
+                    },
+                    fontFamily: {
+                        mono: ['"Courier New"', 'Courier', 'monospace'],
+                        sans: ['system-ui', 'sans-serif']
+                    },
+                    animation: {
+                        'scan': 'scan 4s linear infinite',
+                        'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        scan: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(100%)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #030508;
+            color: #00f3ff;
+            overflow-x: hidden;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #030508;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #00f3ff;
+            border-radius: 4px;
+        }
+
+        /* CRT Scanline Effect */
+        .scanlines {
+            background: linear-gradient(to bottom,
+                    rgba(255, 255, 255, 0),
+                    rgba(255, 255, 255, 0) 50%,
+                    rgba(0, 0, 0, 0.2) 50%,
+                    rgba(0, 0, 0, 0.2));
+            background-size: 100% 4px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 50;
+            pointer-events: none;
+            opacity: 0.15;
+        }
+
+        /* 3D Card Tilt Effect Classes */
+        .tilt-card {
+            transition: transform 0.1s;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .tilt-content {
+            transform: translateZ(20px);
+        }
+
+        /* Glowing Text */
+        .neon-text {
+            text-shadow: 0 0 5px #00f3ff, 0 0 10px #00f3ff;
+        }
+
+        .neon-border {
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3), inset 0 0 20px rgba(0, 243, 255, 0.1);
+        }
+
+        /* Canvas Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        /* Hexagon Clip Path for profile */
+        .hex-img {
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-hud selection:text-space">
+
+    <!-- Three.js Background -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- CRT Overlay -->
+    <div class="scanlines"></div>
+
+    <!-- Navigation / Top HUD -->
+    <nav class="fixed top-0 w-full z-40 border-b border-hud/30 bg-space/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo / Status -->
+                <div class="flex items-center space-x-4">
+                    <i data-lucide="cpu" class="h-6 w-6 animate-pulse-fast"></i>
+                    <span class="font-bold tracking-widest text-lg">SYS.ONLINE</span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#mission"
+                            class="hover:bg-hud/20 px-3 py-2 rounded-md text-sm font-medium transition-all hover:text-white border border-transparent hover:border-hud">MISSION</a>
+                        <a href="#systems"
+                            class="hover:bg-hud/20 px-3 py-2 rounded-md text-sm font-medium transition-all hover:text-white border border-transparent hover:border-hud">SYSTEMS</a>
+                        <a href="#logs"
+                            class="hover:bg-hud/20 px-3 py-2 rounded-md text-sm font-medium transition-all hover:text-white border border-transparent hover:border-hud">LOGS</a>
+                        <a href="#comm"
+                            class="hover:bg-hud/20 px-3 py-2 rounded-md text-sm font-medium transition-all hover:text-white border border-transparent hover:border-hud">COMMS</a>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')"
+                        class="text-hud hover:text-white p-2">
+                        <i data-lucide="menu"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-space border-b border-hud">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#mission" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-hud/20">MISSION</a>
+                <a href="#systems" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-hud/20">SYSTEMS</a>
+                <a href="#logs" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-hud/20">LOGS</a>
+                <a href="#comm" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-hud/20">COMMS</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="relative z-10 pt-20 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Hero Section -->
+        <section id="mission" class="min-h-[90vh] flex flex-col md:flex-row items-center justify-center gap-12">
+
+            <!-- Text Content -->
+            <div class="flex-1 space-y-6 animate-float">
+                <div
+                    class="inline-block border border-hud px-4 py-1 text-xs tracking-[0.3em] bg-hud/10 text-hud uppercase">
+                    Incoming Transmission...
+                </div>
+                <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight">
+                    COMMANDER <br>
+                    <span class="text-white neon-text">ALEX DEV</span>
+                </h1>
+                <p
+                    class="text-lg text-gray-300 max-w-lg border-l-4 border-hud pl-4 bg-gradient-to-r from-hud/10 to-transparent p-2">
+                    Full Stack Engineer specializing in interstellar web applications, react propulsion systems, and
+                    scalable backend architecture.
+                </p>
+
+                <div class="flex gap-4 pt-4">
+                    <a href="#logs"
+                        class="relative group overflow-hidden px-8 py-3 bg-hud/10 border border-hud text-hud font-bold uppercase tracking-wider transition-all hover:bg-hud hover:text-black clip-path-slant">
+                        <span class="relative z-10">Initialize Projects</span>
+                        <div
+                            class="absolute inset-0 bg-hud transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left">
+                        </div>
+                    </a>
+                    <a href="#comm"
+                        class="px-8 py-3 border border-gray-600 text-gray-400 font-bold uppercase tracking-wider hover:border-white hover:text-white transition-all">
+                        Contact
+                    </a>
+                </div>
+            </div>
+
+            <!-- 3D Hologram Representation (CSS/HTML) -->
+            <div class="flex-1 flex justify-center items-center relative">
+                <!-- Rotating Rings -->
+                <div
+                    class="absolute w-64 h-64 border border-hud rounded-full animate-[spin_10s_linear_infinite] opacity-30">
+                </div>
+                <div
+                    class="absolute w-80 h-80 border border-dashed border-danger rounded-full animate-[spin_15s_linear_infinite_reverse] opacity-20">
+                </div>
+
+                <!-- Profile Image container -->
+                <div
+                    class="relative w-64 h-64 bg-panel border-2 border-hud neon-border flex items-center justify-center hex-img">
+                    <div class="text-center">
+                        <i data-lucide="user" class="w-20 h-20 mx-auto mb-2"></i>
+                        <div class="text-xs tracking-widest">ID: 8472-X</div>
+                        <div class="text-[0.6rem] text-success">STATUS: ACTIVE</div>
+                    </div>
+                    <!-- Scanning line over image -->
+                    <div
+                        class="absolute inset-0 bg-gradient-to-b from-transparent via-hud/30 to-transparent h-4 w-full animate-scan opacity-50">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Grid (HUD Elements) -->
+        <div
+            class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-20 border-y border-hud/20 py-8 bg-black/40 backdrop-blur-sm">
+            <div class="text-center border-r border-hud/20">
+                <div class="text-3xl font-bold text-white">5+</div>
+                <div class="text-xs text-hud tracking-widest">YEARS EXP</div>
+            </div>
+            <div class="text-center border-r border-hud/20">
+                <div class="text-3xl font-bold text-white">32</div>
+                <div class="text-xs text-hud tracking-widest">MISSIONS COMPLETE</div>
+            </div>
+            <div class="text-center border-r border-hud/20">
+                <div class="text-3xl font-bold text-white">100%</div>
+                <div class="text-xs text-hud tracking-widest">SYS INTEGRITY</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold text-white">24/7</div>
+                <div class="text-xs text-hud tracking-widest">UPTIME</div>
+            </div>
+        </div>
+
+        <!-- Skills / Systems Section -->
+        <section id="systems" class="mb-32">
+            <div class="flex items-center gap-4 mb-12">
+                <div class="h-px bg-hud flex-1"></div>
+                <h2 class="text-3xl font-bold tracking-widest text-white"><i data-lucide="cpu"
+                        class="inline mb-1 mr-2"></i>SHIP SYSTEMS</h2>
+                <div class="h-px bg-hud flex-1"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Frontend Module -->
+                <div
+                    class="js-tilt bg-panel border border-hud/30 p-6 rounded-sm relative group hover:border-hud transition-colors">
+                    <div class="absolute -top-3 -left-3 w-6 h-6 border-t-2 border-l-2 border-hud"></div>
+                    <div class="absolute -bottom-3 -right-3 w-6 h-6 border-b-2 border-r-2 border-hud"></div>
+
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                        <i data-lucide="layout" class="mr-2 text-danger"></i> FRONTEND
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm"><span class="text-gray-400">React Core</span> <span
+                                class="text-success">98%</span></div>
+                        <div class="w-full bg-gray-800 h-1">
+                            <div class="bg-hud h-1" style="width: 98%"></div>
+                        </div>
+
+                        <div class="flex justify-between text-sm"><span class="text-gray-400">Tailwind Armor</span>
+                            <span class="text-success">95%</span></div>
+                        <div class="w-full bg-gray-800 h-1">
+                            <div class="bg-hud h-1" style="width: 95%"></div>
+                        </div>
+
+                        <div class="flex justify-between text-sm"><span class="text-gray-400">Three.js Engine</span>
+                            <span class="text-warning text-yellow-400">80%</span></div>
+                        <div class="w-full bg-gray-800 h-1">
+                            <div class="bg-yellow-400 h-1" style="width: 80%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Backend Module -->
+                <div
+                    class="js-tilt bg-panel border border-hud/30 p-6 rounded-sm relative group hover:border-hud transition-colors">
+                    <div class="absolute -top-3 -left-3 w-6 h-6 border-t-2 border-l-2 border-hud"></div>
+                    <div class="absolute -bottom-3 -right-3 w-6 h-6 border-b-2 border-r-2 border-hud"></div>
+
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                        <i data-lucide="server" class="mr-2 text-danger"></i> BACKEND
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm"><span class="text-gray-400">Node Propulsion</span>
+                            <span class="text-success">90%</span></div>
+                        <div class="w-full bg-gray-800 h-1">
+                            <div class="bg-hud h-1" style="width: 90%"></div>
+                        </div>
+
+                        <div class="flex justify-between text-sm"><span class="text-gray-400">Python Scripting</span>
+                            <span class="text-success">85%</span></div>
+                        <div class="w-full bg-gray-800 h-1">
+                            <div class="bg-hud h-1" style="width: 85%"></div>
+                        </div>
+
+                        <div class="flex justify-between text-sm"><span class="text-gray-400">SQL Database</span> <span
+                                class="text-success">88%</span></div>
+                        <div class="w-full bg-gray-800 h-1">
+                            <div class="bg-hud h-1" style="width: 88%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tools Module -->
+                <div
+                    class="js-tilt bg-panel border border-hud/30 p-6 rounded-sm relative group hover:border-hud transition-colors">
+                    <div class="absolute -top-3 -left-3 w-6 h-6 border-t-2 border-l-2 border-hud"></div>
+                    <div class="absolute -bottom-3 -right-3 w-6 h-6 border-b-2 border-r-2 border-hud"></div>
+
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                        <i data-lucide="wrench" class="mr-2 text-danger"></i> ARMORY
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-hud/10 border border-hud/50 text-xs rounded">Git</span>
+                        <span class="px-2 py-1 bg-hud/10 border border-hud/50 text-xs rounded">Docker</span>
+                        <span class="px-2 py-1 bg-hud/10 border border-hud/50 text-xs rounded">AWS</span>
+                        <span class="px-2 py-1 bg-hud/10 border border-hud/50 text-xs rounded">Figma</span>
+                        <span class="px-2 py-1 bg-hud/10 border border-hud/50 text-xs rounded">Linux</span>
+                        <span class="px-2 py-1 bg-hud/10 border border-hud/50 text-xs rounded">CI/CD</span>
+                    </div>
+                    <div class="mt-6 border-t border-gray-700 pt-4">
+                        <div class="text-xs text-gray-500 uppercase mb-1">Current Weapon Weaponry</div>
+                        <div class="text-white">VS Code / Terminal</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects / Mission Logs -->
+        <section id="logs" class="mb-32">
+            <div class="flex items-center gap-4 mb-12">
+                <h2 class="text-3xl font-bold tracking-widest text-white"><i data-lucide="folder-git-2"
+                        class="inline mb-1 mr-2"></i>MISSION LOGS</h2>
+                <div class="h-px bg-hud flex-1"></div>
+                <div class="text-xs text-hud border border-hud px-2 py-1">ARCHIVE: PUBLIC</div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+
+                <!-- Project Card 1 -->
+                <div class="js-tilt group relative h-80 w-full perspective-1000">
+                    <div
+                        class="absolute inset-0 bg-hud/5 transform rotate-6 scale-95 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-500">
+                    </div>
+
+                    <div
+                        class="relative h-full w-full bg-panel border border-hud/30 p-1 flex flex-col group-hover:border-hud transition-colors shadow-lg shadow-cyan-500/10 overflow-hidden">
+                        <!-- Holographic Overlay -->
+                        <div
+                            class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10">
+                        </div>
+
+                        <div class="relative z-10 h-1/2 bg-black border-b border-hud/30 overflow-hidden">
+                            <!-- Placeholder for project image -->
+                            <div
+                                class="w-full h-full bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center group-hover:scale-105 transition-transform duration-700">
+                                <i data-lucide="globe" class="w-16 h-16 text-hud opacity-50"></i>
+                            </div>
+                            <div class="absolute bottom-2 right-2 bg-black/80 px-2 text-xs text-hud border border-hud">
+                                VER 2.0</div>
+                        </div>
+
+                        <div
+                            class="relative z-10 p-6 flex flex-col justify-between h-1/2 bg-gradient-to-b from-panel to-black">
+                            <div>
+                                <h3 class="text-2xl font-bold text-white group-hover:text-hud transition-colors">
+                                    Galactic E-Commerce</h3>
+                                <p class="text-sm text-gray-400 mt-2">A full-stack trading platform for interplanetary
+                                    resources built with Next.js and Stripe.</p>
+                            </div>
+                            <div class="flex justify-between items-center mt-4">
+                                <div class="flex gap-2 text-xs text-gray-500 font-mono">
+                                    <span>REACT</span><span>//</span><span>NODE</span>
+                                </div>
+                                <a href="#" class="text-hud hover:text-white flex items-center text-sm font-bold">
+                                    DEPLOY <i data-lucide="external-link" class="ml-1 w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Card 2 -->
+                <div class="js-tilt group relative h-80 w-full perspective-1000">
+                    <div
+                        class="absolute inset-0 bg-danger/5 transform -rotate-2 scale-95 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-500">
+                    </div>
+
+                    <div
+                        class="relative h-full w-full bg-panel border border-hud/30 p-1 flex flex-col group-hover:border-danger transition-colors shadow-lg shadow-pink-500/10 overflow-hidden">
+                        <div class="relative z-10 h-1/2 bg-black border-b border-hud/30 overflow-hidden">
+                            <div
+                                class="w-full h-full bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center group-hover:scale-105 transition-transform duration-700">
+                                <i data-lucide="shield" class="w-16 h-16 text-danger opacity-50"></i>
+                            </div>
+                            <div
+                                class="absolute bottom-2 right-2 bg-black/80 px-2 text-xs text-danger border border-danger">
+                                SECURE</div>
+                        </div>
+
+                        <div
+                            class="relative z-10 p-6 flex flex-col justify-between h-1/2 bg-gradient-to-b from-panel to-black">
+                            <div>
+                                <h3 class="text-2xl font-bold text-white group-hover:text-danger transition-colors">
+                                    Nebula Chat AI</h3>
+                                <p class="text-sm text-gray-400 mt-2">Real-time communication encryption utilizing
+                                    WebSockets and OpenAI API.</p>
+                            </div>
+                            <div class="flex justify-between items-center mt-4">
+                                <div class="flex gap-2 text-xs text-gray-500 font-mono">
+                                    <span>SOCKET.IO</span><span>//</span><span>REDIS</span>
+                                </div>
+                                <a href="#" class="text-danger hover:text-white flex items-center text-sm font-bold">
+                                    ACCESS <i data-lucide="external-link" class="ml-1 w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Contact / Comms -->
+        <section id="comm" class="max-w-2xl mx-auto border border-hud/30 bg-panel/80 p-8 relative">
+            <!-- Decorative corners -->
+            <div class="absolute -top-1 -left-1 w-4 h-4 border-t border-l border-hud"></div>
+            <div class="absolute -top-1 -right-1 w-4 h-4 border-t border-r border-hud"></div>
+            <div class="absolute -bottom-1 -left-1 w-4 h-4 border-b border-l border-hud"></div>
+            <div class="absolute -bottom-1 -right-1 w-4 h-4 border-b border-r border-hud"></div>
+
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-white uppercase tracking-widest">Establish Comms</h2>
+                <p class="text-hud text-sm mt-2">Frequency Open. Encryption: None.</p>
+            </div>
+
+            <form class="space-y-6" onsubmit="event.preventDefault(); alert('Transmission Sent!');">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs text-gray-500 uppercase mb-1">Identify Yourself</label>
+                        <input type="text"
+                            class="w-full bg-black/50 border border-gray-700 text-white p-3 focus:border-hud focus:outline-none focus:ring-1 focus:ring-hud transition-colors"
+                            placeholder="Name">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 uppercase mb-1">Return Frequency</label>
+                        <input type="email"
+                            class="w-full bg-black/50 border border-gray-700 text-white p-3 focus:border-hud focus:outline-none focus:ring-1 focus:ring-hud transition-colors"
+                            placeholder="Email">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase mb-1">Message Data</label>
+                    <textarea rows="4"
+                        class="w-full bg-black/50 border border-gray-700 text-white p-3 focus:border-hud focus:outline-none focus:ring-1 focus:ring-hud transition-colors"
+                        placeholder="Enter transmission..."></textarea>
+                </div>
+                <button type="submit"
+                    class="w-full bg-hud/10 border border-hud text-hud hover:bg-hud hover:text-black font-bold py-3 uppercase tracking-widest transition-all">
+                    Transmit Signal
+                </button>
+            </form>
+
+            <div class="flex justify-center gap-8 mt-8 border-t border-gray-800 pt-6">
+                <a href="#" class="text-gray-500 hover:text-hud transition-colors"><i data-lucide="github"></i></a>
+                <a href="#" class="text-gray-500 hover:text-hud transition-colors"><i data-lucide="linkedin"></i></a>
+                <a href="#" class="text-gray-500 hover:text-hud transition-colors"><i data-lucide="twitter"></i></a>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-6 text-xs text-gray-600 relative z-10 bg-black/80">
+        <p>SYSTEM VERSION 3.4.1 // BUILT BY COMMANDER ALEX</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // --- Three.js Background Implementation ---
+        const initThreeJS = () => {
+            const canvas = document.getElementById('bg-canvas');
+            const scene = new THREE.Scene();
+            // Fog to fade out distant stars
+            scene.fog = new THREE.FogExp2(0x030508, 0.002);
+
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            // 1. Particle System (Stars)
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 2000;
+            const posArray = new Float32Array(particlesCount * 3);
+
+            for (let i = 0; i < particlesCount * 3; i++) {
+                // Spread stars wide
+                posArray[i] = (Math.random() - 0.5) * 50;
+            }
+
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.05,
+                color: 0x00f3ff,
+                transparent: true,
+                opacity: 0.8,
+            });
+
+            const starMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(starMesh);
+
+            // 2. Wireframe Planet (Holographic Map)
+            const planetGeometry = new THREE.IcosahedronGeometry(10, 2);
+            const planetMaterial = new THREE.MeshBasicMaterial({
+                color: 0x00f3ff,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.1
+            });
+            const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+            // Position it to the right side of the screen usually, or center for mobile
+            planet.position.set(15, -10, -10);
+            scene.add(planet);
+
+            // 3. Floating Geometric debris
+            const debrisGeometry = new THREE.TetrahedronGeometry(1, 0);
+            const debrisMaterial = new THREE.MeshBasicMaterial({ color: 0xff2a6d, wireframe: true });
+            const debris = [];
+
+            for (let i = 0; i < 5; i++) {
+                const mesh = new THREE.Mesh(debrisGeometry, debrisMaterial);
+                mesh.position.set((Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30, (Math.random() - 0.5) * 10);
+                scene.add(mesh);
+                debris.push({ mesh, speed: Math.random() * 0.02 });
+            }
+
+            camera.position.z = 5;
+
+            // Mouse Interaction
+            let mouseX = 0;
+            let mouseY = 0;
+            let targetX = 0;
+            let targetY = 0;
+
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX - windowHalfX);
+                mouseY = (event.clientY - windowHalfY);
+            });
+
+            // Clock for animation
+            const clock = new THREE.Clock();
+
+            const animate = () => {
+                const elapsedTime = clock.getElapsedTime();
+
+                targetX = mouseX * 0.001;
+                targetY = mouseY * 0.001;
+
+                // Gentle rotation of the entire star system
+                starMesh.rotation.y += 0.0005;
+                starMesh.rotation.x += 0.0002;
+
+                // Mouse parallax effect
+                starMesh.rotation.y += 0.05 * (targetX - starMesh.rotation.y);
+                starMesh.rotation.x += 0.05 * (targetY - starMesh.rotation.x);
+
+                // Planet rotation
+                planet.rotation.y += 0.002;
+                planet.rotation.z += 0.001;
+
+                // Debris floating
+                debris.forEach(d => {
+                    d.mesh.rotation.x += d.speed;
+                    d.mesh.rotation.y += d.speed;
+                });
+
+                renderer.render(scene, camera);
+                requestAnimationFrame(animate);
+            };
+
+            animate();
+
+            // Handle Resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        };
+
+        initThreeJS();
+
+        // --- Simple Vanilla JS Tilt Effect for Cards ---
+        const tiltElements = document.querySelectorAll('.js-tilt');
+
+        tiltElements.forEach(el => {
+            el.addEventListener('mousemove', (e) => {
+                const rect = el.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // Calculate center
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                // Max rotation degrees
+                const maxRot = 10;
+
+                const rotateX = ((y - centerY) / centerY) * -maxRot;
+                const rotateY = ((x - centerX) / centerX) * maxRot;
+
+                el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+            });
+        });
+
+    </script>
+</body>
+
+</html>
