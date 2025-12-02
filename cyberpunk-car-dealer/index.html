@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEON MOTORS | 2077 Inventory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            black: '#050505',
+                            dark: '#0a0a12',
+                            gray: '#1a1a24',
+                            cyan: '#00f3ff',
+                            pink: '#ff00ff',
+                            yellow: '#fcee0a',
+                            purple: '#bc13fe'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['Orbitron', 'sans-serif'],
+                        body: ['Rajdhani', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'grid-pattern': "linear-gradient(to right, #1f2937 1px, transparent 1px), linear-gradient(to bottom, #1f2937 1px, transparent 1px)",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a12;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #00f3ff;
+            border-radius: 4px;
+        }
+
+        /* CRT Scanline Effect */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom,
+                    rgba(255, 255, 255, 0),
+                    rgba(255, 255, 255, 0) 50%,
+                    rgba(0, 0, 0, 0.1) 50%,
+                    rgba(0, 0, 0, 0.1));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 50;
+            animation: fadeIn 1s ease-out;
+        }
+
+        /* Glitch Animation Keyframes */
+        @keyframes glitch {
+            0% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+            }
+
+            40% {
+                transform: translate(-2px, -2px);
+            }
+
+            60% {
+                transform: translate(2px, 2px);
+            }
+
+            80% {
+                transform: translate(2px, -2px);
+            }
+
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        /* Hero Image Glitch Effect */
+        @keyframes img-glitch {
+
+            0%,
+            100% {
+                transform: scale(1);
+                filter: hue-rotate(0deg) contrast(1.2);
+                opacity: 0.5;
+            }
+
+            92% {
+                transform: scale(1);
+                filter: hue-rotate(0deg) contrast(1.2);
+                opacity: 0.5;
+            }
+
+            93% {
+                transform: scale(1.02) skewX(2deg);
+                filter: hue-rotate(90deg) contrast(1.5) brightness(1.2);
+                opacity: 0.7;
+            }
+
+            94% {
+                transform: scale(1.02) skewX(-2deg);
+                filter: hue-rotate(-90deg);
+                opacity: 0.6;
+            }
+
+            95% {
+                transform: scale(1.02) translate(-5px, 0);
+                opacity: 0.7;
+            }
+
+            96% {
+                transform: scale(1) translate(5px, 0);
+                opacity: 0.5;
+            }
+        }
+
+        .hero-img-glitch {
+            animation: img-glitch 5s infinite;
+        }
+
+        .glitch-hover:hover {
+            animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+            color: #ff00ff;
+            text-shadow: 2px 2px #00f3ff;
+        }
+
+        /* Cyberpunk Clip Path */
+        .clip-angle {
+            clip-path: polygon(10% 0, 100% 0,
+                    100% 70%, 90% 100%,
+                    0 100%, 0 30%);
+        }
+
+        .clip-button {
+            clip-path: polygon(10px 0, 100% 0,
+                    100% calc(100% - 10px), calc(100% - 10px) 100%,
+                    0 100%, 0 10px);
+        }
+
+        /* Neon Glows */
+        .glow-cyan {
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3), inset 0 0 10px rgba(0, 243, 255, 0.1);
+        }
+
+        .glow-pink {
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.3), inset 0 0 10px rgba(255, 0, 255, 0.1);
+        }
+
+        /* Card Hover Effect */
+        .car-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .car-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
+            z-index: 10;
+        }
+
+        /* Smooth Entrance Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Stat Bar Animation */
+        .stat-bar-fill {
+            width: 0%;
+            transition: width 1.5s ease-out;
+        }
+
+        /* Grid Background Animation */
+        @keyframes gridMove {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 40px 40px;
+            }
+        }
+
+        .animated-grid {
+            background-size: 40px 40px;
+            animation: gridMove 4s linear infinite;
+        }
+    </style>
+</head>
+
+<body class="bg-cyber-black text-gray-200 font-body overflow-x-hidden selection:bg-cyber-pink selection:text-white">
+
+    <!-- Scanline Overlay -->
+    <div class="scanlines"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-40 bg-cyber-dark/90 backdrop-blur-md border-b border-cyber-cyan/30">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3 group cursor-pointer">
+                <i class="fa-solid fa-bolt text-cyber-yellow text-2xl group-hover:animate-pulse"></i>
+                <h1 class="font-display text-2xl font-bold tracking-widest text-white">
+                    NEON<span class="text-cyber-cyan">MOTORS</span>
+                </h1>
+            </div>
+
+            <div class="hidden md:flex gap-8">
+                <a href="#inventory"
+                    class="font-display text-sm tracking-widest hover:text-cyber-pink transition-colors uppercase glitch-hover">Inventory</a>
+                <a href="#features"
+                    class="font-display text-sm tracking-widest hover:text-cyber-cyan transition-colors uppercase glitch-hover">Services</a>
+                <a href="#contact"
+                    class="font-display text-sm tracking-widest hover:text-cyber-yellow transition-colors uppercase glitch-hover">Contact</a>
+            </div>
+
+            <button
+                class="clip-button bg-cyber-cyan text-cyber-black font-bold px-6 py-2 hover:bg-white transition-colors font-display text-sm">
+                CONNECT WALLET
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0 z-0 bg-cyber-black">
+            <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=2000&auto=format&fit=crop"
+                class="w-full h-full object-cover opacity-50 hero-img-glitch" alt="Neon Cyberpunk Car">
+            <div class="absolute inset-0 bg-gradient-to-t from-cyber-black via-cyber-black/60 to-transparent"></div>
+            <div class="absolute inset-0 bg-grid-pattern opacity-10 animated-grid"></div>
+        </div>
+
+        <div class="relative z-10 text-center px-4 max-w-5xl mx-auto">
+            <div
+                class="inline-block border border-cyber-pink px-4 py-1 mb-6 rounded-full bg-cyber-pink/10 backdrop-blur">
+                <span class="text-cyber-pink font-bold tracking-[0.2em] text-xs">EST. 2077 // NIGHT CITY</span>
+            </div>
+            <h1
+                class="font-display text-5xl md:text-8xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-cyber-cyan to-white drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]">
+                DRIVE THE<br>FUTURE
+            </h1>
+            <p
+                class="text-xl md:text-2xl text-gray-400 mb-10 max-w-2xl mx-auto font-light border-l-4 border-cyber-yellow pl-6 text-left md:text-center md:border-l-0 md:pl-0">
+                High-performance cybernetic vehicles for the discerning street samurai.
+                Full neural-link integration standard on all models.
+            </p>
+            <div class="flex flex-col md:flex-row gap-6 justify-center">
+                <a href="#inventory"
+                    class="clip-button bg-cyber-pink text-white font-bold px-8 py-4 hover:bg-pink-400 transition-all transform hover:scale-105 glow-pink flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-car-side"></i> VIEW INVENTORY
+                </a>
+                <button
+                    class="clip-button border border-cyber-cyan text-cyber-cyan font-bold px-8 py-4 hover:bg-cyber-cyan/20 transition-all glow-cyan flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-vr-cardboard"></i> VIRTUAL TEST DRIVE
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filter/Search Bar -->
+    <div class="bg-cyber-dark border-y border-cyber-gray py-6 sticky top-[72px] z-30 backdrop-blur-lg">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row gap-4 justify-between items-center">
+            <div class="flex items-center gap-4 text-cyber-cyan">
+                <i class="fa-solid fa-filter"></i>
+                <span class="font-display tracking-widest text-sm">FILTER SYSTEM</span>
+            </div>
+            <div class="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
+                <button
+                    class="px-4 py-1 border border-cyber-cyan text-cyber-cyan text-xs font-bold hover:bg-cyber-cyan hover:text-black transition-colors uppercase whitespace-nowrap active-filter"
+                    onclick="filterCars('all')">All Models</button>
+                <button
+                    class="px-4 py-1 border border-cyber-gray text-gray-400 text-xs font-bold hover:border-cyber-pink hover:text-cyber-pink transition-colors uppercase whitespace-nowrap"
+                    onclick="filterCars('hyper')">Hyper</button>
+                <button
+                    class="px-4 py-1 border border-cyber-gray text-gray-400 text-xs font-bold hover:border-cyber-yellow hover:text-cyber-yellow transition-colors uppercase whitespace-nowrap"
+                    onclick="filterCars('sport')">Sport</button>
+                <button
+                    class="px-4 py-1 border border-cyber-gray text-gray-400 text-xs font-bold hover:border-cyber-purple hover:text-cyber-purple transition-colors uppercase whitespace-nowrap"
+                    onclick="filterCars('suv')">Armored</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Grid -->
+    <main id="inventory" class="max-w-7xl mx-auto px-6 py-20">
+        <div class="flex items-end justify-between mb-12 border-b border-cyber-gray pb-4">
+            <div>
+                <h2 class="font-display text-4xl font-bold text-white mb-2">LATEST ARRIVALS</h2>
+                <div class="h-1 w-20 bg-cyber-cyan"></div>
+            </div>
+            <p class="hidden md:block text-gray-500 font-mono text-xs">DATABASE_UPDATED: <span id="time-display"></span>
+            </p>
+        </div>
+
+        <div id="car-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Car cards will be injected here by JS -->
+        </div>
+    </main>
+
+    <!-- Features Section -->
+    <section id="features" class="bg-cyber-dark border-t border-cyber-gray py-20 relative">
+        <div class="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div
+                    class="reveal bg-cyber-black/50 p-8 border border-cyber-gray hover:border-cyber-cyan transition-colors group">
+                    <i
+                        class="fa-solid fa-microchip text-4xl text-cyber-cyan mb-6 group-hover:scale-110 transition-transform duration-300"></i>
+                    <h3 class="font-display text-xl font-bold mb-4 text-white">NEURAL LINK</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Direct cortex interface included with every purchase. Feel the engine as if it were your own
+                        heart.
+                    </p>
+                </div>
+                <div
+                    class="reveal bg-cyber-black/50 p-8 border border-cyber-gray hover:border-cyber-pink transition-colors group">
+                    <i
+                        class="fa-solid fa-shield-halved text-4xl text-cyber-pink mb-6 group-hover:scale-110 transition-transform duration-300"></i>
+                    <h3 class="font-display text-xl font-bold mb-4 text-white">TITANIUM PLATING</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Military-grade ballistic protection. Survive Night City's toughest districts in comfort.
+                    </p>
+                </div>
+                <div
+                    class="reveal bg-cyber-black/50 p-8 border border-cyber-gray hover:border-cyber-yellow transition-colors group">
+                    <i
+                        class="fa-solid fa-bolt text-4xl text-cyber-yellow mb-6 group-hover:scale-110 transition-transform duration-300"></i>
+                    <h3 class="font-display text-xl font-bold mb-4 text-white">FUSION CORE</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Infinite range fusion cells. Never stop for fuel. Leave the charging stations to the past.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-black py-12 border-t border-cyber-gray">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="col-span-1 md:col-span-2">
+                <h2 class="font-display text-3xl font-bold text-white mb-4">NEON<span
+                        class="text-cyber-cyan">MOTORS</span></h2>
+                <p class="text-gray-500 max-w-sm mb-6">
+                    The premier destination for high-tech automotive engineering in Sector 7.
+                    Authorized dealer for Quadra, Mizutani, and Rayfield.
+                </p>
+                <div class="flex gap-4">
+                    <a href="#"
+                        class="w-10 h-10 flex items-center justify-center border border-cyber-gray text-cyber-cyan hover:bg-cyber-cyan hover:text-black transition-colors rounded-full"><i
+                            class="fa-brands fa-twitter"></i></a>
+                    <a href="#"
+                        class="w-10 h-10 flex items-center justify-center border border-cyber-gray text-cyber-pink hover:bg-cyber-pink hover:text-black transition-colors rounded-full"><i
+                            class="fa-brands fa-instagram"></i></a>
+                    <a href="#"
+                        class="w-10 h-10 flex items-center justify-center border border-cyber-gray text-cyber-yellow hover:bg-cyber-yellow hover:text-black transition-colors rounded-full"><i
+                            class="fa-brands fa-discord"></i></a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="font-display text-white font-bold mb-6 tracking-widest">LOCATIONS</h4>
+                <ul class="space-y-3 text-gray-400 text-sm">
+                    <li class="hover:text-cyber-cyan cursor-pointer">Main Hub: City Center</li>
+                    <li class="hover:text-cyber-cyan cursor-pointer">Showroom: Japantown</li>
+                    <li class="hover:text-cyber-cyan cursor-pointer">Service: Badlands Outpost</li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-display text-white font-bold mb-6 tracking-widest">NEWSLETTER</h4>
+                <div class="flex flex-col gap-3">
+                    <input type="email" placeholder="ENTER NEURAL ID"
+                        class="bg-cyber-gray border border-cyber-gray p-3 text-sm text-white focus:outline-none focus:border-cyber-pink transition-colors">
+                    <button
+                        class="bg-cyber-pink text-white font-bold py-2 font-display text-sm hover:bg-pink-600 transition-colors">SUBSCRIBE</button>
+                </div>
+            </div>
+        </div>
+        <div
+            class="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-cyber-gray/30 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600 font-mono">
+            <p>&copy; 2077 NEON MOTORS INC. ALL RIGHTS RESERVED.</p>
+            <p>SYSTEM STATUS: ONLINE // VER 2.4.9</p>
+        </div>
+    </footer>
+
+    <script>
+        // Car Data
+        const cars = [
+            {
+                id: 1,
+                name: "AERONDIGHT S7",
+                type: "hyper",
+                price: "250,000",
+                speed: 98,
+                handling: 85,
+                accel: "1.9s",
+                image: "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=800&auto=format&fit=crop",
+                tag: "LUXURY",
+                color: "border-cyber-purple text-cyber-purple shadow-cyber-purple/20"
+            },
+            {
+                id: 2,
+                name: "QUADRA TURBO-R",
+                type: "sport",
+                price: "125,000",
+                speed: 92,
+                handling: 90,
+                accel: "2.4s",
+                image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=800&auto=format&fit=crop",
+                tag: "STREET",
+                color: "border-cyber-yellow text-cyber-yellow shadow-cyber-yellow/20"
+            },
+            {
+                id: 3,
+                name: "BEHEMOTH MACK",
+                type: "suv",
+                price: "180,000",
+                speed: 65,
+                handling: 70,
+                accel: "4.5s",
+                image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=800&auto=format&fit=crop",
+                tag: "HEAVY",
+                color: "border-cyber-pink text-cyber-pink shadow-cyber-pink/20"
+            },
+            {
+                id: 4,
+                name: "CALIBURN 2077",
+                type: "hyper",
+                price: "310,000",
+                speed: 100,
+                handling: 88,
+                accel: "1.6s",
+                image: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?q=80&w=800&auto=format&fit=crop",
+                tag: "SPEED",
+                color: "border-cyber-cyan text-cyber-cyan shadow-cyber-cyan/20"
+            },
+            {
+                id: 5,
+                name: "SHION COYOTE",
+                type: "sport",
+                price: "95,000",
+                speed: 88,
+                handling: 95,
+                accel: "2.9s",
+                image: "https://images.unsplash.com/photo-1600712242805-5f78671624d2?q=80&w=800&auto=format&fit=crop",
+                tag: "RALLY",
+                color: "border-cyber-yellow text-cyber-yellow shadow-cyber-yellow/20"
+            },
+            {
+                id: 6,
+                name: "THORTON GALENA",
+                type: "suv",
+                price: "45,000",
+                speed: 60,
+                handling: 50,
+                accel: "5.2s",
+                image: "https://images.unsplash.com/photo-1594502184342-2b12f89d4250?q=80&w=800&auto=format&fit=crop",
+                tag: "BUDGET",
+                color: "border-gray-500 text-gray-400 shadow-gray-500/20"
+            }
+        ];
+
+        const carGrid = document.getElementById('car-grid');
+        const timeDisplay = document.getElementById('time-display');
+
+        // Update Time
+        function updateTime() {
+            const now = new Date();
+            timeDisplay.textContent = now.toISOString().split('T')[0] + " // " + now.toLocaleTimeString();
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // Render Cars
+        function renderCars(filter = 'all') {
+            carGrid.innerHTML = '';
+
+            const filteredCars = filter === 'all'
+                ? cars
+                : cars.filter(car => car.type === filter);
+
+            filteredCars.forEach((car, index) => {
+                const card = document.createElement('div');
+                card.className = 'car-card reveal bg-cyber-dark clip-angle border border-gray-800 relative group overflow-hidden';
+                card.style.transitionDelay = `${index * 100}ms`; // Staggered delay
+
+                // HTML structure for card
+                card.innerHTML = `
+                    <div class="relative h-48 overflow-hidden">
+                        <div class="absolute inset-0 bg-cyber-cyan/20 mix-blend-overlay z-10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <img src="${car.image}" alt="${car.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute top-2 right-2 z-20">
+                            <span class="bg-black/80 backdrop-blur border ${car.color.split(' ')[0]} ${car.color.split(' ')[1]} text-xs font-bold px-3 py-1 font-display tracking-widest">
+                                ${car.tag}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="font-display text-xl font-bold text-white group-hover:text-cyber-cyan transition-colors">${car.name}</h3>
+                                <p class="text-xs text-gray-500 font-mono">ID: N-${car.id}00${car.id}-X</p>
+                            </div>
+                            <p class="font-display text-xl text-cyber-cyan font-bold">€$${car.price}</p>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-center text-xs font-mono text-gray-400 gap-2">
+                                <span class="w-12">SPEED</span>
+                                <div class="flex-1 h-1 bg-gray-800 rounded-full overflow-hidden">
+                                    <div class="stat-bar-fill h-full bg-gradient-to-r from-cyber-cyan to-blue-600" style="width: 0%" data-width="${car.speed}%"></div>
+                                </div>
+                                <span class="w-8 text-right text-white">${car.speed}</span>
+                            </div>
+                            <div class="flex items-center text-xs font-mono text-gray-400 gap-2">
+                                <span class="w-12">HANDL</span>
+                                <div class="flex-1 h-1 bg-gray-800 rounded-full overflow-hidden">
+                                    <div class="stat-bar-fill h-full bg-gradient-to-r from-cyber-pink to-purple-600" style="width: 0%" data-width="${car.handling}%"></div>
+                                </div>
+                                <span class="w-8 text-right text-white">${car.handling}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center border-t border-gray-800 pt-4 mt-4">
+                            <div class="text-xs font-mono text-gray-400">
+                                <span class="block text-gray-600">0-60 MPH</span>
+                                <span class="text-white">${car.accel}</span>
+                            </div>
+                            <button class="bg-transparent border border-white/20 hover:border-cyber-cyan hover:bg-cyber-cyan/10 hover:text-cyber-cyan text-white text-xs px-4 py-2 transition-all font-bold uppercase tracking-wider">
+                                Details
+                            </button>
+                        </div>
+                    </div>
+                `;
+                carGrid.appendChild(card);
+            });
+
+            // Re-trigger scroll observer for new elements
+            observeElements();
+            // Trigger stat bars after a small delay
+            setTimeout(() => {
+                document.querySelectorAll('.stat-bar-fill').forEach(bar => {
+                    bar.style.width = bar.getAttribute('data-width');
+                });
+            }, 100);
+        }
+
+        // Filtering Logic
+        function filterCars(type) {
+            // Update active button state
+            document.querySelectorAll('button[onclick^="filterCars"]').forEach(btn => {
+                btn.classList.remove('border-cyber-cyan', 'text-cyber-cyan', 'bg-cyber-cyan', 'text-black');
+                btn.classList.add('border-cyber-gray', 'text-gray-400');
+                if (btn.textContent.toLowerCase().includes(type) || (type === 'all' && btn.textContent.includes('All'))) {
+                    btn.classList.remove('border-cyber-gray', 'text-gray-400');
+                    btn.classList.add('border-cyber-cyan', 'text-cyber-cyan');
+                }
+            });
+            renderCars(type);
+        }
+
+        // Scroll Observer for Animations
+        function observeElements() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCars();
+        });
+
+    </script>
+</body>
+
+</html>

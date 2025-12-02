@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Full-stack developer specializing in performance & developer experience. Building scalable web products with modern technologies.">
+    <meta name="keywords" content="developer, portfolio, full-stack, web development, React, Node.js, Next.js">
+    <title>Alex Morgan | Full-Stack Developer</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts - JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            background-color: #020617;
+            color: #e2e8f0;
+        }
+
+        /* Terminal cursor blink animation */
+        @keyframes blink {
+
+            0%,
+            50% {
+                opacity: 1;
+            }
+
+            51%,
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background-color: #22d3ee;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+
+        /* Terminal glow effect */
+        .terminal-glow {
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+        }
+
+        /* Hover glow effect */
+        .hover-glow:hover {
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.5);
+            border-color: #22d3ee;
+        }
+
+        /* Fade in animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        /* Line numbers styling */
+        .line-numbers {
+            counter-reset: line;
+        }
+
+        .line-numbers .line::before {
+            counter-increment: line;
+            content: counter(line);
+            display: inline-block;
+            width: 40px;
+            color: #475569;
+            text-align: right;
+            margin-right: 20px;
+            user-select: none;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Grid pattern background */
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+    </style>
+</head>
+
+<body class="grid-bg">
+
+    <!-- ============================================ -->
+    <!-- HERO SECTION - Terminal Intro -->
+    <!-- ============================================ -->
+    <section id="hero" class="min-h-screen flex items-center justify-center px-4 py-20">
+        <div class="w-full max-w-7xl">
+            <div class="bg-slate-900 border border-slate-700 rounded-lg overflow-hidden terminal-glow">
+                <!-- Terminal Header -->
+                <div class="bg-slate-800 px-4 py-3 flex items-center gap-2 border-b border-slate-700">
+                    <div class="flex gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <div class="ml-4 text-slate-400 text-sm">alex@terminal:~</div>
+                </div>
+
+                <!-- Terminal Content -->
+                <div class="p-8 md:p-12 lg:p-16">
+                    <div class="text-lg md:text-xl lg:text-2xl space-y-4">
+                        <div class="text-cyan-400">
+                            <span class="text-slate-500">$</span> <span id="typed-text-1"></span><span
+                                class="cursor"></span>
+                        </div>
+                        <div class="text-emerald-400">
+                            <span class="text-slate-500">$</span> <span id="typed-text-2"></span>
+                        </div>
+                        <div class="text-purple-400">
+                            <span class="text-slate-500">$</span> <span id="typed-text-3"></span>
+                        </div>
+                    </div>
+
+                    <!-- CTA Buttons -->
+                    <div class="mt-12 flex flex-wrap gap-4">
+                        <a href="#projects"
+                            class="px-6 py-3 bg-cyan-500 text-slate-900 font-semibold rounded hover:bg-cyan-400 transition-all hover:shadow-lg hover:shadow-cyan-500/50">
+                            View Projects
+                        </a>
+                        <a href="#contact"
+                            class="px-6 py-3 border-2 border-cyan-500 text-cyan-400 font-semibold rounded hover:bg-cyan-500/10 transition-all">
+                            Contact Me
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- ABOUT SECTION - Code Comment Style -->
+    <!-- ============================================ -->
+    <section id="about" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-cyan-400 mb-8">
+                <span class="text-slate-500">//</span> About Me
+            </h2>
+
+            <div class="bg-slate-900 border border-slate-700 rounded-lg overflow-hidden hover-glow transition-all">
+                <!-- File Tab -->
+                <div class="bg-slate-800 px-4 py-2 border-b border-slate-700 flex items-center gap-2">
+                    <div class="text-sm text-slate-400">📄 developer.js</div>
+                </div>
+
+                <!-- Code Content with Line Numbers -->
+                <div class="p-6 md:p-8 overflow-x-auto">
+                    <div class="line-numbers text-sm md:text-base">
+                        <div class="line"><span class="text-purple-400">const</span> <span
+                                class="text-cyan-300">developer</span> = {</div>
+                        <div class="line"> <span class="text-emerald-300">name</span>: <span
+                                class="text-yellow-300">"Alex Morgan"</span>,</div>
+                        <div class="line"> <span class="text-emerald-300">role</span>: <span
+                                class="text-yellow-300">"Full-Stack Developer"</span>,</div>
+                        <div class="line"> <span class="text-emerald-300">location</span>: <span
+                                class="text-yellow-300">"San Francisco, CA"</span>,</div>
+                        <div class="line"> <span class="text-emerald-300">experience</span>: <span
+                                class="text-yellow-300">"5+ years"</span>,</div>
+                        <div class="line"> <span class="text-emerald-300">skills</span>: [</div>
+                        <div class="line"> <span class="text-yellow-300">"React"</span>, <span
+                                class="text-yellow-300">"Next.js"</span>, <span
+                                class="text-yellow-300">"TypeScript"</span>,</div>
+                        <div class="line"> <span class="text-yellow-300">"Node.js"</span>, <span
+                                class="text-yellow-300">"Express"</span>, <span
+                                class="text-yellow-300">"PostgreSQL"</span>,</div>
+                        <div class="line"> <span class="text-yellow-300">"Docker"</span>, <span
+                                class="text-yellow-300">"AWS"</span>, <span class="text-yellow-300">"CI/CD"</span></div>
+                        <div class="line"> ],</div>
+                        <div class="line"> <span class="text-emerald-300">focus</span>: <span
+                                class="text-yellow-300">"Performance & Developer Experience"</span>,</div>
+                        <div class="line"> <span class="text-emerald-300">passion</span>: <span
+                                class="text-yellow-300">"Building scalable web products"</span>,</div>
+                        <div class="line"> <span class="text-emerald-300">currentlyLearning</span>: [<span
+                                class="text-yellow-300">"Rust"</span>, <span
+                                class="text-yellow-300">"WebAssembly"</span>],</div>
+                        <div class="line"> <span class="text-emerald-300">hobbies</span>: [<span
+                                class="text-yellow-300">"Open Source"</span>, <span class="text-yellow-300">"Tech
+                                Blogging"</span>, <span class="text-yellow-300">"Coffee"</span>]</div>
+                        <div class="line">};</div>
+                        <div class="line">&nbsp;</div>
+                        <div class="line"><span class="text-slate-500">// Passionate about clean code and great
+                                UX</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SKILLS SECTION - Tech Stack Grid -->
+    <!-- ============================================ -->
+    <section id="skills" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-cyan-400 mb-8">
+                <span class="text-slate-500">//</span> Tech Stack
+            </h2>
+
+            <!-- Frontend -->
+            <div class="mb-12">
+                <h3 class="text-xl font-semibold text-emerald-400 mb-4">
+                    <span class="text-slate-500">></span> Frontend
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- React -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">⚛️</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">React</h4>
+                        <p class="text-sm text-slate-400">Component-based UI library for building interactive interfaces
+                        </p>
+                    </div>
+
+                    <!-- Next.js -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">▲</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">Next.js</h4>
+                        <p class="text-sm text-slate-400">React framework with SSR, SSG, and API routes</p>
+                    </div>
+
+                    <!-- TypeScript -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">📘</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">TypeScript</h4>
+                        <p class="text-sm text-slate-400">Typed superset of JavaScript for safer code</p>
+                    </div>
+
+                    <!-- Tailwind CSS -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">🎨</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">Tailwind CSS</h4>
+                        <p class="text-sm text-slate-400">Utility-first CSS framework for rapid UI development</p>
+                    </div>
+
+                    <!-- Redux -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">🔄</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">Redux</h4>
+                        <p class="text-sm text-slate-400">Predictable state container for JavaScript apps</p>
+                    </div>
+
+                    <!-- Vite -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">⚡</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">Vite</h4>
+                        <p class="text-sm text-slate-400">Next generation frontend tooling with lightning-fast HMR</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backend -->
+            <div class="mb-12">
+                <h3 class="text-xl font-semibold text-emerald-400 mb-4">
+                    <span class="text-slate-500">></span> Backend
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Node.js -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">🟢</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">Node.js</h4>
+                        <p class="text-sm text-slate-400">JavaScript runtime built on Chrome's V8 engine</p>
+                    </div>
+
+                    <!-- Express -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">🚂</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">Express</h4>
+                        <p class="text-sm text-slate-400">Fast, minimalist web framework for Node.js</p>
+                    </div>
+
+                    <!-- PostgreSQL -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">🐘</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">PostgreSQL</h4>
+                        <p class="text-sm text-slate-400">Advanced open-source relational database</p>
+                    </div>
+
+                    <!-- MongoDB -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">🍃</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">MongoDB</h4>
+                        <p class="text-sm text-slate-400">NoSQL database for modern applications</p>
+                    </div>
+
+                    <!-- GraphQL -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">◈</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">GraphQL</h4>
+                        <p class="text-sm text-slate-400">Query language for APIs with strong typing</p>
+                    </div>
+
+                    <!-- REST APIs -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">🔌</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">REST APIs</h4>
+                        <p class="text-sm text-slate-400">RESTful API design and implementation</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tools & DevOps -->
+            <div>
+                <h3 class="text-xl font-semibold text-emerald-400 mb-4">
+                    <span class="text-slate-500">></span> Tools & DevOps
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Docker -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">🐳</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">Docker</h4>
+                        <p class="text-sm text-slate-400">Containerization platform for consistent deployments</p>
+                    </div>
+
+                    <!-- AWS -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">☁️</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">AWS</h4>
+                        <p class="text-sm text-slate-400">Cloud infrastructure and services</p>
+                    </div>
+
+                    <!-- Git -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">📦</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">Git</h4>
+                        <p class="text-sm text-slate-400">Version control and collaboration</p>
+                    </div>
+
+                    <!-- CI/CD -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">🔄</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">CI/CD</h4>
+                        <p class="text-sm text-slate-400">Automated testing and deployment pipelines</p>
+                    </div>
+
+                    <!-- VS Code -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">💻</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">VS Code</h4>
+                        <p class="text-sm text-slate-400">Primary code editor with extensive extensions</p>
+                    </div>
+
+                    <!-- Jest -->
+                    <div
+                        class="bg-slate-900 border border-slate-700 rounded-lg p-6 hover-glow transition-all cursor-pointer">
+                        <div class="text-3xl mb-3">🃏</div>
+                        <h4 class="text-lg font-semibold text-cyan-300 mb-2">Jest</h4>
+                        <p class="text-sm text-slate-400">JavaScript testing framework with zero config</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- PROJECTS SECTION - Repository View -->
+    <!-- ============================================ -->
+    <section id="projects" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-cyan-400 mb-8">
+                <span class="text-slate-500">//</span> Featured Projects
+            </h2>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Project 1 -->
+                <div class="bg-slate-900 border border-slate-700 rounded-lg overflow-hidden hover-glow transition-all">
+                    <div class="bg-slate-800 px-4 py-3 border-b border-slate-700">
+                        <h3 class="text-lg font-semibold text-cyan-300">📁 e-commerce-platform</h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-300 mb-4">
+                            Full-stack e-commerce platform with real-time inventory management, payment processing, and
+                            admin dashboard. Built with Next.js and Stripe integration.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="px-3 py-1 bg-cyan-500/20 text-cyan-300 text-xs rounded border border-cyan-500/30">Next.js</span>
+                            <span
+                                class="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs rounded border border-emerald-500/30">Node.js</span>
+                            <span
+                                class="px-3 py-1 bg-purple-500/20 text-purple-300 text-xs rounded border border-purple-500/30">PostgreSQL</span>
+                            <span
+                                class="px-3 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded border border-yellow-500/30">Stripe</span>
+                        </div>
+                        <div class="flex gap-4">
+                            <a href="#"
+                                class="text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1">
+                                <span>🔗</span> Live Demo
+                            </a>
+                            <a href="#"
+                                class="text-slate-400 hover:text-slate-300 transition-colors flex items-center gap-1">
+                                <span>📂</span> GitHub
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="bg-slate-900 border border-slate-700 rounded-lg overflow-hidden hover-glow transition-all">
+                    <div class="bg-slate-800 px-4 py-3 border-b border-slate-700">
+                        <h3 class="text-lg font-semibold text-cyan-300">📁 task-management-app</h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-300 mb-4">
+                            Collaborative task management tool with real-time updates, drag-and-drop interface, and team
+                            workspaces. Features include notifications and analytics.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="px-3 py-1 bg-cyan-500/20 text-cyan-300 text-xs rounded border border-cyan-500/30">React</span>
+                            <span
+                                class="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs rounded border border-emerald-500/30">Express</span>
+                            <span
+                                class="px-3 py-1 bg-purple-500/20 text-purple-300 text-xs rounded border border-purple-500/30">MongoDB</span>
+                            <span
+                                class="px-3 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded border border-yellow-500/30">Socket.io</span>
+                        </div>
+                        <div class="flex gap-4">
+                            <a href="#"
+                                class="text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1">
+                                <span>🔗</span> Live Demo
+                            </a>
+                            <a href="#"
+                                class="text-slate-400 hover:text-slate-300 transition-colors flex items-center gap-1">
+                                <span>📂</span> GitHub
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="bg-slate-900 border border-slate-700 rounded-lg overflow-hidden hover-glow transition-all">
+                    <div class="bg-slate-800 px-4 py-3 border-b border-slate-700">
+                        <h3 class="text-lg font-semibold text-cyan-300">📁 ai-content-generator</h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-300 mb-4">
+                            AI-powered content generation tool using OpenAI API. Features include blog post generation,
+                            SEO optimization, and content scheduling with analytics dashboard.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="px-3 py-1 bg-cyan-500/20 text-cyan-300 text-xs rounded border border-cyan-500/30">Next.js</span>
+                            <span
+                                class="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs rounded border border-emerald-500/30">TypeScript</span>
+                            <span
+                                class="px-3 py-1 bg-purple-500/20 text-purple-300 text-xs rounded border border-purple-500/30">OpenAI</span>
+                            <span
+                                class="px-3 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded border border-yellow-500/30">Tailwind</span>
+                        </div>
+                        <div class="flex gap-4">
+                            <a href="#"
+                                class="text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1">
+                                <span>🔗</span> Live Demo
+                            </a>
+                            <a href="#"
+                                class="text-slate-400 hover:text-slate-300 transition-colors flex items-center gap-1">
+                                <span>📂</span> GitHub
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 4 -->
+                <div class="bg-slate-900 border border-slate-700 rounded-lg overflow-hidden hover-glow transition-all">
+                    <div class="bg-slate-800 px-4 py-3 border-b border-slate-700">
+                        <h3 class="text-lg font-semibold text-cyan-300">📁 developer-portfolio-cms</h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-300 mb-4">
+                            Headless CMS for developer portfolios with markdown support, code syntax highlighting, and
+                            automatic deployment. Built with modern JAMstack architecture.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="px-3 py-1 bg-cyan-500/20 text-cyan-300 text-xs rounded border border-cyan-500/30">Next.js</span>
+                            <span
+                                class="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs rounded border border-emerald-500/30">Sanity</span>
+                            <span
+                                class="px-3 py-1 bg-purple-500/20 text-purple-300 text-xs rounded border border-purple-500/30">GraphQL</span>
+                            <span
+                                class="px-3 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded border border-yellow-500/30">Vercel</span>
+                        </div>
+                        <div class="flex gap-4">
+                            <a href="#"
+                                class="text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1">
+                                <span>🔗</span> Live Demo
+                            </a>
+                            <a href="#"
+                                class="text-slate-400 hover:text-slate-300 transition-colors flex items-center gap-1">
+                                <span>📂</span> GitHub
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- EXPERIENCE SECTION - Timeline / CLI Logs -->
+    <!-- ============================================ -->
+    <section id="experience" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-cyan-400 mb-8">
+                <span class="text-slate-500">//</span> Experience
+            </h2>
+
+            <div class="bg-slate-900 border border-slate-700 rounded-lg overflow-hidden">
+                <div class="bg-slate-800 px-4 py-3 border-b border-slate-700">
+                    <div class="text-sm text-slate-400">📜 career.log</div>
+                </div>
+
+                <div class="p-6 md:p-8 space-y-6">
+                    <!-- Experience 1 -->
+                    <div class="border-l-2 border-cyan-500 pl-6">
+                        <div class="text-emerald-400 mb-2">
+                            <span class="text-slate-500">></span> 2023 - Present
+                        </div>
+                        <h3 class="text-xl font-semibold text-cyan-300 mb-2">Senior Full-Stack Engineer @ TechCorp</h3>
+                        <ul class="text-slate-300 space-y-2 text-sm">
+                            <li><span class="text-cyan-400">•</span> Led development of microservices architecture
+                                serving 2M+ users</li>
+                            <li><span class="text-cyan-400">•</span> Reduced API response time by 60% through
+                                optimization</li>
+                            <li><span class="text-cyan-400">•</span> Mentored team of 5 junior developers</li>
+                            <li><span class="text-cyan-400">•</span> Implemented CI/CD pipeline reducing deployment time
+                                by 80%</li>
+                        </ul>
+                    </div>
+
+                    <div class="border-t border-slate-700"></div>
+
+                    <!-- Experience 2 -->
+                    <div class="border-l-2 border-purple-500 pl-6">
+                        <div class="text-emerald-400 mb-2">
+                            <span class="text-slate-500">></span> 2021 - 2023
+                        </div>
+                        <h3 class="text-xl font-semibold text-cyan-300 mb-2">Full-Stack Developer @ StartupXYZ</h3>
+                        <ul class="text-slate-300 space-y-2 text-sm">
+                            <li><span class="text-purple-400">•</span> Built scalable e-commerce platform from scratch
+                            </li>
+                            <li><span class="text-purple-400">•</span> Integrated payment systems (Stripe, PayPal)</li>
+                            <li><span class="text-purple-400">•</span> Developed RESTful APIs and GraphQL endpoints</li>
+                            <li><span class="text-purple-400">•</span> Improved SEO resulting in 150% organic traffic
+                                increase</li>
+                        </ul>
+                    </div>
+
+                    <div class="border-t border-slate-700"></div>
+
+                    <!-- Experience 3 -->
+                    <div class="border-l-2 border-emerald-500 pl-6">
+                        <div class="text-emerald-400 mb-2">
+                            <span class="text-slate-500">></span> 2020 - 2021
+                        </div>
+                        <h3 class="text-xl font-semibold text-cyan-300 mb-2">Frontend Developer @ WebAgency</h3>
+                        <ul class="text-slate-300 space-y-2 text-sm">
+                            <li><span class="text-emerald-400">•</span> Developed responsive web applications using
+                                React</li>
+                            <li><span class="text-emerald-400">•</span> Collaborated with designers to implement
+                                pixel-perfect UIs</li>
+                            <li><span class="text-emerald-400">•</span> Optimized web performance achieving 95+
+                                Lighthouse scores</li>
+                            <li><span class="text-emerald-400">•</span> Maintained and updated legacy codebases</li>
+                        </ul>
+                    </div>
+
+                    <div class="border-t border-slate-700"></div>
+
+                    <!-- Experience 4 -->
+                    <div class="border-l-2 border-yellow-500 pl-6">
+                        <div class="text-emerald-400 mb-2">
+                            <span class="text-slate-500">></span> 2019 - 2020
+                        </div>
+                        <h3 class="text-xl font-semibold text-cyan-300 mb-2">Junior Developer @ CodeFactory</h3>
+                        <ul class="text-slate-300 space-y-2 text-sm">
+                            <li><span class="text-yellow-400">•</span> Learned modern web development practices</li>
+                            <li><span class="text-yellow-400">•</span> Built internal tools and dashboards</li>
+                            <li><span class="text-yellow-400">•</span> Participated in code reviews and pair programming
+                            </li>
+                            <li><span class="text-yellow-400">•</span> Contributed to open-source projects</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- CONTACT SECTION - Terminal Form -->
+    <!-- ============================================ -->
+    <section id="contact" class="py-20 px-4 mb-20">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-cyan-400 mb-8">
+                <span class="text-slate-500">//</span> Get In Touch
+            </h2>
+
+            <div class="bg-slate-900 border border-slate-700 rounded-lg overflow-hidden terminal-glow">
+                <!-- Terminal Header -->
+                <div class="bg-slate-800 px-4 py-3 flex items-center gap-2 border-b border-slate-700">
+                    <div class="flex gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <div class="ml-4 text-slate-400 text-sm">contact@terminal:~</div>
+                </div>
+
+                <!-- Form Content -->
+                <div class="p-8">
+                    <form id="contact-form" class="space-y-6">
+                        <!-- Name Input -->
+                        <div>
+                            <label class="block text-emerald-400 mb-2">
+                                <span class="text-slate-500">></span> name:
+                            </label>
+                            <input type="text" id="name" required
+                                class="w-full bg-slate-800 border border-slate-600 rounded px-4 py-3 text-slate-200 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"
+                                placeholder="Enter your name" />
+                        </div>
+
+                        <!-- Email Input -->
+                        <div>
+                            <label class="block text-emerald-400 mb-2">
+                                <span class="text-slate-500">></span> email:
+                            </label>
+                            <input type="email" id="email" required
+                                class="w-full bg-slate-800 border border-slate-600 rounded px-4 py-3 text-slate-200 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"
+                                placeholder="your.email@example.com" />
+                        </div>
+
+                        <!-- Message Input -->
+                        <div>
+                            <label class="block text-emerald-400 mb-2">
+                                <span class="text-slate-500">></span> message:
+                            </label>
+                            <textarea id="message" required rows="6"
+                                class="w-full bg-slate-800 border border-slate-600 rounded px-4 py-3 text-slate-200 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all resize-none"
+                                placeholder="Your message here..."></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit"
+                            class="w-full bg-cyan-500 text-slate-900 font-semibold py-3 rounded hover:bg-cyan-400 transition-all hover:shadow-lg hover:shadow-cyan-500/50">
+                            <span class="text-slate-900">$</span> send_message
+                        </button>
+                    </form>
+
+                    <!-- Success Message (Hidden by default) -->
+                    <div id="success-message"
+                        class="hidden mt-6 p-4 bg-emerald-500/20 border border-emerald-500 rounded">
+                        <p class="text-emerald-400">
+                            <span class="text-slate-500">></span> Message sent successfully! ✅
+                        </p>
+                        <p class="text-slate-400 text-sm mt-2">
+                            <span class="text-slate-500">></span> I'll get back to you soon.
+                        </p>
+                    </div>
+
+                    <!-- Contact Links -->
+                    <div class="mt-8 pt-8 border-t border-slate-700">
+                        <p class="text-slate-400 mb-4">
+                            <span class="text-slate-500">></span> Or reach me directly:
+                        </p>
+                        <div class="space-y-2 text-sm">
+                            <div class="text-cyan-400">
+                                <span class="text-slate-500">$</span> email: <a href="mailto:alex@example.com"
+                                    class="hover:text-cyan-300 transition-colors">alex@example.com</a>
+                            </div>
+                            <div class="text-cyan-400">
+                                <span class="text-slate-500">$</span> github: <a href="https://github.com"
+                                    target="_blank"
+                                    class="hover:text-cyan-300 transition-colors">github.com/alexmorgan</a>
+                            </div>
+                            <div class="text-cyan-400">
+                                <span class="text-slate-500">$</span> linkedin: <a href="https://linkedin.com"
+                                    target="_blank"
+                                    class="hover:text-cyan-300 transition-colors">linkedin.com/in/alexmorgan</a>
+                            </div>
+                            <div class="text-cyan-400">
+                                <span class="text-slate-500">$</span> twitter: <a href="https://twitter.com"
+                                    target="_blank" class="hover:text-cyan-300 transition-colors">@alexmorgan_dev</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================ -->
+    <footer class="py-8 px-4 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto text-center">
+            <p class="text-slate-500 text-sm">
+                <span class="text-slate-600">></span> Built with passion and lots of coffee ☕
+            </p>
+            <p class="text-slate-600 text-xs mt-2">
+                © 2024 Alex Morgan. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <!-- ============================================ -->
+    <!-- JAVASCRIPT -->
+    <!-- ============================================ -->
+    <script>
+        // Typing effect for hero section
+        const texts = [
+            { element: 'typed-text-1', text: "hi, i'm alex morgan", delay: 0 },
+            { element: 'typed-text-2', text: "full-stack developer", delay: 1500 },
+            { element: 'typed-text-3', text: "building web products that matter", delay: 3000 }
+        ];
+
+        function typeText(elementId, text, delay) {
+            setTimeout(() => {
+                const element = document.getElementById(elementId);
+                let index = 0;
+
+                const interval = setInterval(() => {
+                    if (index < text.length) {
+                        element.textContent += text.charAt(index);
+                        index++;
+                    } else {
+                        clearInterval(interval);
+                    }
+                }, 50);
+            }, delay);
+        }
+
+        // Start typing animation on page load
+        window.addEventListener('load', () => {
+            texts.forEach(item => {
+                typeText(item.element, item.text, item.delay);
+            });
+        });
+
+        // Fade-in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Contact form handling
+        const contactForm = document.getElementById('contact-form');
+        const successMessage = document.getElementById('success-message');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Get form values
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+
+            // Simulate form submission (replace with actual API call)
+            console.log('Form submitted:', { name, email, message });
+
+            // Show success message
+            successMessage.classList.remove('hidden');
+
+            // Reset form
+            contactForm.reset();
+
+            // Hide success message after 5 seconds
+            setTimeout(() => {
+                successMessage.classList.add('hidden');
+            }, 5000);
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
