@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Portfolio | Browser Edition</title>
+
+    <!-- Tailwind Configuration for Dark Mode -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;700&display=swap');
+
+        /* Theme Transitions */
+        html,
+        body,
+        div,
+        span,
+        applet,
+        object,
+        iframe,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        blockquote,
+        pre,
+        a,
+        abbr,
+        acronym,
+        address,
+        big,
+        cite,
+        code,
+        del,
+        dfn,
+        em,
+        img,
+        ins,
+        kbd,
+        q,
+        s,
+        samp,
+        small,
+        strike,
+        strong,
+        sub,
+        sup,
+        tt,
+        var,
+        b,
+        u,
+        i,
+        center,
+        dl,
+        dt,
+        dd,
+        ol,
+        ul,
+        li,
+        fieldset,
+        form,
+        label,
+        legend,
+        table,
+        caption,
+        tbody,
+        tfoot,
+        thead,
+        tr,
+        th,
+        td,
+        article,
+        aside,
+        canvas,
+        details,
+        embed,
+        figure,
+        figcaption,
+        footer,
+        header,
+        hgroup,
+        menu,
+        nav,
+        output,
+        ruby,
+        section,
+        summary,
+        time,
+        mark,
+        audio,
+        video {
+            transition-property: background-color, border-color, color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 300ms;
+        }
+
+        /* Dynamic Background Pattern */
+        body {
+            background-color: #f1f5f9;
+            /* Slate 100 */
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        .dark body {
+            background-color: #0f172a;
+            /* Slate 900 */
+            background-image: radial-gradient(#1e293b 1px, transparent 1px);
+        }
+
+        /* Custom Scrollbar */
+        .browser-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .browser-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .browser-content::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .dark .browser-content::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+
+        .dark .browser-content::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        .browser-content::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        /* Typing Cursor */
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s step-start infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="h-screen w-full flex items-center justify-center p-4 overflow-hidden selection:bg-sky-500 selection:text-white text-slate-800 dark:text-slate-100">
+
+    <!-- Browser Window Container -->
+    <div
+        class="w-full max-w-[1920px] h-[90vh] bg-white dark:bg-slate-800 rounded-xl shadow-2xl flex flex-col border border-slate-300 dark:border-slate-700 overflow-hidden relative transition-colors duration-300">
+
+        <!-- Browser Header (Top Bar) -->
+        <div
+            class="bg-slate-100 dark:bg-slate-900 p-3 flex flex-col gap-3 border-b border-slate-300 dark:border-slate-700 z-20 transition-colors duration-300">
+
+            <!-- Window Controls & Tabs Row -->
+            <div class="flex items-center gap-4">
+                <!-- Traffic Lights -->
+                <div class="flex gap-2 mr-4">
+                    <div
+                        class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-400 transition-colors cursor-pointer border border-red-600/20">
+                    </div>
+                    <div
+                        class="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-400 transition-colors cursor-pointer border border-yellow-600/20">
+                    </div>
+                    <div
+                        class="w-3 h-3 rounded-full bg-green-500 hover:bg-green-400 transition-colors cursor-pointer border border-green-600/20">
+                    </div>
+                </div>
+
+                <!-- Tabs Container -->
+                <div class="flex-1 flex overflow-x-auto no-scrollbar gap-1">
+
+                    <button onclick="switchTab('home')" id="tab-home"
+                        class="group flex items-center gap-2 px-4 py-2 rounded-t-lg text-sm font-medium transition-all w-32 md:w-40 bg-white dark:bg-slate-800 border-b-2 border-sky-500 text-slate-800 dark:text-slate-100">
+                        <i data-lucide="home" class="w-4 h-4"></i>
+                        <span class="truncate">Home</span>
+                        <i data-lucide="x"
+                            class="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 hover:bg-slate-200 dark:hover:bg-slate-700 rounded"></i>
+                    </button>
+
+                    <button onclick="switchTab('projects')" id="tab-projects"
+                        class="group flex items-center gap-2 px-4 py-2 rounded-t-lg text-sm font-medium transition-all w-32 md:w-40 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800">
+                        <i data-lucide="folder-git-2" class="w-4 h-4"></i>
+                        <span class="truncate">Projects</span>
+                        <i data-lucide="x"
+                            class="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 hover:bg-slate-200 dark:hover:bg-slate-700 rounded"></i>
+                    </button>
+
+                    <button onclick="switchTab('skills')" id="tab-skills"
+                        class="group flex items-center gap-2 px-4 py-2 rounded-t-lg text-sm font-medium transition-all w-32 md:w-40 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800">
+                        <i data-lucide="cpu" class="w-4 h-4"></i>
+                        <span class="truncate">Stack</span>
+                        <i data-lucide="x"
+                            class="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 hover:bg-slate-200 dark:hover:bg-slate-700 rounded"></i>
+                    </button>
+
+                    <button onclick="switchTab('contact')" id="tab-contact"
+                        class="group flex items-center gap-2 px-4 py-2 rounded-t-lg text-sm font-medium transition-all w-32 md:w-40 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800">
+                        <i data-lucide="mail" class="w-4 h-4"></i>
+                        <span class="truncate">Contact</span>
+                        <i data-lucide="x"
+                            class="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 hover:bg-slate-200 dark:hover:bg-slate-700 rounded"></i>
+                    </button>
+
+                    <!-- New Tab Button -->
+                    <button
+                        class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full transition-colors">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Address Bar Row -->
+            <div class="flex items-center gap-3 bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
+                <div class="flex gap-2 text-slate-500 dark:text-slate-400">
+                    <button class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full transition-colors"><i
+                            data-lucide="arrow-left" class="w-4 h-4"></i></button>
+                    <button class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full transition-colors"><i
+                            data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    <button onclick="reloadPage()"
+                        class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full transition-colors group"><i
+                            data-lucide="rotate-cw"
+                            class="w-4 h-4 group-hover:rotate-180 transition-transform duration-500"></i></button>
+                </div>
+
+                <!-- URL Input -->
+                <div
+                    class="flex-1 bg-white dark:bg-slate-800 rounded-full h-9 flex items-center px-4 text-sm text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 focus-within:border-sky-500 focus-within:ring-1 focus-within:ring-sky-500 transition-all shadow-sm">
+                    <i data-lucide="lock" class="w-3 h-3 text-green-500 mr-2"></i>
+                    <span class="text-slate-400 dark:text-slate-500 mr-1">https://</span>
+                    <span id="url-bar" class="font-mono">developer.portfolio/home</span>
+                </div>
+
+                <div class="flex gap-2 text-slate-500 dark:text-slate-400">
+                    <!-- Theme Toggle Button -->
+                    <button onclick="toggleTheme()"
+                        class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full transition-colors text-yellow-500 dark:text-slate-400">
+                        <i id="theme-icon" data-lucide="moon" class="w-4 h-4 hidden dark:block"></i>
+                        <i id="theme-icon-light" data-lucide="sun" class="w-4 h-4 block dark:hidden"></i>
+                    </button>
+                    <button
+                        class="p-1.5 hover:text-sky-500 transition-colors hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full"><i
+                            data-lucide="star" class="w-4 h-4"></i></button>
+                    <button
+                        class="p-1.5 hover:text-sky-500 transition-colors hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full"><i
+                            data-lucide="user" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Viewport -->
+        <div class="flex-1 bg-slate-50 dark:bg-slate-900 relative overflow-hidden transition-colors duration-300">
+
+            <!-- Scrollable Area -->
+            <div id="content-area" class="browser-content w-full h-full overflow-y-auto relative">
+
+                <!-- HOME SECTION -->
+                <section id="content-home"
+                    class="min-h-full flex flex-col items-center justify-center p-8 text-center animate-fade-in">
+                    <div
+                        class="w-24 h-24 rounded-full bg-gradient-to-tr from-sky-500 to-indigo-600 p-1 mb-6 shadow-lg shadow-sky-500/20">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Profile"
+                            class="w-full h-full rounded-full bg-slate-100 dark:bg-slate-800">
+                    </div>
+                    <h1
+                        class="text-4xl md:text-6xl font-bold text-slate-800 dark:text-white mb-4 tracking-tight transition-colors">
+                        Hello, I'm <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-indigo-500">Alex
+                            Dev</span>
+                    </h1>
+                    <p class="text-slate-600 dark:text-slate-400 text-lg max-w-xl mb-8 leading-relaxed">
+                        I build pixel-perfect, accessible, and performant web experiences.
+                        Currently styling the web one div at a time.
+                    </p>
+                    <div class="flex gap-4">
+                        <button onclick="switchTab('projects')"
+                            class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white rounded-lg font-medium transition-all hover:scale-105 flex items-center gap-2 shadow-lg shadow-sky-500/20">
+                            View Work <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="switchTab('contact')"
+                            class="px-6 py-3 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-lg font-medium transition-all hover:scale-105 shadow-sm">
+                            Get in Touch
+                        </button>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div
+                        class="mt-16 grid grid-cols-3 gap-8 md:gap-16 border-t border-slate-200 dark:border-slate-800 pt-8 transition-colors">
+                        <div>
+                            <div class="text-2xl font-bold text-slate-800 dark:text-white">5+</div>
+                            <div class="text-sm text-slate-500">Years Exp</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-slate-800 dark:text-white">50+</div>
+                            <div class="text-sm text-slate-500">Projects</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-slate-800 dark:text-white">100%</div>
+                            <div class="text-sm text-slate-500">Commitment</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PROJECTS SECTION -->
+                <section id="content-projects" class="hidden p-8 max-w-5xl mx-auto animate-fade-in">
+                    <div class="mb-10">
+                        <h2 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Recent Projects</h2>
+                        <p class="text-slate-600 dark:text-slate-400">Selected works from my local repository.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Project Card 1 -->
+                        <div
+                            class="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden hover:border-sky-500/50 transition-all hover:shadow-xl hover:shadow-sky-500/10 shadow-sm">
+                            <div class="h-48 bg-slate-200 dark:bg-slate-700 relative overflow-hidden">
+                                <!-- Mockup graphic -->
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                                    <i data-lucide="layout-dashboard"
+                                        class="w-16 h-16 text-slate-400 dark:text-slate-500 group-hover:text-sky-500 dark:group-hover:text-sky-400 transition-colors"></i>
+                                </div>
+                                <div
+                                    class="absolute inset-0 bg-black/10 dark:bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-[2px]">
+                                    <button
+                                        class="p-2 bg-white rounded-full text-slate-900 hover:bg-sky-400 hover:text-white transition-colors shadow-lg"><i
+                                            data-lucide="github" class="w-5 h-5"></i></button>
+                                    <button
+                                        class="p-2 bg-white rounded-full text-slate-900 hover:bg-sky-400 hover:text-white transition-colors shadow-lg"><i
+                                            data-lucide="external-link" class="w-5 h-5"></i></button>
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="text-xl font-bold text-slate-800 dark:text-white">SaaS Dashboard</h3>
+                                    <span
+                                        class="px-2 py-1 bg-sky-100 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 text-xs rounded border border-sky-200 dark:border-sky-500/20">v2.0.0</span>
+                                </div>
+                                <p class="text-slate-600 dark:text-slate-400 text-sm mb-4">A comprehensive analytics
+                                    dashboard featuring real-time data visualization and user management.</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        class="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded">React</span>
+                                    <span
+                                        class="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded">Tailwind</span>
+                                    <span
+                                        class="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded">Firebase</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Project Card 2 -->
+                        <div
+                            class="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden hover:border-indigo-500/50 transition-all hover:shadow-xl hover:shadow-indigo-500/10 shadow-sm">
+                            <div class="h-48 bg-slate-200 dark:bg-slate-700 relative overflow-hidden">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                                    <i data-lucide="shopping-cart"
+                                        class="w-16 h-16 text-slate-400 dark:text-slate-500 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors"></i>
+                                </div>
+                                <div
+                                    class="absolute inset-0 bg-black/10 dark:bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-[2px]">
+                                    <button
+                                        class="p-2 bg-white rounded-full text-slate-900 hover:bg-indigo-400 hover:text-white transition-colors shadow-lg"><i
+                                            data-lucide="github" class="w-5 h-5"></i></button>
+                                    <button
+                                        class="p-2 bg-white rounded-full text-slate-900 hover:bg-indigo-400 hover:text-white transition-colors shadow-lg"><i
+                                            data-lucide="external-link" class="w-5 h-5"></i></button>
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="text-xl font-bold text-slate-800 dark:text-white">E-Commerce API</h3>
+                                    <span
+                                        class="px-2 py-1 bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-xs rounded border border-indigo-200 dark:border-indigo-500/20">Backend</span>
+                                </div>
+                                <p class="text-slate-600 dark:text-slate-400 text-sm mb-4">Headless e-commerce solution
+                                    with Stripe integration and inventory management system.</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        class="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded">Node.js</span>
+                                    <span
+                                        class="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded">PostgreSQL</span>
+                                    <span
+                                        class="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded">Docker</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Project Card 3 -->
+                        <div
+                            class="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden hover:border-green-500/50 transition-all hover:shadow-xl hover:shadow-green-500/10 shadow-sm">
+                            <div class="h-48 bg-slate-200 dark:bg-slate-700 relative overflow-hidden">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                                    <i data-lucide="message-square"
+                                        class="w-16 h-16 text-slate-400 dark:text-slate-500 group-hover:text-green-500 dark:group-hover:text-green-400 transition-colors"></i>
+                                </div>
+                                <div
+                                    class="absolute inset-0 bg-black/10 dark:bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-[2px]">
+                                    <button
+                                        class="p-2 bg-white rounded-full text-slate-900 hover:bg-green-400 hover:text-white transition-colors shadow-lg"><i
+                                            data-lucide="github" class="w-5 h-5"></i></button>
+                                    <button
+                                        class="p-2 bg-white rounded-full text-slate-900 hover:bg-green-400 hover:text-white transition-colors shadow-lg"><i
+                                            data-lucide="external-link" class="w-5 h-5"></i></button>
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="text-xl font-bold text-slate-800 dark:text-white">Chat Application</h3>
+                                    <span
+                                        class="px-2 py-1 bg-green-100 dark:bg-green-500/10 text-green-600 dark:text-green-400 text-xs rounded border border-green-200 dark:border-green-500/20">Realtime</span>
+                                </div>
+                                <p class="text-slate-600 dark:text-slate-400 text-sm mb-4">End-to-end encrypted
+                                    messaging app using WebSockets for instant communication.</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        class="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded">Vue.js</span>
+                                    <span
+                                        class="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded">Socket.io</span>
+                                    <span
+                                        class="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded">Redis</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Project Card 4 -->
+                        <div
+                            class="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden hover:border-rose-500/50 transition-all hover:shadow-xl hover:shadow-rose-500/10 shadow-sm">
+                            <div class="h-48 bg-slate-200 dark:bg-slate-700 relative overflow-hidden">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                                    <i data-lucide="video"
+                                        class="w-16 h-16 text-slate-400 dark:text-slate-500 group-hover:text-rose-500 dark:group-hover:text-rose-400 transition-colors"></i>
+                                </div>
+                                <div
+                                    class="absolute inset-0 bg-black/10 dark:bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-[2px]">
+                                    <button
+                                        class="p-2 bg-white rounded-full text-slate-900 hover:bg-rose-400 hover:text-white transition-colors shadow-lg"><i
+                                            data-lucide="github" class="w-5 h-5"></i></button>
+                                    <button
+                                        class="p-2 bg-white rounded-full text-slate-900 hover:bg-rose-400 hover:text-white transition-colors shadow-lg"><i
+                                            data-lucide="external-link" class="w-5 h-5"></i></button>
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="text-xl font-bold text-slate-800 dark:text-white">Stream Platform</h3>
+                                    <span
+                                        class="px-2 py-1 bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs rounded border border-rose-200 dark:border-rose-500/20">Beta</span>
+                                </div>
+                                <p class="text-slate-600 dark:text-slate-400 text-sm mb-4">A conceptual video streaming
+                                    platform focused on UX and micro-interactions.</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        class="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded">Next.js</span>
+                                    <span
+                                        class="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded">Framer
+                                        Motion</span>
+                                    <span
+                                        class="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded">AWS</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SKILLS SECTION -->
+                <section id="content-skills" class="hidden p-8 max-w-4xl mx-auto animate-fade-in">
+                    <div class="mb-10 text-center">
+                        <h2 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Installed Extensions</h2>
+                        <p class="text-slate-600 dark:text-slate-400">My technical toolkit and dependencies.</p>
+                    </div>
+
+                    <!-- Tech Stack Grid -->
+                    <div class="grid gap-6">
+
+                        <!-- Frontend -->
+                        <div
+                            class="bg-white dark:bg-slate-800/50 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div
+                                    class="p-2 bg-sky-100 dark:bg-sky-500/20 rounded-lg text-sky-600 dark:text-sky-400">
+                                    <i data-lucide="monitor" class="w-5 h-5"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800 dark:text-white">Frontend Core</h3>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-sky-100 dark:hover:bg-sky-600 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">HTML5</span>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-sky-100 dark:hover:bg-sky-600 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">CSS3</span>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-yellow-100 dark:hover:bg-yellow-600 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">JavaScript
+                                    (ES6+)</span>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-600 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">TypeScript</span>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-cyan-100 dark:hover:bg-cyan-600 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">React</span>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-emerald-100 dark:hover:bg-emerald-600 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">Vue.js</span>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-sky-100 dark:hover:bg-sky-400 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">Tailwind
+                                    CSS</span>
+                            </div>
+                        </div>
+
+                        <!-- Backend -->
+                        <div
+                            class="bg-white dark:bg-slate-800/50 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div
+                                    class="p-2 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg text-indigo-600 dark:text-indigo-400">
+                                    <i data-lucide="server" class="w-5 h-5"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800 dark:text-white">Backend & Ops</h3>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-green-100 dark:hover:bg-green-600 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">Node.js</span>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">Express</span>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-orange-100 dark:hover:bg-orange-600 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">Firebase</span>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">PostgreSQL</span>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-green-100 dark:hover:bg-green-700 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">MongoDB</span>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-500 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">Docker</span>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-orange-100 dark:hover:bg-orange-500 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">AWS</span>
+                            </div>
+                        </div>
+
+                        <!-- Tools -->
+                        <div
+                            class="bg-white dark:bg-slate-800/50 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div
+                                    class="p-2 bg-purple-100 dark:bg-purple-500/20 rounded-lg text-purple-600 dark:text-purple-400">
+                                    <i data-lucide="wrench" class="w-5 h-5"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800 dark:text-white">Workflow & Tools</h3>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-purple-100 dark:hover:bg-purple-600 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">Git</span>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-purple-100 dark:hover:bg-purple-600 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">Figma</span>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-purple-100 dark:hover:bg-purple-600 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">VS
+                                    Code</span>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-purple-100 dark:hover:bg-purple-600 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">Postman</span>
+                                <span
+                                    class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-purple-100 dark:hover:bg-purple-600 transition-colors rounded-full text-sm text-slate-700 dark:text-slate-200 cursor-default border border-slate-200 dark:border-transparent">Jest</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- CONTACT SECTION -->
+                <section id="content-contact"
+                    class="hidden h-full flex flex-col items-center justify-center p-8 animate-fade-in">
+                    <div
+                        class="w-full max-w-lg bg-slate-900 border border-slate-700 rounded-lg shadow-xl overflow-hidden">
+                        <!-- Terminal Header -->
+                        <div class="bg-slate-800 p-2 flex gap-2 border-b border-slate-700">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="ml-2 text-xs text-slate-400 font-mono">bash -- contact-form</span>
+                        </div>
+
+                        <!-- Form Content (Always Dark for Terminal Look) -->
+                        <div class="p-6 font-mono">
+                            <p class="text-green-400 mb-4">$ ./initiate_contact.sh</p>
+
+                            <form onsubmit="event.preventDefault(); alert('Message sent to the server!');"
+                                class="space-y-4">
+                                <div>
+                                    <label class="block text-slate-400 text-sm mb-1">Name</label>
+                                    <input type="text"
+                                        class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all placeholder-slate-700"
+                                        placeholder="John Doe">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-400 text-sm mb-1">Email</label>
+                                    <input type="email"
+                                        class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all placeholder-slate-700"
+                                        placeholder="john@example.com">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-400 text-sm mb-1">Message</label>
+                                    <textarea rows="4"
+                                        class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all placeholder-slate-700"
+                                        placeholder="Hello world..."></textarea>
+                                </div>
+                                <button type="submit"
+                                    class="w-full bg-green-600 hover:bg-green-500 text-white py-2 rounded font-bold transition-colors mt-2">
+                                    > Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Footer Spacer -->
+                <div class="h-10"></div>
+            </div>
+        </div>
+
+        <!-- Footer / Status Bar -->
+        <div
+            class="bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-500 text-xs py-1 px-4 border-t border-slate-300 dark:border-slate-700 flex justify-between items-center z-20 transition-colors duration-300">
+            <div class="flex gap-4">
+                <span><i data-lucide="git-branch" class="w-3 h-3 inline mr-1"></i>main</span>
+                <span><i data-lucide="check-circle" class="w-3 h-3 inline mr-1"></i>0 errors</span>
+                <span class="hidden md:inline">UTF-8</span>
+            </div>
+            <div class="flex gap-4">
+                <span class="hover:text-slate-900 dark:hover:text-white cursor-pointer transition-colors">Ln 24, Col
+                    8</span>
+                <span class="hover:text-slate-900 dark:hover:text-white cursor-pointer transition-colors">HTML</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // --- Theme Logic ---
+        const htmlElement = document.documentElement;
+
+        // 1. Check LocalStorage or Preference on load
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlElement.classList.add('dark');
+        } else {
+            htmlElement.classList.remove('dark');
+        }
+
+        // 2. Toggle Function
+        function toggleTheme() {
+            if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                htmlElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+            // Re-render icons if needed (Lucide handles SVG updates via CSS mostly, but logic might need help if icons were different)
+        }
+
+        // --- Navigation Logic ---
+        let currentTab = 'home';
+        const urlPrefix = "developer.portfolio/";
+
+        const routes = {
+            'home': { title: 'Home', url: 'home' },
+            'projects': { title: 'Projects', url: 'projects' },
+            'skills': { title: 'Tech Stack', url: 'extensions/skills' },
+            'contact': { title: 'Contact', url: 'contact-me' }
+        };
+
+        function switchTab(tabId) {
+            // 1. Update Tab Styles
+            document.querySelectorAll('button[id^="tab-"]').forEach(btn => {
+                const id = btn.id.replace('tab-', '');
+                if (id === tabId) {
+                    btn.className = "group flex items-center gap-2 px-4 py-2 rounded-t-lg text-sm font-medium transition-all w-32 md:w-40 bg-white dark:bg-slate-800 border-b-2 border-sky-500 text-slate-800 dark:text-slate-100";
+                } else {
+                    btn.className = "group flex items-center gap-2 px-4 py-2 rounded-t-lg text-sm font-medium transition-all w-32 md:w-40 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800";
+                }
+            });
+
+            // 2. Hide all content sections
+            document.querySelectorAll('section[id^="content-"]').forEach(section => {
+                section.classList.add('hidden');
+                section.classList.remove('animate-fade-in');
+            });
+
+            // 3. Show selected content with animation
+            const selectedContent = document.getElementById(`content-${tabId}`);
+            selectedContent.classList.remove('hidden');
+            void selectedContent.offsetWidth;
+            selectedContent.classList.add('animate-fade-in');
+
+            // 4. Update URL Bar (Typing Effect)
+            const urlBar = document.getElementById('url-bar');
+            const targetUrl = urlPrefix + routes[tabId].url;
+            typeUrl(urlBar, targetUrl);
+
+            // 5. Update Title
+            document.title = `${routes[tabId].title} | Dev Portfolio`;
+            currentTab = tabId;
+        }
+
+        // Typing effect
+        function typeUrl(element, text) {
+            element.classList.add('typing-cursor');
+            element.textContent = "";
+            let i = 0;
+            if (element.typingInterval) clearInterval(element.typingInterval);
+
+            element.typingInterval = setInterval(() => {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(element.typingInterval);
+                    element.classList.remove('typing-cursor');
+                }
+            }, 30);
+        }
+
+        function reloadPage() {
+            const btn = document.querySelector('.rotate-cw');
+            btn.classList.add('animate-spin');
+
+            const content = document.getElementById(`content-${currentTab}`);
+            content.classList.add('opacity-50');
+
+            setTimeout(() => {
+                btn.classList.remove('animate-spin');
+                content.classList.remove('opacity-50');
+                content.classList.remove('animate-fade-in');
+                void content.offsetWidth;
+                content.classList.add('animate-fade-in');
+            }, 800);
+        }
+
+        // Initialize default tab
+        window.onload = () => {
+            // Optional: Force a check on load if needed
+        };
+
+    </script>
+</body>
+
+</html>

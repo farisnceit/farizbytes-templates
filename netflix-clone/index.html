@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix Clone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Netflix+Sans:wght@400;500;700&display=swap');
+        /* Mocking Netflix Font logic usually uses system fonts or Roboto, sticking to sans-serif for safety */
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #141414;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Hide Scrollbar but allow scrolling */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Movie Card Hover Animation */
+        .movie-card {
+            transition: transform 0.3s ease-in-out, opacity 0.3s;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.05);
+            /* Slight zoom, simplified from actual Netflix 1.4x hover */
+            z-index: 50;
+            cursor: pointer;
+        }
+
+        /* Row Slider Buttons */
+        .slider-arrow {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .group:hover .slider-arrow {
+            opacity: 1;
+        }
+
+        /* Hero Gradient */
+        .hero-gradient {
+            background: linear-gradient(to top, #141414 10%, transparent 90%);
+        }
+
+        .hero-vignette {
+            background: linear-gradient(to right, #141414 0%, transparent 50%);
+        }
+
+        /* Modal Animation */
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        .modal-enter-active {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .modal-exit {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .modal-exit-active {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        /* Navbar Transition */
+        .nav-black {
+            background-color: #141414;
+        }
+
+        .nav-transparent {
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 10%, transparent);
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav id="navbar"
+        class="fixed top-0 w-full z-50 transition-colors duration-300 nav-transparent px-4 md:px-12 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-8">
+            <!-- Logo -->
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Logo"
+                class="h-6 md:h-8 cursor-pointer">
+
+            <!-- Menu Links (Desktop) -->
+            <ul class="hidden md:flex gap-6 text-sm text-gray-300">
+                <li class="hover:text-white cursor-pointer font-medium">Home</li>
+                <li class="hover:text-white cursor-pointer">TV Shows</li>
+                <li class="hover:text-white cursor-pointer">Movies</li>
+                <li class="hover:text-white cursor-pointer">New & Popular</li>
+                <li class="hover:text-white cursor-pointer">My List</li>
+            </ul>
+        </div>
+
+        <div class="flex items-center gap-4 text-white">
+            <i class="fas fa-search cursor-pointer text-lg"></i>
+            <span class="text-sm font-medium cursor-pointer">KIDS</span>
+            <i class="fas fa-bell cursor-pointer text-lg"></i>
+            <div class="flex items-center gap-2 cursor-pointer group relative">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" alt="Profile"
+                    class="h-8 w-8 rounded">
+                <i class="fas fa-caret-down transition-transform group-hover:rotate-180"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="hero" class="relative h-[85vh] w-full bg-cover bg-center object-contain">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="absolute inset-0 hero-vignette"></div>
+        <div class="absolute inset-0 hero-gradient"></div>
+
+        <div class="absolute top-[30%] left-4 md:left-12 max-w-2xl space-y-4">
+            <!-- Dynamic Hero Content injected via JS -->
+            <h1 id="hero-title" class="text-5xl md:text-7xl font-bold text-white drop-shadow-lg"></h1>
+            <div class="flex items-center gap-3 text-green-400 font-bold text-lg">
+                <span>98% Match</span>
+                <span class="text-gray-300 font-normal">2023</span>
+                <span class="border border-gray-500 px-1 text-xs text-gray-300">4K Ultra HD</span>
+            </div>
+            <p id="hero-desc" class="text-lg text-shadow-md text-white line-clamp-3 drop-shadow-md"></p>
+
+            <div class="flex gap-4 mt-6">
+                <button onclick="playMovie()"
+                    class="flex items-center gap-2 bg-white text-black px-6 py-2 rounded hover:bg-opacity-80 transition font-bold text-xl">
+                    <i class="fas fa-play"></i> Play
+                </button>
+                <button onclick="openModal(heroMovie)"
+                    class="flex items-center gap-2 bg-gray-500/70 text-white px-6 py-2 rounded hover:bg-gray-500/50 transition font-bold text-xl">
+                    <i class="fas fa-info-circle"></i> More Info
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content: Rows -->
+    <main class="relative z-10 -mt-32 pb-20 space-y-8 pl-4 md:pl-12">
+        <!-- Rows Container -->
+        <div id="rows-container" class="space-y-8"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-5xl mx-auto px-12 py-20 text-gray-500 text-sm">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <ul class="space-y-2">
+                <li class="hover:underline cursor-pointer">Audio and Subtitles</li>
+                <li class="hover:underline cursor-pointer">Media Center</li>
+                <li class="hover:underline cursor-pointer">Privacy</li>
+                <li class="hover:underline cursor-pointer">Contact Us</li>
+            </ul>
+            <ul class="space-y-2">
+                <li class="hover:underline cursor-pointer">Audio Description</li>
+                <li class="hover:underline cursor-pointer">Investor Relations</li>
+                <li class="hover:underline cursor-pointer">Legal Notices</li>
+            </ul>
+            <ul class="space-y-2">
+                <li class="hover:underline cursor-pointer">Help Center</li>
+                <li class="hover:underline cursor-pointer">Jobs</li>
+                <li class="hover:underline cursor-pointer">Cookie Preferences</li>
+            </ul>
+            <ul class="space-y-2">
+                <li class="hover:underline cursor-pointer">Gift Cards</li>
+                <li class="hover:underline cursor-pointer">Terms of Use</li>
+                <li class="hover:underline cursor-pointer">Corporate Information</li>
+            </ul>
+        </div>
+        <button class="border border-gray-500 px-4 py-1 mt-8 hover:text-white">Service Code</button>
+        <div class="mt-4">&copy; 1997-2024 Netflix Clone, Inc.</div>
+    </footer>
+
+    <!-- Video Modal -->
+    <div id="movie-modal" class="fixed inset-0 z-[100] bg-black/80 hidden flex items-center justify-center p-4">
+        <div id="modal-content"
+            class="bg-[#181818] w-full max-w-4xl rounded-lg overflow-hidden shadow-2xl relative transform transition-all modal-enter">
+            <button onclick="closeModal()"
+                class="absolute top-4 right-4 z-10 bg-[#181818] rounded-full p-2 hover:bg-white hover:text-black transition">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+
+            <!-- Modal Hero -->
+            <div class="relative h-96">
+                <img id="modal-img" src="" alt="Cover" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#181818] to-transparent"></div>
+                <div class="absolute bottom-10 left-10">
+                    <h2 id="modal-title" class="text-4xl font-bold mb-4"></h2>
+                    <div class="flex gap-4">
+                        <button class="bg-white text-black px-8 py-2 rounded font-bold hover:bg-opacity-80">
+                            <i class="fas fa-play mr-2"></i> Play
+                        </button>
+                        <button
+                            class="border border-gray-400 rounded-full p-2 w-10 h-10 flex items-center justify-center hover:border-white">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button
+                            class="border border-gray-400 rounded-full p-2 w-10 h-10 flex items-center justify-center hover:border-white">
+                            <i class="far fa-thumbs-up"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="col-span-2 space-y-4">
+                    <div class="flex items-center gap-4 text-sm">
+                        <span class="text-green-500 font-bold">95% Match</span>
+                        <span id="modal-year">2023</span>
+                        <span class="border px-1 text-xs">HD</span>
+                    </div>
+                    <p id="modal-desc" class="text-white text-sm leading-relaxed"></p>
+                </div>
+                <div class="col-span-1 space-y-2 text-sm text-gray-400">
+                    <div><span class="text-gray-500">Cast:</span> <span class="text-white">Generic Actor, Famous Star,
+                            Rising Talent</span></div>
+                    <div><span class="text-gray-500">Genres:</span> <span id="modal-genre" class="text-white"></span>
+                    </div>
+                    <div><span class="text-gray-500">This movie is:</span> <span class="text-white">Exciting,
+                            Suspenseful</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Mock Data (Simulating an API) ---
+        // Using high quality placeholders or real TMDB paths where applicable for demo purposes
+        const movies = [
+            {
+                id: 1,
+                title: "Stranger Things",
+                description: "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.",
+                image: "https://image.tmdb.org/t/p/w500/49WJfeN0moxb9IPfGn8AIqMGskD.jpg", // Real TMDB path
+                heroImage: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2070&auto=format&fit=crop",
+                genre: "Trending Now",
+                year: 2016
+            },
+            {
+                id: 2,
+                title: "The Witcher",
+                description: "Geralt of Rivia, a mutated monster-hunter for hire, journeys toward his destiny in a turbulent world where people often prove more wicked than beasts.",
+                image: "https://image.tmdb.org/t/p/w500/cZ0d3tCFlUM3WArWJ9T5XAfPnL9.jpg",
+                genre: "Trending Now",
+                year: 2019
+            },
+            {
+                id: 3,
+                title: "Inception",
+                description: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
+                image: "https://image.tmdb.org/t/p/w500/9gk7admal4ZLvd9ZbfqSenKVJqB.jpg",
+                heroImage: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=2070&auto=format&fit=crop",
+                genre: "Sci-Fi",
+                year: 2010
+            },
+            {
+                id: 4,
+                title: "The Dark Knight",
+                description: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
+                image: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+                genre: "Action",
+                year: 2008
+            },
+            {
+                id: 5,
+                title: "Avengers: Endgame",
+                description: "After the devastating events of Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.",
+                image: "https://image.tmdb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg",
+                genre: "Action",
+                year: 2019
+            },
+            {
+                id: 6,
+                title: "Interstellar",
+                description: "The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.",
+                image: "https://image.tmdb.org/t/p/w500/gEU2QniL6E8AHtMY4kO3MIhel72.jpg",
+                genre: "Sci-Fi",
+                year: 2014
+            },
+            {
+                id: 7,
+                title: "Breaking Bad",
+                description: "A high school chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine in order to secure his family's future.",
+                image: "https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg",
+                genre: "Trending Now",
+                year: 2008
+            },
+            {
+                id: 8,
+                title: "Spider-Man: Into the Spider-Verse",
+                description: "Teen Miles Morales becomes the Spider-Man of his universe, and must join with five spider-powered individuals from other dimensions to stop a threat for all realities.",
+                image: "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
+                genre: "Animation",
+                year: 2018
+            },
+            {
+                id: 9,
+                title: "The Crown",
+                description: "Follows the political rivalries and romance of Queen Elizabeth II's reign and the events that shaped the second half of the twentieth century.",
+                image: "https://image.tmdb.org/t/p/w500/10O5hAFx7l8y28J7W41aI0f4N3I.jpg",
+                genre: "Drama",
+                year: 2016
+            },
+            {
+                id: 10,
+                title: "Black Mirror",
+                description: "An anthology series exploring a twisted, high-tech multiverse where humanity's greatest innovations and darkest instincts collide.",
+                image: "https://image.tmdb.org/t/p/w500/5UaYs5GfKidvf7xM3UFSa35p2s.jpg",
+                genre: "Sci-Fi",
+                year: 2011
+            },
+            {
+                id: 11,
+                title: "Squid Game",
+                description: "Hundreds of cash-strapped players accept a strange invitation to compete in children's games. Inside, a tempting prize awaits with deadly high stakes.",
+                image: "https://image.tmdb.org/t/p/w500/d9obEAm31h466ob85Cgvr27sS19.jpg",
+                genre: "Trending Now",
+                year: 2021
+            },
+            {
+                id: 12,
+                title: "Pulp Fiction",
+                description: "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
+                image: "https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
+                genre: "Action",
+                year: 1994
+            }
+        ];
+
+        // --- 2. State & Helper Functions ---
+        let heroMovie = null;
+
+        // Group movies by genre
+        const categories = {
+            "Trending Now": movies.filter(m => m.genre === "Trending Now"),
+            "Action Thrillers": movies.filter(m => m.genre === "Action" || m.genre === "Sci-Fi"),
+            "Award Winning": movies.filter(m => m.id % 2 === 0), // Mock random category
+            "Blockbuster Movies": movies.filter(m => m.id % 2 !== 0) // Mock random category
+        };
+
+        // --- 3. DOM Logic ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupNavbar();
+            renderHero();
+            renderRows();
+        });
+
+        function setupNavbar() {
+            const nav = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 100) {
+                    nav.classList.remove('nav-transparent');
+                    nav.classList.add('nav-black');
+                } else {
+                    nav.classList.add('nav-transparent');
+                    nav.classList.remove('nav-black');
+                }
+            });
+        }
+
+        function renderHero() {
+            // Select random movie for hero
+            const randomIdx = Math.floor(Math.random() * movies.length);
+            heroMovie = movies[randomIdx];
+
+            // Ensure we have a high quality hero background, fallback to a color if specific hero image missing
+            const bgImage = heroMovie.heroImage || heroMovie.image;
+
+            const heroEl = document.getElementById('hero');
+            heroEl.style.backgroundImage = `url('${bgImage}')`;
+
+            document.getElementById('hero-title').innerText = heroMovie.title;
+            document.getElementById('hero-desc').innerText = heroMovie.description;
+        }
+
+        function renderRows() {
+            const container = document.getElementById('rows-container');
+
+            Object.keys(categories).forEach((categoryName, index) => {
+                if (categories[categoryName].length === 0) return;
+
+                const rowHtml = `
+                    <div class="row relative group">
+                        <h2 class="text-xl md:text-2xl font-bold text-gray-100 mb-3 hover:text-white cursor-pointer transition w-fit">${categoryName}</h2>
+                        
+                        <div class="relative">
+                            <!-- Left Arrow -->
+                            <div class="absolute left-0 top-0 bottom-0 z-40 w-12 bg-black/50 flex items-center justify-center cursor-pointer slider-arrow hover:bg-black/70 rounded-r" onclick="scrollRow('row-${index}', -300)">
+                                <i class="fas fa-chevron-left text-2xl"></i>
+                            </div>
+
+                            <!-- Row Content -->
+                            <div id="row-${index}" class="flex gap-2 overflow-x-scroll hide-scrollbar scroll-smooth px-2 pb-8">
+                                ${categories[categoryName].map(movie => `
+                                    <div class="relative min-w-[200px] md:min-w-[240px] aspect-[2/3] movie-card rounded-md overflow-hidden" onclick="openModal(${movie.id})">
+                                        <img src="${movie.image}" 
+                                             alt="${movie.title}" 
+                                             class="w-full h-full object-cover"
+                                             onerror="this.src='https://placehold.co/300x450/222/FFF?text=${encodeURIComponent(movie.title)}'">
+                                        
+                                        <!-- Hover Content (Simplified) -->
+                                        <div class="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition duration-300 flex flex-col justify-end p-4">
+                                            <h4 class="font-bold text-sm mb-1">${movie.title}</h4>
+                                            <div class="flex items-center gap-2 text-xs">
+                                                <button class="bg-white text-black rounded-full w-6 h-6 flex items-center justify-center"><i class="fas fa-play text-[8px]"></i></button>
+                                                <button class="border border-gray-300 rounded-full w-6 h-6 flex items-center justify-center"><i class="fas fa-plus text-[8px]"></i></button>
+                                            </div>
+                                            <div class="flex gap-2 text-[10px] mt-2 text-green-400 font-bold">
+                                                <span>98% Match</span>
+                                                <span class="text-white border border-gray-500 px-1">HD</span>
+                                            </div>
+                                            <div class="text-[10px] text-gray-300 mt-1">
+                                                ${movie.genre}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+
+                            <!-- Right Arrow -->
+                            <div class="absolute right-0 top-0 bottom-0 z-40 w-12 bg-black/50 flex items-center justify-center cursor-pointer slider-arrow hover:bg-black/70 rounded-l" onclick="scrollRow('row-${index}', 300)">
+                                <i class="fas fa-chevron-right text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += rowHtml;
+            });
+        }
+
+        // --- 4. Interactive Functions ---
+
+        function scrollRow(elementId, distance) {
+            const row = document.getElementById(elementId);
+            row.scrollBy({ left: distance, behavior: 'smooth' });
+        }
+
+        // Handle opening modal by ID or object
+        function openModal(movieOrId) {
+            let movie = movieOrId;
+            if (typeof movieOrId === 'number') {
+                movie = movies.find(m => m.id === movieOrId);
+            }
+
+            if (!movie) return;
+
+            // Fill Modal
+            document.getElementById('modal-img').src = movie.heroImage || movie.image;
+            document.getElementById('modal-title').innerText = movie.title;
+            document.getElementById('modal-desc').innerText = movie.description;
+            document.getElementById('modal-year').innerText = movie.year;
+            document.getElementById('modal-genre').innerText = movie.genre;
+
+            // Show Modal
+            const modal = document.getElementById('movie-modal');
+            modal.classList.remove('hidden');
+
+            // Animation class reset
+            const content = document.getElementById('modal-content');
+            content.classList.remove('modal-exit', 'modal-exit-active');
+            content.classList.add('modal-enter');
+            requestAnimationFrame(() => {
+                content.classList.add('modal-enter-active');
+            });
+
+            // Prevent background scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('movie-modal');
+            const content = document.getElementById('modal-content');
+
+            // Animation out
+            content.classList.remove('modal-enter-active', 'modal-enter');
+            content.classList.add('modal-exit');
+
+            requestAnimationFrame(() => {
+                content.classList.add('modal-exit-active');
+            });
+
+            // Wait for animation to finish before hiding
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto'; // Restore scroll
+            }, 200);
+        }
+
+        // Close modal if clicking outside content
+        document.getElementById('movie-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'movie-modal') {
+                closeModal();
+            }
+        });
+
+        function playMovie() {
+            // Simple visual feedback
+            const btn = document.activeElement;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Loading...`;
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                alert("Playing movie functionality would go here! 🍿");
+            }, 1000);
+        }
+    </script>
+</body>
+
+</html>
