@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Portfolio - macOS Style</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            /* Prevent scrolling on the desktop */
+            user-select: none;
+            /* OS feel */
+        }
+
+        /* Boot Screen Animation */
+        #boot-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 4px;
+            background: #333;
+            border-radius: 4px;
+            margin-top: 40px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #fff;
+            width: 0%;
+            transition: width 2s ease-out;
+        }
+
+        /* Desktop Wallpaper */
+        #desktop {
+            background: url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-dark {
+            background: rgba(28, 28, 30, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .glass-panel {
+            background: rgba(40, 40, 40, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Window Styling */
+        .window {
+            position: absolute;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, opacity 0.2s;
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+            /* Initially hidden */
+            min-width: 300px;
+            min-height: 200px;
+        }
+
+        .window.open {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .window.minimized {
+            opacity: 0;
+            transform: scale(0.8) translate(0, 100px);
+            pointer-events: none;
+        }
+
+        .traffic-light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        /* Dock Animation */
+        .dock-icon {
+            transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+            transform-origin: bottom;
+        }
+
+        .dock-icon:hover {
+            transform: scale(1.2) translateY(-10px);
+            margin: 0 10px;
+        }
+
+        /* Terminal Typing Cursor */
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: #fff;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Custom Selection Color */
+        ::selection {
+            background: rgba(59, 130, 246, 0.5);
+        }
+    </style>
+</head>
+
+<body class="bg-black text-white">
+
+    <!-- Boot Screen -->
+    <div id="boot-screen">
+        <i data-lucide="apple" class="w-24 h-24 text-white fill-white mb-8"></i>
+        <div class="progress-bar">
+            <div class="progress-fill" id="boot-progress"></div>
+        </div>
+    </div>
+
+    <!-- Main Desktop -->
+    <div id="desktop" class="hidden">
+
+        <!-- Top Menu Bar -->
+        <div
+            class="glass-dark h-8 w-full fixed top-0 left-0 z-50 flex justify-between items-center px-4 text-xs font-medium">
+            <div class="flex items-center gap-4">
+                <i data-lucide="apple" class="w-4 h-4 fill-white"></i>
+                <span class="font-bold">Finder</span>
+                <span class="hidden sm:inline">File</span>
+                <span class="hidden sm:inline">Edit</span>
+                <span class="hidden sm:inline">View</span>
+                <span class="hidden sm:inline">Go</span>
+                <span class="hidden sm:inline">Window</span>
+                <span class="hidden sm:inline">Help</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="battery-medium" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">74%</span>
+                </div>
+                <i data-lucide="wifi" class="w-4 h-4"></i>
+                <i data-lucide="search" class="w-4 h-4"></i>
+                <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+                <span id="clock" class="ml-2">Mon Jun 22 9:41 AM</span>
+            </div>
+        </div>
+
+        <!-- Desktop Icons (Grid) -->
+        <div class="absolute top-12 left-4 flex flex-col gap-6 items-center">
+            <!-- About Me Folder -->
+            <div class="group flex flex-col items-center gap-1 cursor-pointer w-20"
+                onclick="openWindow('window-about')">
+                <div
+                    class="w-14 h-14 bg-blue-400/20 rounded-xl border border-blue-300/30 flex items-center justify-center backdrop-blur-sm group-hover:bg-blue-400/40 transition-colors">
+                    <i data-lucide="user" class="w-8 h-8 text-blue-200"></i>
+                </div>
+                <span
+                    class="text-xs text-white drop-shadow-md font-medium px-2 py-0.5 rounded group-hover:bg-blue-600/60">About
+                    Me</span>
+            </div>
+
+            <!-- Resume PDF -->
+            <div class="group flex flex-col items-center gap-1 cursor-pointer w-20"
+                onclick="alertUser('Resume downloading disabled in demo.')">
+                <div
+                    class="w-14 h-14 bg-red-500/20 rounded-xl border border-red-300/30 flex items-center justify-center backdrop-blur-sm group-hover:bg-red-500/40 transition-colors">
+                    <i data-lucide="file-text" class="w-8 h-8 text-red-200"></i>
+                </div>
+                <span
+                    class="text-xs text-white drop-shadow-md font-medium px-2 py-0.5 rounded group-hover:bg-blue-600/60">Resume.pdf</span>
+            </div>
+        </div>
+
+        <!-- WINDOWS AREA -->
+
+        <!-- 1. VS Code (Projects) -->
+        <div id="window-projects" class="window bg-[#1e1e1e] border border-[#333] w-11/12 md:w-[800px] h-[500px]"
+            style="top: 10%; left: 10%;">
+            <!-- Title Bar -->
+            <div class="h-10 bg-[#2d2d2d] flex items-center justify-between px-4 draggable cursor-default select-none rounded-t-xl"
+                onmousedown="startDrag(event, 'window-projects')">
+                <div class="flex gap-2 group">
+                    <div onclick="closeWindow('window-projects')"
+                        class="traffic-light bg-red-500 cursor-pointer flex items-center justify-center group-hover:after:content-['x'] after:text-[8px] after:text-black/50">
+                    </div>
+                    <div onclick="minimizeWindow('window-projects')"
+                        class="traffic-light bg-yellow-500 cursor-pointer flex items-center justify-center group-hover:after:content-['-'] after:text-[8px] after:text-black/50">
+                    </div>
+                    <div onclick="maximizeWindow('window-projects')"
+                        class="traffic-light bg-green-500 cursor-pointer flex items-center justify-center group-hover:after:content-['+'] after:text-[8px] after:text-black/50">
+                    </div>
+                </div>
+                <div class="text-xs text-gray-400 font-medium">projects.tsx — Visual Studio Code</div>
+                <div class="w-14"></div> <!-- Spacer for centering -->
+            </div>
+
+            <!-- VS Code Body -->
+            <div class="flex flex-1 overflow-hidden">
+                <!-- Sidebar -->
+                <div class="w-12 bg-[#333] flex flex-col items-center py-4 gap-4 hidden sm:flex">
+                    <i data-lucide="files" class="w-6 h-6 text-white opacity-100 border-l-2 border-white pl-2"></i>
+                    <i data-lucide="search" class="w-6 h-6 text-gray-500 hover:text-white transition"></i>
+                    <i data-lucide="git-branch" class="w-6 h-6 text-gray-500 hover:text-white transition"></i>
+                    <i data-lucide="box" class="w-6 h-6 text-gray-500 hover:text-white transition"></i>
+                </div>
+                <!-- File Tree -->
+                <div class="w-48 bg-[#252526] text-gray-400 text-sm py-2 hidden md:block">
+                    <div class="px-4 py-1 text-xs font-bold uppercase tracking-wider">Explorer</div>
+                    <div class="mt-2">
+                        <div class="px-2 py-1 flex items-center gap-1 hover:bg-[#37373d] text-gray-300 bg-[#37373d]">
+                            <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                            <span class="font-bold">PORTFOLIO</span>
+                        </div>
+                        <div class="pl-6 py-1 flex items-center gap-2 hover:bg-[#2a2d2e] cursor-pointer text-blue-400">
+                            <i data-lucide="file-code" class="w-3 h-3"></i>
+                            <span>e-commerce.react</span>
+                        </div>
+                        <div
+                            class="pl-6 py-1 flex items-center gap-2 hover:bg-[#2a2d2e] cursor-pointer text-yellow-400">
+                            <i data-lucide="file-json" class="w-3 h-3"></i>
+                            <span>weather-app.js</span>
+                        </div>
+                        <div
+                            class="pl-6 py-1 flex items-center gap-2 hover:bg-[#2a2d2e] cursor-pointer text-purple-400">
+                            <i data-lucide="file-text" class="w-3 h-3"></i>
+                            <span>task-manager.ts</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Code Area -->
+                <div class="flex-1 bg-[#1e1e1e] p-4 overflow-y-auto font-mono text-sm">
+                    <div class="text-gray-500 mb-4">// Check out my latest work below</div>
+
+                    <!-- Project 1 -->
+                    <div class="mb-6">
+                        <span class="text-purple-400">const</span> <span class="text-blue-400">ECommercePlatform</span>
+                        = <span class="text-yellow-300">()</span> <span class="text-purple-400">=></span> {<br>
+                        &nbsp;&nbsp;<span class="text-blue-300">tech_stack</span>: [<span
+                            class="text-green-400">"React"</span>, <span class="text-green-400">"Node.js"</span>, <span
+                            class="text-green-400">"Stripe"</span>],<br>
+                        &nbsp;&nbsp;<span class="text-blue-300">description</span>: <span class="text-green-400">"Full
+                            stack marketplace with real-time inventory."</span>,<br>
+                        &nbsp;&nbsp;<span class="text-blue-300">status</span>: <span
+                            class="text-green-400">"Live"</span><br>
+                        };
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="mb-6">
+                        <span class="text-purple-400">const</span> <span class="text-blue-400">WeatherDashboard</span> =
+                        <span class="text-yellow-300">()</span> <span class="text-purple-400">=></span> {<br>
+                        &nbsp;&nbsp;<span class="text-blue-300">tech_stack</span>: [<span class="text-green-400">"Vue
+                            3"</span>, <span class="text-green-400">"OpenWeatherAPI"</span>, <span
+                            class="text-green-400">"ChartJS"</span>],<br>
+                        &nbsp;&nbsp;<span class="text-blue-300">description</span>: <span
+                            class="text-green-400">"Visualizes climate data trends globally."</span>,<br>
+                        &nbsp;&nbsp;<span class="text-blue-300">link</span>: <span
+                            class="text-green-400">"github.com/demo/weather"</span><br>
+                        };
+                    </div>
+
+                    <div class="text-gray-500 cursor-text">|</div>
+                </div>
+            </div>
+            <!-- Status Bar -->
+            <div class="h-6 bg-[#007acc] text-white text-[10px] flex items-center px-2 gap-4">
+                <div class="flex items-center gap-1"><i data-lucide="git-branch" class="w-3 h-3"></i> main*</div>
+                <div>0 errors, 0 warnings</div>
+                <div class="ml-auto">Ln 12, Col 45</div>
+                <div>UTF-8</div>
+                <div>React</div>
+            </div>
+        </div>
+
+
+        <!-- 2. Terminal (Skills) -->
+        <div id="window-terminal" class="window bg-black/90 border border-gray-700 w-11/12 md:w-[600px] h-[400px]"
+            style="top: 15%; left: 15%;">
+            <div class="h-8 bg-[#333] flex items-center px-4 rounded-t-xl draggable cursor-default"
+                onmousedown="startDrag(event, 'window-terminal')">
+                <div class="flex gap-2 group mr-4">
+                    <div onclick="closeWindow('window-terminal')" class="traffic-light bg-red-500 cursor-pointer"></div>
+                    <div onclick="minimizeWindow('window-terminal')" class="traffic-light bg-yellow-500 cursor-pointer">
+                    </div>
+                    <div onclick="maximizeWindow('window-terminal')" class="traffic-light bg-green-500 cursor-pointer">
+                    </div>
+                </div>
+                <div class="text-xs text-gray-400 font-medium flex gap-2 items-center">
+                    <i data-lucide="terminal" class="w-3 h-3"></i> zsh — 80x24
+                </div>
+            </div>
+            <div class="p-4 font-mono text-sm text-green-400 overflow-y-auto h-full"
+                onclick="document.getElementById('term-input').focus()">
+                <div class="mb-2">Last login: <span id="last-login"></span> on ttys001</div>
+                <div class="mb-4">
+                    <span class="text-blue-400">visitor@portfolio</span>:<span class="text-blue-200">~</span>$ neofetch
+                </div>
+                <div class="flex gap-4 mb-4">
+                    <div class="text-pink-500 hidden sm:block">
+                        <pre>
+      /\
+     /  \
+    /    \
+   /      \
+  /________\
+  </pre>
+                    </div>
+                    <div>
+                        <div><span class="text-blue-400">OS</span>: WebOS 14.0 (Mac Theme)</div>
+                        <div><span class="text-blue-400">Host</span>: Chrome Browser</div>
+                        <div><span class="text-blue-400">Uptime</span>: Forever</div>
+                        <div><span class="text-blue-400">Shell</span>: ZSH</div>
+                        <br>
+                        <div><span class="text-yellow-400 font-bold">Frontend:</span> React, Tailwind, Next.js,
+                            HTML5/CSS3</div>
+                        <div><span class="text-yellow-400 font-bold">Backend:</span> Node.js, Python, PostgreSQL</div>
+                        <div><span class="text-yellow-400 font-bold">Tools:</span> Docker, AWS, Git, Figma</div>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-blue-400">visitor@portfolio</span>:<span class="text-blue-200">~</span>$ <span
+                        id="typewriter"></span><span class="cursor"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Finder (About Me) -->
+        <div id="window-about" class="window bg-[#F5F5F7] text-gray-800 w-11/12 md:w-[640px] h-[400px]"
+            style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <div class="h-10 bg-[#e8e8e8] border-b border-gray-300 flex items-center justify-between px-4 draggable cursor-default rounded-t-xl"
+                onmousedown="startDrag(event, 'window-about')">
+                <div class="flex gap-2 group">
+                    <div onclick="closeWindow('window-about')" class="traffic-light bg-red-500 cursor-pointer"></div>
+                    <div onclick="minimizeWindow('window-about')" class="traffic-light bg-yellow-500 cursor-pointer">
+                    </div>
+                    <div onclick="maximizeWindow('window-about')" class="traffic-light bg-green-500 cursor-pointer">
+                    </div>
+                </div>
+                <div class="text-sm font-semibold text-gray-600">About Me</div>
+                <div class="w-14"></div>
+            </div>
+
+            <div class="flex h-full">
+                <!-- Sidebar -->
+                <div class="w-40 bg-gray-100/50 backdrop-blur border-r border-gray-200 p-4 text-sm hidden sm:block">
+                    <div class="text-gray-400 text-xs font-semibold mb-2">Favorites</div>
+                    <div class="flex items-center gap-2 mb-2 bg-gray-300/50 p-1 rounded text-gray-700"><i
+                            data-lucide="smile" class="w-4 h-4 text-blue-500"></i> Bio</div>
+                    <div class="flex items-center gap-2 mb-2 p-1 text-gray-600"><i data-lucide="briefcase"
+                            class="w-4 h-4 text-blue-500"></i> Experience</div>
+                    <div class="flex items-center gap-2 mb-2 p-1 text-gray-600"><i data-lucide="download"
+                            class="w-4 h-4 text-blue-500"></i> Downloads</div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="flex-1 p-8 flex flex-col items-center justify-center text-center overflow-y-auto">
+                    <div
+                        class="w-24 h-24 rounded-full bg-gray-300 mb-4 overflow-hidden border-4 border-white shadow-lg">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Avatar"
+                            class="w-full h-full object-cover">
+                    </div>
+                    <h1 class="text-2xl font-bold mb-1">Alex Developer</h1>
+                    <p class="text-gray-500 text-sm mb-4">Full Stack Engineer & UI Designer</p>
+                    <p class="text-gray-600 max-w-sm text-sm leading-relaxed">
+                        I build pixel-perfect, engaging, and accessible digital experiences.
+                        Obsessed with smooth animations and clean architecture. Currently based in the Cloud.
+                    </p>
+                    <div class="mt-6 flex gap-3">
+                        <button onclick="openWindow('window-contact')"
+                            class="px-4 py-1.5 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 transition shadow-sm">Contact
+                            Me</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Mail (Contact) -->
+        <div id="window-contact" class="window bg-white w-11/12 md:w-[500px] h-[450px]" style="top: 20%; left: 30%;">
+            <div class="h-10 bg-[#f6f6f6] border-b border-gray-200 flex items-center justify-between px-4 draggable cursor-default rounded-t-xl"
+                onmousedown="startDrag(event, 'window-contact')">
+                <div class="flex gap-2">
+                    <div onclick="closeWindow('window-contact')" class="traffic-light bg-red-500 cursor-pointer"></div>
+                    <div onclick="minimizeWindow('window-contact')" class="traffic-light bg-yellow-500 cursor-pointer">
+                    </div>
+                    <div onclick="maximizeWindow('window-contact')" class="traffic-light bg-green-500 cursor-pointer">
+                    </div>
+                </div>
+                <div class="text-sm font-semibold text-gray-500">New Message</div>
+                <div class="w-14"><i data-lucide="send" class="w-4 h-4 text-gray-400 ml-auto"></i></div>
+            </div>
+            <div class="p-4 flex flex-col h-full bg-white/90">
+                <div class="border-b border-gray-200 py-2 flex gap-2 text-sm">
+                    <span class="text-gray-400">To:</span> <span
+                        class="bg-blue-100 text-blue-700 px-2 rounded-full text-xs flex items-center">alex@portfolio.dev</span>
+                </div>
+                <div class="border-b border-gray-200 py-2 flex gap-2 text-sm">
+                    <span class="text-gray-400">Subject:</span> <input type="text" placeholder="Project Inquiry"
+                        class="outline-none w-full bg-transparent">
+                </div>
+                <textarea class="flex-1 w-full mt-4 outline-none resize-none text-sm text-gray-700"
+                    placeholder="Hi Alex, I'd like to discuss..."></textarea>
+                <div class="flex justify-end pt-4 pb-8">
+                    <button onclick="sendMessage()"
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition flex gap-2 items-center">
+                        <i data-lucide="send" class="w-3 h-3"></i> Send
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DOCK -->
+        <div
+            class="fixed bottom-4 left-1/2 -translate-x-1/2 glass rounded-2xl p-3 flex items-end gap-2 md:gap-4 z-50 overflow-visible transition-all duration-300">
+            <!-- Finder -->
+            <div class="dock-icon w-10 h-10 md:w-12 md:h-12 bg-gray-200 rounded-xl flex items-center justify-center cursor-pointer shadow-lg border border-white/20 relative"
+                onclick="openWindow('window-about')">
+                <div class="absolute -bottom-3 w-1 h-1 bg-white rounded-full opacity-0 active-indicator"
+                    id="ind-window-about"></div>
+                <div
+                    class="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center">
+                    <i data-lucide="smile" class="w-6 h-6 md:w-8 md:h-8 text-white"></i>
+                </div>
+            </div>
+
+            <!-- Terminal -->
+            <div class="dock-icon w-10 h-10 md:w-12 md:h-12 bg-black rounded-xl flex items-center justify-center cursor-pointer shadow-lg border border-white/20 relative"
+                onclick="openWindow('window-terminal')">
+                <div class="absolute -bottom-3 w-1 h-1 bg-white rounded-full opacity-0 active-indicator"
+                    id="ind-window-terminal"></div>
+                <div
+                    class="w-full h-full bg-gray-900 rounded-xl flex items-center justify-center border-t border-gray-700">
+                    <span class="text-green-500 font-mono font-bold text-xs">>_</span>
+                </div>
+            </div>
+
+            <!-- VS Code -->
+            <div class="dock-icon w-10 h-10 md:w-12 md:h-12 bg-[#007acc] rounded-xl flex items-center justify-center cursor-pointer shadow-lg border border-white/20 relative"
+                onclick="openWindow('window-projects')">
+                <div class="absolute -bottom-3 w-1 h-1 bg-white rounded-full opacity-0 active-indicator"
+                    id="ind-window-projects"></div>
+                <i data-lucide="code-2" class="w-6 h-6 md:w-8 md:h-8 text-white"></i>
+            </div>
+
+            <!-- Mail -->
+            <div class="dock-icon w-10 h-10 md:w-12 md:h-12 bg-blue-400 rounded-xl flex items-center justify-center cursor-pointer shadow-lg border border-white/20 relative"
+                onclick="openWindow('window-contact')">
+                <div class="absolute -bottom-3 w-1 h-1 bg-white rounded-full opacity-0 active-indicator"
+                    id="ind-window-contact"></div>
+                <i data-lucide="mail" class="w-6 h-6 md:w-8 md:h-8 text-white"></i>
+            </div>
+
+            <div class="w-[1px] h-8 bg-white/20 mx-1"></div>
+
+            <!-- Trash -->
+            <div class="dock-icon w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-gray-300 to-gray-400 rounded-xl flex items-center justify-center cursor-pointer shadow-lg border border-white/20"
+                onclick="alertUser('Trash is empty.')">
+                <i data-lucide="trash-2" class="w-6 h-6 md:w-8 md:h-8 text-gray-600"></i>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-area" class="fixed top-12 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        // --- 1. Boot Sequence ---
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+
+            const fill = document.getElementById('boot-progress');
+            const bootScreen = document.getElementById('boot-screen');
+            const desktop = document.getElementById('desktop');
+            const aboutWindow = document.getElementById('window-about');
+
+            // Start boot bar
+            setTimeout(() => {
+                fill.style.width = '100%';
+            }, 500);
+
+            // Fade out boot screen, show desktop
+            setTimeout(() => {
+                bootScreen.style.opacity = '0';
+                setTimeout(() => {
+                    bootScreen.style.display = 'none';
+                    desktop.classList.remove('hidden');
+                    // Play startup pop animation for About window
+                    openWindow('window-about');
+                    typeWriterEffect();
+                }, 1000);
+            }, 2500);
+
+            // Initialize clock
+            setInterval(updateClock, 1000);
+            updateClock();
+
+            // Set last login time
+            document.getElementById('last-login').innerText = new Date().toLocaleString();
+        });
+
+        // --- 2. Clock Logic ---
+        function updateClock() {
+            const now = new Date();
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+
+            const timeString = `${days[now.getDay()]} ${months[now.getMonth()]} ${now.getDate()} ${hours}:${minutes} ${ampm}`;
+            document.getElementById('clock').innerText = timeString;
+        }
+
+        // --- 3. Window Management ---
+        let highestZIndex = 10;
+        let activeWindows = new Set();
+
+        function openWindow(id) {
+            const win = document.getElementById(id);
+            const indicator = document.getElementById('ind-' + id);
+
+            // If minimized, restore
+            win.classList.remove('minimized');
+            win.classList.add('open');
+
+            // Bring to front
+            highestZIndex++;
+            win.style.zIndex = highestZIndex;
+
+            // Add indicator dot
+            activeWindows.add(id);
+            if (indicator) indicator.style.opacity = '1';
+
+            // Reset position if off screen (simple safety check)
+            const rect = win.getBoundingClientRect();
+            if (rect.top < 0 || rect.left < 0) {
+                win.style.top = '10%';
+                win.style.left = '10%';
+            }
+        }
+
+        function closeWindow(id) {
+            const win = document.getElementById(id);
+            const indicator = document.getElementById('ind-' + id);
+
+            win.classList.remove('open');
+            // Reset scale/opacity after animation ends could be done via event listener, 
+            // but CSS transition handles the visual part well.
+
+            activeWindows.delete(id);
+            if (indicator) indicator.style.opacity = '0';
+        }
+
+        function minimizeWindow(id) {
+            const win = document.getElementById(id);
+            win.classList.add('minimized');
+            win.classList.remove('open');
+        }
+
+        function maximizeWindow(id) {
+            const win = document.getElementById(id);
+            if (win.style.width === '100%') {
+                // Restore
+                win.style.width = win.dataset.prevWidth || '';
+                win.style.height = win.dataset.prevHeight || '';
+                win.style.top = win.dataset.prevTop || '';
+                win.style.left = win.dataset.prevLeft || '';
+                win.style.borderRadius = '12px';
+            } else {
+                // Maximize
+                // Save state
+                win.dataset.prevWidth = win.style.width;
+                win.dataset.prevHeight = win.style.height;
+                win.dataset.prevTop = win.style.top;
+                win.dataset.prevLeft = win.style.left;
+
+                // Apply full screen relative to desktop
+                win.style.width = '100%';
+                win.style.height = 'calc(100vh - 32px)'; // Minus top bar
+                win.style.top = '32px';
+                win.style.left = '0';
+                win.style.borderRadius = '0';
+            }
+        }
+
+        // Focus window on click
+        document.querySelectorAll('.window').forEach(win => {
+            win.addEventListener('mousedown', () => {
+                highestZIndex++;
+                win.style.zIndex = highestZIndex;
+            });
+        });
+
+        // --- 4. Drag Logic ---
+        let isDragging = false;
+        let currentWindow = null;
+        let startX, startY, initialLeft, initialTop;
+
+        function startDrag(e, windowId) {
+            // Prevent dragging if maximizing
+            if (e.target.closest('.traffic-light')) return;
+
+            e.preventDefault();
+            const win = document.getElementById(windowId);
+
+            // Maximize z-index
+            highestZIndex++;
+            win.style.zIndex = highestZIndex;
+
+            // Check if maximized, if so, dragging is disabled or should restore (simplification: disable)
+            if (win.style.width === '100%') return;
+
+            isDragging = true;
+            currentWindow = win;
+
+            // Get mouse position relative to viewport
+            startX = e.clientX;
+            startY = e.clientY;
+
+            // Get current window position
+            const rect = win.getBoundingClientRect();
+            initialLeft = rect.left;
+            initialTop = rect.top;
+
+            // Add global listeners
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+
+            // Apply new position
+            // Note: We use style.left/top instead of transform to allow resizing later easily
+            currentWindow.style.left = `${initialLeft + dx}px`;
+            currentWindow.style.top = `${initialTop + dy}px`;
+            currentWindow.style.transform = 'none'; // Remove centering transform if it exists
+        }
+
+        function stopDrag() {
+            isDragging = false;
+            currentWindow = null;
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', stopDrag);
+        }
+
+        // --- 5. Utilities ---
+
+        // Notification System
+        function alertUser(message) {
+            const container = document.getElementById('notification-area');
+            const notif = document.createElement('div');
+            notif.className = "bg-white/80 backdrop-blur-md text-black px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 w-64 transform transition-all duration-300 translate-x-full";
+            notif.innerHTML = `
+                <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                    <i data-lucide="bell" class="w-4 h-4"></i>
+                </div>
+                <div class="text-sm font-medium">${message}</div>
+            `;
+
+            container.appendChild(notif);
+            lucide.createIcons();
+
+            // Slide in
+            setTimeout(() => notif.classList.remove('translate-x-full'), 10);
+
+            // Remove after 3s
+            setTimeout(() => {
+                notif.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(() => notif.remove(), 300);
+            }, 3000);
+        }
+
+        function sendMessage() {
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i data-lucide="check" class="w-3 h-3"></i> Sent`;
+            lucide.createIcons();
+            btn.classList.remove('bg-blue-500');
+            btn.classList.add('bg-green-500');
+
+            alertUser('Message sent successfully!');
+
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.add('bg-blue-500');
+                btn.classList.remove('bg-green-500');
+                closeWindow('window-contact');
+            }, 2000);
+        }
+
+        // Typewriter Effect for Terminal
+        function typeWriterEffect() {
+            const text = "echo 'Welcome to my portfolio...'";
+            const element = document.getElementById('typewriter');
+            let i = 0;
+            element.innerHTML = '';
+
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 100);
+                }
+            }
+            type();
+        }
+
+    </script>
+</body>
+
+</html>
