@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing Plans</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons for checkmarks -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Smooth fade for price change */
+        .price-text {
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .fade-out {
+            opacity: 0;
+        }
+
+        /* Card Hover Effect */
+        .pricing-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Toggle Switch Animation */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #2563EB;
+        }
+
+        .toggle-checkbox:checked+.toggle-label {
+            background-color: #2563EB;
+        }
+
+        /* Custom glow for the middle card */
+        .glow-effect {
+            box-shadow: 0 0 40px -10px rgba(37, 99, 235, 0.25);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 antialiased min-h-screen flex flex-col items-center py-16 px-4 sm:px-6 lg:px-8">
+
+    <!-- Header Section -->
+    <div class="text-center max-w-3xl mx-auto mb-12">
+        <h1 class="text-3xl md:text-5xl font-bold tracking-tight text-gray-900 mb-4">
+            Streamline your teamwork. Start free.
+        </h1>
+        <p class="text-lg text-gray-500">
+            Choose the perfect plan for your business needs
+        </p>
+
+        <!-- Toggle Switch -->
+        <div class="mt-8 flex items-center justify-center relative">
+            <div class="relative flex bg-white p-1 rounded-full border border-gray-200 shadow-sm cursor-pointer select-none w-64 h-12"
+                id="billingToggle">
+                <!-- Sliding Background -->
+                <div id="toggleSlider"
+                    class="absolute left-1 top-1 w-[48%] h-[82%] bg-blue-600 rounded-full transition-all duration-300 ease-in-out shadow-sm z-0">
+                </div>
+
+                <!-- Buttons -->
+                <button class="w-1/2 z-10 text-sm font-medium transition-colors duration-300 text-white"
+                    id="btnMonthly">Monthly</button>
+                <button class="w-1/2 z-10 text-sm font-medium transition-colors duration-300 text-gray-500"
+                    id="btnYearly">Yearly</button>
+            </div>
+
+            <!-- Decorative Arrow & Badge -->
+            <div class="absolute -right-4 md:-right-24 top-1 hidden sm:block">
+                <div class="flex flex-col items-start relative">
+                    <!-- Hand drawn arrow SVG -->
+                    <svg class="w-12 h-12 text-green-500 absolute -left-10 top-2 rotate-12" viewBox="0 0 100 100"
+                        fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M80,50 C80,20 40,10 20,40" />
+                        <path d="M20,40 L30,35 M20,40 L28,48" />
+                    </svg>
+                    <!-- Badge -->
+                    <span
+                        class="bg-green-100 text-green-600 text-xs font-bold px-3 py-1 rounded-full border border-green-200 transform rotate-6 translate-x-2">
+                        Save 20%
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pricing Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl w-full items-start">
+
+        <!-- FREE PLAN -->
+        <div class="pricing-card bg-white rounded-2xl border border-gray-200 p-8 flex flex-col h-full">
+            <h3 class="text-xl font-bold text-gray-900">Free</h3>
+            <p class="text-sm text-gray-500 mt-2">Best for personal use</p>
+            <div class="mt-6 mb-6">
+                <span class="text-4xl font-bold text-gray-900">$0</span>
+                <span class="text-gray-500 text-sm font-medium">/month</span>
+            </div>
+            <button
+                class="w-full py-3 px-4 rounded-xl border border-gray-200 text-gray-700 font-medium hover:border-gray-400 hover:bg-gray-50 transition-colors mb-8">
+                Current Plan
+            </button>
+
+            <div class="space-y-4 flex-grow">
+                <p class="font-medium text-gray-900 text-sm">What you get:</p>
+                <ul class="space-y-3 text-sm text-gray-600">
+                    <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-blue-600"></i> Task
+                        Organization</li>
+                    <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-blue-600"></i>
+                        Project Workflows</li>
+                    <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-blue-600"></i> Team
+                        Communication</li>
+                    <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-blue-600"></i> Alerts
+                        and Scheduling</li>
+                    <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-blue-600"></i> Core
+                        Features</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- BUSINESS PLAN (Highlighted) -->
+        <div
+            class="pricing-card relative bg-white rounded-2xl border-2 border-blue-600 shadow-xl glow-effect flex flex-col h-full transform scale-100 md:scale-105 z-10">
+            <!-- Top Banner -->
+            <div
+                class="absolute top-0 left-0 right-0 bg-blue-600 text-white text-center text-xs font-bold uppercase tracking-wider py-1.5 rounded-t-lg">
+                Most Popular
+            </div>
+
+            <div class="p-8 pt-12 flex flex-col h-full">
+                <h3 class="text-xl font-bold text-gray-900">Business</h3>
+                <p class="text-sm text-gray-500 mt-2">Best for a business team use</p>
+                <div class="mt-6 mb-6 flex items-baseline">
+                    <span id="businessPrice" class="text-4xl font-bold text-gray-900 price-text">$16</span>
+                    <span class="text-gray-500 text-sm font-medium ml-1">/month</span>
+                    <span id="billingText"
+                        class="text-xs text-green-600 font-medium ml-2 opacity-0 transition-opacity duration-300">billed
+                        yearly</span>
+                </div>
+                <button
+                    class="w-full py-3 px-4 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 shadow-md hover:shadow-lg transition-all mb-8">
+                    Select Plan
+                </button>
+
+                <div class="space-y-4 flex-grow">
+                    <p class="font-medium text-gray-900 text-sm">All free features, plus:</p>
+                    <ul class="space-y-3 text-sm text-gray-600">
+                        <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-blue-600"></i>
+                            Custom Project Stages</li>
+                        <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-blue-600"></i>
+                            Insightful Data Analysis</li>
+                        <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-blue-600"></i>
+                            File Sharing</li>
+                        <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-blue-600"></i>
+                            Adaptable Framework</li>
+                        <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-blue-600"></i>
+                            Bug Resolution</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENTERPRISE PLAN -->
+        <div class="pricing-card bg-white rounded-2xl border border-gray-200 p-8 flex flex-col h-full">
+            <h3 class="text-xl font-bold text-gray-900">Enterprise</h3>
+            <p class="text-sm text-gray-500 mt-2">Best for multinational business</p>
+            <div class="mt-6 mb-6">
+                <span class="text-4xl font-bold text-gray-900">Custom</span>
+            </div>
+            <button
+                class="w-full py-3 px-4 rounded-xl border border-blue-600 text-blue-600 font-medium hover:bg-blue-50 transition-colors mb-8">
+                Contact us
+            </button>
+
+            <div class="space-y-4 flex-grow">
+                <p class="font-medium text-gray-900 text-sm">All business features, plus:</p>
+                <ul class="space-y-3 text-sm text-gray-600">
+                    <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-blue-600"></i> Single
+                        Sign-On</li>
+                    <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-blue-600"></i>
+                        Platform Integrations</li>
+                    <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-blue-600"></i> Secure
+                        Client Portal</li>
+                    <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-blue-600"></i>
+                        Advanced Task Automation</li>
+                    <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-blue-600"></i>
+                        Cross-Platform Access</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript for Functionality -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // State
+        let isMonthly = true;
+
+        // Elements
+        const toggleContainer = document.getElementById('billingToggle');
+        const slider = document.getElementById('toggleSlider');
+        const btnMonthly = document.getElementById('btnMonthly');
+        const btnYearly = document.getElementById('btnYearly');
+        const priceElement = document.getElementById('businessPrice');
+        const billingText = document.getElementById('billingText');
+
+        // Logic
+        toggleContainer.addEventListener('click', () => {
+            isMonthly = !isMonthly;
+            updateUI();
+        });
+
+        function updateUI() {
+            // 1. Animate Slider
+            if (isMonthly) {
+                slider.style.transform = 'translateX(0)';
+                slider.style.width = '48%';
+                // Text Colors
+                btnMonthly.classList.remove('text-gray-500');
+                btnMonthly.classList.add('text-white');
+                btnYearly.classList.remove('text-white');
+                btnYearly.classList.add('text-gray-500');
+            } else {
+                slider.style.transform = 'translateX(100%)';
+                slider.style.width = '48%'; // Keep width consistent
+                // Text Colors
+                btnMonthly.classList.remove('text-white');
+                btnMonthly.classList.add('text-gray-500');
+                btnYearly.classList.remove('text-gray-500');
+                btnYearly.classList.add('text-white');
+            }
+
+            // 2. Animate and Update Price
+            // Fade out
+            priceElement.classList.add('fade-out');
+
+            setTimeout(() => {
+                // Update Value
+                if (isMonthly) {
+                    priceElement.textContent = '$16';
+                    billingText.classList.remove('opacity-100');
+                    billingText.classList.add('opacity-0');
+                } else {
+                    // 20% Discount Math: 16 * 0.8 = 12.8. Let's round to $12 for cleaner aesthetics
+                    priceElement.textContent = '$12';
+                    billingText.classList.remove('opacity-0');
+                    billingText.classList.add('opacity-100');
+                }
+
+                // Fade in
+                priceElement.classList.remove('fade-out');
+            }, 300); // Wait for fade out to finish
+        }
+    </script>
+</body>
+
+</html>
