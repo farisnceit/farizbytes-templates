@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev.exe - Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Retro Windows 95/98 Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background-color: #008080;
+            cursor: default;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 16px;
+            height: 16px;
+            background: #c0c0c0;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c0c0c0;
+            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px gray, inset 2px 2px white;
+        }
+
+        ::-webkit-scrollbar-button {
+            background: #c0c0c0;
+            width: 16px;
+            height: 16px;
+            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px gray, inset 2px 2px white;
+        }
+
+        /* The Classic 3D Look Utility Classes */
+        .win-outset {
+            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px gray, inset 2px 2px white;
+            background-color: #c0c0c0;
+        }
+
+        .win-inset {
+            box-shadow: inset -1px -1px #ffffff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px gray;
+            background-color: #ffffff;
+        }
+
+        .win-btn {
+            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px gray, inset 2px 2px #dfdfdf;
+            background-color: #c0c0c0;
+        }
+
+        .win-btn:active {
+            box-shadow: inset -1px -1px #ffffff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px gray;
+            padding-top: 2px;
+            padding-left: 2px;
+        }
+
+        /* Scanline / CRT Effect Overlay */
+        .crt::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+            z-index: 9999;
+            background-size: 100% 2px;
+            pointer-events: none;
+        }
+
+        /* Desktop Icon Selection Style */
+        .desktop-icon:active img,
+        .desktop-icon:focus img {
+            filter: grayscale(100%) brightness(50%) sepia(100%) hue-rotate(200deg) saturate(500%);
+        }
+
+        .desktop-icon p {
+            background-color: transparent;
+        }
+
+        .desktop-icon:active p {
+            background-color: #000080;
+            color: white;
+            border: 1px dotted yellow;
+        }
+
+        /* Window Dragging */
+        .draggable {
+            position: absolute;
+            display: none;
+            /* Hidden by default */
+            flex-direction: column;
+        }
+
+        .window-content {
+            overflow: auto;
+        }
+
+        /* Boot Screen Animation */
+        #boot-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+        }
+    </style>
+</head>
+
+<body class="h-screen w-screen overflow-hidden select-none crt">
+
+    <!-- Boot Screen -->
+    <div id="boot-screen">
+        <p>AWARD MODULAR BIOS v4.51PG, An Energy Star Ally</p>
+        <p>Copyright (C) 1984-98, Award Software, Inc.</p>
+        <br>
+        <p>PENTIUM II - MMX CPU at 450MHz</p>
+        <p>Memory Test: <span id="mem-test">0</span>K OK</p>
+        <br>
+        <p class="hidden" id="boot-msg-1">Detecting Primary Master ... DEVS-HDD-20GB</p>
+        <p class="hidden" id="boot-msg-2">Detecting Primary Slave ... None</p>
+        <br>
+        <p class="hidden" id="boot-msg-3">Starting Windows 98...</p>
+    </div>
+
+    <!-- Desktop Area -->
+    <div id="desktop"
+        class="w-full h-[calc(100%-40px)] relative p-4 grid grid-cols-1 gap-4 content-start justify-items-start sm:grid-cols-[repeat(auto-fill,100px)]">
+
+        <!-- Desktop Icons -->
+        <div class="desktop-icon w-20 flex flex-col items-center gap-1 cursor-pointer group"
+            ondblclick="openWindow('about')">
+            <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-4.png" class="w-10 h-10 pixelated"
+                alt="My Computer">
+            <p class="text-white text-xs px-1 text-center group-hover:bg-blue-800/50">My Profile</p>
+        </div>
+
+        <div class="desktop-icon w-20 flex flex-col items-center gap-1 cursor-pointer group"
+            ondblclick="openWindow('projects')">
+            <img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png"
+                class="w-10 h-10 pixelated" alt="Projects">
+            <p class="text-white text-xs px-1 text-center group-hover:bg-blue-800/50">My Projects</p>
+        </div>
+
+        <div class="desktop-icon w-20 flex flex-col items-center gap-1 cursor-pointer group"
+            ondblclick="openWindow('skills')">
+            <img src="https://win98icons.alexmeub.com/icons/png/chm-2.png" class="w-10 h-10 pixelated" alt="Skills">
+            <p class="text-white text-xs px-1 text-center group-hover:bg-blue-800/50">Skills.chm</p>
+        </div>
+
+        <div class="desktop-icon w-20 flex flex-col items-center gap-1 cursor-pointer group"
+            ondblclick="openWindow('contact')">
+            <img src="https://win98icons.alexmeub.com/icons/png/outlook_express-4.png" class="w-10 h-10 pixelated"
+                alt="Contact">
+            <p class="text-white text-xs px-1 text-center group-hover:bg-blue-800/50">Contact Me</p>
+        </div>
+
+        <div class="desktop-icon w-20 flex flex-col items-center gap-1 cursor-pointer group"
+            ondblclick="openLink('https://github.com')">
+            <img src="https://win98icons.alexmeub.com/icons/png/msie1-2.png" class="w-10 h-10 pixelated" alt="Internet">
+            <p class="text-white text-xs px-1 text-center group-hover:bg-blue-800/50">Github</p>
+        </div>
+
+        <div class="desktop-icon w-20 flex flex-col items-center gap-1 cursor-pointer group absolute bottom-4 right-4"
+            ondblclick="window.location.reload()">
+            <img src="https://win98icons.alexmeub.com/icons/png/recycle_bin_empty-4.png" class="w-10 h-10 pixelated"
+                alt="Recycle Bin">
+            <p class="text-white text-xs px-1 text-center group-hover:bg-blue-800/50">Recycle Bin</p>
+        </div>
+    </div>
+
+    <!-- WINDOWS -->
+
+    <!-- 1. About Me Window -->
+    <div id="about" class="draggable win-outset flex flex-col w-[90%] md:w-[600px] h-[450px]"
+        style="top: 10%; left: 10%;">
+        <!-- Title Bar -->
+        <div class="title-bar bg-[#000080] h-6 flex justify-between items-center px-1 cursor-default select-none">
+            <div class="flex items-center gap-2">
+                <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-0.png" class="w-4 h-4" alt="icon">
+                <span class="text-white font-bold text-sm tracking-wide">My Profile - Notepad</span>
+            </div>
+            <div class="flex gap-1">
+                <button class="win-btn w-4 h-4 flex items-center justify-center text-[10px] font-bold"
+                    onclick="minimizeWindow('about')">_</button>
+                <button class="win-btn w-4 h-4 flex items-center justify-center text-[10px] font-bold">□</button>
+                <button class="win-btn w-4 h-4 flex items-center justify-center text-[10px] font-bold"
+                    onclick="closeWindow('about')">×</button>
+            </div>
+        </div>
+        <!-- Menu Bar -->
+        <div
+            class="bg-[#c0c0c0] flex gap-4 px-2 py-1 text-sm border-b border-gray-400 border-b-2 border-white border-b-[1px]">
+            <span class="underline cursor-pointer">F</span>ile
+            <span class="underline cursor-pointer">E</span>dit
+            <span class="underline cursor-pointer">S</span>earch
+            <span class="underline cursor-pointer">H</span>elp
+        </div>
+        <!-- Content -->
+        <div class="window-content bg-white flex-1 p-4 font-mono overflow-auto win-inset m-1 text-sm">
+            <div class="flex flex-col md:flex-row gap-6">
+                <div class="flex-shrink-0">
+                    <div
+                        class="w-32 h-32 bg-gray-200 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-2 flex items-center justify-center overflow-hidden">
+                        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=Felix" alt="Avatar"
+                            class="w-full h-full object-cover">
+                    </div>
+                    <p class="text-center font-bold">Dev_User.bmp</p>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold mb-2">Hello World! 👋</h2>
+                    <p class="mb-4">I'm a Full Stack Developer with a passion for retro aesthetics and clean code. I
+                        specialize in building web applications that are both functional and visually engaging.</p>
+
+                    <p class="mb-2 font-bold">Current Status:</p>
+                    <ul class="list-disc pl-5 mb-4">
+                        <li>Open to work</li>
+                        <li>Building cool stuff</li>
+                        <li>Learning Rust</li>
+                    </ul>
+
+                    <p class="italic text-gray-500">// Feel free to browse my system files to see what I've been working
+                        on.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Projects Window (Explorer Style) -->
+    <div id="projects" class="draggable win-outset flex flex-col w-[90%] md:w-[700px] h-[500px]"
+        style="top: 15%; left: 15%;">
+        <div class="title-bar bg-[#000080] h-6 flex justify-between items-center px-1 cursor-default select-none">
+            <div class="flex items-center gap-2">
+                <img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-0.png" class="w-4 h-4"
+                    alt="icon">
+                <span class="text-white font-bold text-sm">C:\My Documents\Projects</span>
+            </div>
+            <div class="flex gap-1">
+                <button class="win-btn w-4 h-4 flex items-center justify-center text-[10px] font-bold"
+                    onclick="minimizeWindow('projects')">_</button>
+                <button class="win-btn w-4 h-4 flex items-center justify-center text-[10px] font-bold">□</button>
+                <button class="win-btn w-4 h-4 flex items-center justify-center text-[10px] font-bold"
+                    onclick="closeWindow('projects')">×</button>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="bg-[#c0c0c0] p-1 border-b border-gray-400">
+            <div class="flex gap-2 mb-1">
+                <span class="text-xs px-2">File</span>
+                <span class="text-xs px-2">Edit</span>
+                <span class="text-xs px-2">View</span>
+            </div>
+            <div class="win-inset bg-white p-1 flex items-center gap-2 text-sm mb-1">
+                <span class="text-gray-500">Address</span>
+                <div class="flex-1 border border-gray-400 px-1 font-mono text-xs pt-0.5">C:\Users\Dev\Projects</div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="window-content bg-white flex-1 win-inset m-1 p-4 overflow-auto">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <!-- Project 1 -->
+                <div
+                    class="flex flex-col items-center gap-1 group cursor-pointer hover:bg-blue-100 p-2 border border-transparent hover:border-blue-300 border-dotted">
+                    <img src="https://win98icons.alexmeub.com/icons/png/executable_gear-0.png" class="w-10 h-10"
+                        alt="Proj1">
+                    <div class="text-center">
+                        <p class="font-bold text-sm">E-Commerce.exe</p>
+                        <p class="text-xs text-gray-500">React, Node.js</p>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div
+                    class="flex flex-col items-center gap-1 group cursor-pointer hover:bg-blue-100 p-2 border border-transparent hover:border-blue-300 border-dotted">
+                    <img src="https://win98icons.alexmeub.com/icons/png/html-0.png" class="w-10 h-10" alt="Proj2">
+                    <div class="text-center">
+                        <p class="font-bold text-sm">Portfolio_v1.html</p>
+                        <p class="text-xs text-gray-500">HTML, CSS</p>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div
+                    class="flex flex-col items-center gap-1 group cursor-pointer hover:bg-blue-100 p-2 border border-transparent hover:border-blue-300 border-dotted">
+                    <img src="https://win98icons.alexmeub.com/icons/png/world-0.png" class="w-10 h-10" alt="Proj3">
+                    <div class="text-center">
+                        <p class="font-bold text-sm">SocialApp.net</p>
+                        <p class="text-xs text-gray-500">Next.js, Firebase</p>
+                    </div>
+                </div>
+
+                <!-- Project 4 -->
+                <div
+                    class="flex flex-col items-center gap-1 group cursor-pointer hover:bg-blue-100 p-2 border border-transparent hover:border-blue-300 border-dotted">
+                    <img src="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png" class="w-10 h-10"
+                        alt="Proj4">
+                    <div class="text-center">
+                        <p class="font-bold text-sm">CLI_Tool.bat</p>
+                        <p class="text-xs text-gray-500">Rust, Clap</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-4 border-t border-gray-200 text-sm text-gray-500">
+                4 object(s) selected
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Skills Window -->
+    <div id="skills" class="draggable win-outset flex flex-col w-[90%] md:w-[400px] h-[350px]"
+        style="top: 20%; left: 30%;">
+        <div class="title-bar bg-[#000080] h-6 flex justify-between items-center px-1 cursor-default select-none">
+            <div class="flex items-center gap-2">
+                <img src="https://win98icons.alexmeub.com/icons/png/chm-0.png" class="w-4 h-4" alt="icon">
+                <span class="text-white font-bold text-sm">System Properties (Skills)</span>
+            </div>
+            <div class="flex gap-1">
+                <button class="win-btn w-4 h-4 flex items-center justify-center text-[10px] font-bold"
+                    onclick="minimizeWindow('skills')">_</button>
+                <button class="win-btn w-4 h-4 flex items-center justify-center text-[10px] font-bold">□</button>
+                <button class="win-btn w-4 h-4 flex items-center justify-center text-[10px] font-bold"
+                    onclick="closeWindow('skills')">×</button>
+            </div>
+        </div>
+
+        <div class="bg-[#c0c0c0] p-2 flex gap-1 text-sm border-b border-white mb-2">
+            <div class="bg-white px-2 py-1 -mb-2.5 border-t border-l border-r border-white relative z-10">General</div>
+            <div class="px-2 py-1">Advanced</div>
+            <div class="px-2 py-1">Hardware</div>
+        </div>
+
+        <div class="window-content p-4 flex-1">
+            <div class="flex gap-4 mb-4">
+                <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-4.png" class="w-12 h-12">
+                <div class="text-sm">
+                    <p>System:</p>
+                    <p class="pl-2">JavaScript ES6+</p>
+                    <p class="pl-2">React v18.0</p>
+                    <p class="pl-2">Tailwind CSS</p>
+                    <br>
+                    <p>Backend:</p>
+                    <p class="pl-2">Node.js</p>
+                    <p class="pl-2">PostgreSQL</p>
+                </div>
+            </div>
+            <div class="flex justify-end mt-8">
+                <button class="win-btn px-4 py-1 text-sm font-bold active:translate-y-[1px] active:translate-x-[1px]"
+                    onclick="closeWindow('skills')">OK</button>
+                <button class="win-btn px-4 py-1 ml-2 text-sm active:translate-y-[1px] active:translate-x-[1px]"
+                    onclick="closeWindow('skills')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Contact Window -->
+    <div id="contact" class="draggable win-outset flex flex-col w-[90%] md:w-[450px] h-[400px]"
+        style="top: 25%; left: 40%;">
+        <div class="title-bar bg-[#000080] h-6 flex justify-between items-center px-1 cursor-default select-none">
+            <div class="flex items-center gap-2">
+                <img src="https://win98icons.alexmeub.com/icons/png/outlook_express-0.png" class="w-4 h-4" alt="icon">
+                <span class="text-white font-bold text-sm">New Message</span>
+            </div>
+            <div class="flex gap-1">
+                <button class="win-btn w-4 h-4 flex items-center justify-center text-[10px] font-bold"
+                    onclick="minimizeWindow('contact')">_</button>
+                <button class="win-btn w-4 h-4 flex items-center justify-center text-[10px] font-bold">□</button>
+                <button class="win-btn w-4 h-4 flex items-center justify-center text-[10px] font-bold"
+                    onclick="closeWindow('contact')">×</button>
+            </div>
+        </div>
+
+        <div class="window-content bg-[#c0c0c0] flex-1 p-2 text-sm flex flex-col gap-2">
+            <div class="flex items-center gap-2">
+                <label class="w-12 text-right">To:</label>
+                <input type="text" value="me@example.com" disabled
+                    class="flex-1 win-inset px-1 py-0.5 outline-none bg-gray-100 text-gray-500">
+            </div>
+            <div class="flex items-center gap-2">
+                <label class="w-12 text-right">Subject:</label>
+                <input type="text" placeholder="Project Inquiry"
+                    class="flex-1 win-inset px-1 py-0.5 outline-none font-sans">
+            </div>
+
+            <textarea class="flex-1 win-inset p-2 outline-none font-sans resize-none mt-2"
+                placeholder="Type your message here..."></textarea>
+
+            <div class="flex justify-between items-center mt-1">
+                <button
+                    class="win-btn px-4 py-1 flex items-center gap-2 active:translate-y-[1px] active:translate-x-[1px]">
+                    <i data-lucide="send" class="w-3 h-3"></i> Send
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Taskbar -->
+    <div
+        class="fixed bottom-0 left-0 w-full h-[40px] bg-[#c0c0c0] border-t-2 border-white flex items-center px-1 gap-1 z-[9999]">
+
+        <!-- Start Button -->
+        <div class="relative">
+            <button id="start-btn"
+                class="win-btn flex items-center gap-1 px-2 py-1 font-bold text-sm active:shadow-[inset_-1px_-1px_#ffffff,inset_1px_1px_#0a0a0a,inset_-2px_-2px_#dfdfdf,inset_2px_2px_gray] active:bg-gray-400"
+                onclick="toggleStartMenu()">
+                <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" class="w-5 h-5">
+                Start
+            </button>
+
+            <!-- Start Menu -->
+            <div id="start-menu"
+                class="hidden absolute bottom-[38px] left-0 w-48 bg-[#c0c0c0] win-outset flex flex-col pb-1 z-[10000]">
+                <div
+                    class="bg-[#000080] text-white font-bold text-lg px-2 py-8 w-8 absolute left-0 bottom-0 top-0 flex items-end justify-center">
+                    <span class="-rotate-90 whitespace-nowrap mb-4 tracking-widest">WINDOWS<span
+                            class="font-normal text-sm align-super">98</span></span>
+                </div>
+                <div class="pl-10 flex flex-col">
+                    <div class="p-2 hover:bg-[#000080] hover:text-white flex items-center gap-2 cursor-pointer"
+                        onclick="openWindow('about'); toggleStartMenu()">
+                        <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-4.png" class="w-6 h-6">
+                        <span class="text-sm">Profile</span>
+                    </div>
+                    <div class="p-2 hover:bg-[#000080] hover:text-white flex items-center gap-2 cursor-pointer"
+                        onclick="openWindow('projects'); toggleStartMenu()">
+                        <img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png"
+                            class="w-6 h-6">
+                        <span class="text-sm">Projects</span>
+                    </div>
+                    <div class="p-2 hover:bg-[#000080] hover:text-white flex items-center gap-2 cursor-pointer"
+                        onclick="openWindow('contact'); toggleStartMenu()">
+                        <img src="https://win98icons.alexmeub.com/icons/png/outlook_express-4.png" class="w-6 h-6">
+                        <span class="text-sm">Contact</span>
+                    </div>
+                    <div class="h-[1px] bg-gray-400 my-1 ml-2 shadow-[0_1px_0_white]"></div>
+                    <div class="p-2 hover:bg-[#000080] hover:text-white flex items-center gap-2 cursor-pointer"
+                        onclick="window.close()">
+                        <img src="https://win98icons.alexmeub.com/icons/png/shut_down_normal-4.png" class="w-6 h-6">
+                        <span class="text-sm">Shut Down...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-[2px] h-[80%] bg-gray-400 mx-1 border-l border-gray-600 border-r border-white"></div>
+
+        <!-- Taskbar Items (Will be populated by JS) -->
+        <div id="taskbar-items" class="flex-1 flex gap-1 overflow-x-auto px-1">
+            <!-- Dynamic Buttons go here -->
+        </div>
+
+        <!-- System Tray -->
+        <div class="win-inset flex items-center px-2 py-1 gap-2 bg-[#c0c0c0] min-w-[80px] justify-between">
+            <img src="https://win98icons.alexmeub.com/icons/png/loudspeaker_rays-0.png" class="w-4 h-4 cursor-pointer">
+            <span id="clock" class="text-xs font-sans">12:00 PM</span>
+        </div>
+    </div>
+
+    <script>
+        // --- Boot Sequence Animation ---
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+
+            const bootScreen = document.getElementById('boot-screen');
+            const memTest = document.getElementById('mem-test');
+            let memory = 0;
+
+            // Memory Count Animation
+            const interval = setInterval(() => {
+                memory += 1024;
+                if (memory > 64000) memory += 8192; // Speed up
+
+                memTest.innerText = memory;
+
+                if (memory >= 262144) {
+                    clearInterval(interval);
+                    document.getElementById('boot-msg-1').classList.remove('hidden');
+
+                    setTimeout(() => {
+                        document.getElementById('boot-msg-2').classList.remove('hidden');
+                        setTimeout(() => {
+                            document.getElementById('boot-msg-3').classList.remove('hidden');
+                            setTimeout(() => {
+                                bootScreen.style.display = 'none';
+                                openWindow('about'); // Auto open about window
+                            }, 1000);
+                        }, 500);
+                    }, 500);
+                }
+            }, 5);
+        });
+
+        // --- Clock Functionality ---
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            const strTime = hours + ':' + (minutes < 10 ? '0' + minutes : minutes) + ' ' + ampm;
+            document.getElementById('clock').textContent = strTime;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- Window Management ---
+        let highestZ = 100;
+        const windows = ['about', 'projects', 'skills', 'contact'];
+
+        function openWindow(id) {
+            const win = document.getElementById(id);
+            const taskbarId = `task-${id}`;
+
+            // Show Window
+            win.style.display = 'flex';
+            bringToFront(id);
+
+            // Add to Taskbar if not exists
+            if (!document.getElementById(taskbarId)) {
+                const btn = document.createElement('button');
+                btn.id = taskbarId;
+                btn.className = 'win-btn px-2 py-1 text-xs font-bold flex items-center gap-2 min-w-[100px] max-w-[150px] truncate active-task';
+                btn.innerHTML = getIconForWindow(id) + `<span class="truncate">${getTitleForWindow(id)}</span>`;
+                btn.onclick = () => toggleWindow(id);
+                document.getElementById('taskbar-items').appendChild(btn);
+            }
+            updateTaskbarState(id);
+        }
+
+        function closeWindow(id) {
+            document.getElementById(id).style.display = 'none';
+            const taskBtn = document.getElementById(`task-${id}`);
+            if (taskBtn) taskBtn.remove();
+        }
+
+        function minimizeWindow(id) {
+            document.getElementById(id).style.display = 'none';
+            const taskBtn = document.getElementById(`task-${id}`);
+            if (taskBtn) {
+                taskBtn.classList.remove('win-inset', 'bg-white');
+                taskBtn.classList.add('win-btn');
+            }
+        }
+
+        function toggleWindow(id) {
+            const win = document.getElementById(id);
+            if (win.style.display === 'none') {
+                openWindow(id);
+            } else {
+                if (win.style.zIndex == highestZ) {
+                    minimizeWindow(id);
+                } else {
+                    bringToFront(id);
+                }
+            }
+        }
+
+        function bringToFront(id) {
+            highestZ++;
+            document.getElementById(id).style.zIndex = highestZ;
+            updateTaskbarState(id);
+        }
+
+        function updateTaskbarState(activeId) {
+            document.querySelectorAll('#taskbar-items button').forEach(btn => {
+                btn.classList.remove('win-inset', 'bg-gray-200'); // Remove "pressed" look
+                btn.classList.add('win-btn');
+            });
+
+            const activeBtn = document.getElementById(`task-${activeId}`);
+            if (activeBtn && document.getElementById(activeId).style.display !== 'none') {
+                activeBtn.classList.remove('win-btn');
+                activeBtn.classList.add('win-inset', 'bg-gray-200'); // Add "pressed" look
+            }
+        }
+
+        function getIconForWindow(id) {
+            const icons = {
+                'about': 'computer_explorer-0.png',
+                'projects': 'directory_open_file_mydocs-0.png',
+                'skills': 'chm-0.png',
+                'contact': 'outlook_express-0.png'
+            };
+            return `<img src="https://win98icons.alexmeub.com/icons/png/${icons[id]}" class="w-4 h-4">`;
+        }
+
+        function getTitleForWindow(id) {
+            const titles = {
+                'about': 'My Profile',
+                'projects': 'Projects',
+                'skills': 'Skills',
+                'contact': 'Message'
+            };
+            return titles[id];
+        }
+
+        function openLink(url) {
+            window.open(url, '_blank');
+        }
+
+        // --- Start Menu Toggle ---
+        function toggleStartMenu() {
+            const menu = document.getElementById('start-menu');
+            const btn = document.getElementById('start-btn');
+
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                btn.classList.add('win-inset');
+                btn.classList.remove('win-btn');
+            } else {
+                menu.classList.add('hidden');
+                btn.classList.remove('win-inset');
+                btn.classList.add('win-btn');
+            }
+        }
+
+        // Close start menu when clicking elsewhere
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('start-menu');
+            const btn = document.getElementById('start-btn');
+            if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.classList.add('hidden');
+                btn.classList.remove('win-inset');
+                btn.classList.add('win-btn');
+            }
+        });
+
+        // --- Drag and Drop Logic ---
+        let isDragging = false;
+        let currentWindow = null;
+        let initialX;
+        let initialY;
+        let xOffset = 0;
+        let yOffset = 0;
+
+        document.querySelectorAll('.draggable').forEach(win => {
+            const titleBar = win.querySelector('.title-bar');
+
+            titleBar.addEventListener('mousedown', (e) => {
+                if (e.target.tagName === 'BUTTON') return; // Don't drag if clicking buttons
+
+                initialX = e.clientX - win.offsetLeft;
+                initialY = e.clientY - win.offsetTop;
+                currentWindow = win;
+                isDragging = true;
+                bringToFront(win.id);
+            });
+
+            // Touch support
+            titleBar.addEventListener('touchstart', (e) => {
+                if (e.target.tagName === 'BUTTON') return;
+                initialX = e.touches[0].clientX - win.offsetLeft;
+                initialY = e.touches[0].clientY - win.offsetTop;
+                currentWindow = win;
+                isDragging = true;
+                bringToFront(win.id);
+            }, { passive: false });
+        });
+
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', stopDrag);
+
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging) {
+                e.preventDefault();
+                drag(e.touches[0]);
+            }
+        }, { passive: false });
+        document.addEventListener('touchend', stopDrag);
+
+        function drag(e) {
+            if (isDragging && currentWindow) {
+                e.preventDefault ? e.preventDefault() : null;
+
+                let newX = (e.clientX || e.pageX) - initialX;
+                let newY = (e.clientY || e.pageY) - initialY;
+
+                // Boundary checks
+                const maxX = window.innerWidth - currentWindow.offsetWidth;
+                const maxY = window.innerHeight - currentWindow.offsetHeight - 40; // 40px for taskbar
+
+                // Optional: Clamp to screen
+                // newX = Math.max(0, Math.min(newX, maxX));
+                // newY = Math.max(0, Math.min(newY, maxY));
+
+                currentWindow.style.left = `${newX}px`;
+                currentWindow.style.top = `${newY}px`;
+            }
+        }
+
+        function stopDrag() {
+            isDragging = false;
+            currentWindow = null;
+        }
+
+    </script>
+</body>
+
+</html>
