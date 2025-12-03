@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus AI - Premium Chat Interface</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind Config for Custom Colors/Fonts -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        dark: {
+                            bg: '#0f172a',
+                            surface: '#1e293b',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'slide-up': 'slideUp 0.4s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'spin-slow': 'spin 3s linear infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.3);
+            border-radius: 10px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(148, 163, 184, 0.5);
+        }
+
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-input {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .dark .glass-input {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-input:focus-within {
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .dark .glass-input:focus-within {
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .msg-user {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+        }
+
+        .msg-ai {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            color: #334155;
+        }
+
+        .dark .msg-ai {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+        }
+
+        .dot-flashing {
+            position: relative;
+            width: 6px;
+            height: 6px;
+            border-radius: 5px;
+            background-color: #64748b;
+            animation: dot-flashing 1s infinite linear alternate;
+            animation-delay: 0.5s;
+        }
+
+        .dot-flashing::before,
+        .dot-flashing::after {
+            content: '';
+            display: inline-block;
+            position: absolute;
+            top: 0;
+        }
+
+        .dot-flashing::before {
+            left: -10px;
+            width: 6px;
+            height: 6px;
+            border-radius: 5px;
+            background-color: #64748b;
+            animation: dot-flashing 1s infinite alternate;
+            animation-delay: 0s;
+        }
+
+        .dot-flashing::after {
+            left: 10px;
+            width: 6px;
+            height: 6px;
+            border-radius: 5px;
+            background-color: #64748b;
+            animation: dot-flashing 1s infinite alternate;
+            animation-delay: 1s;
+        }
+
+        @keyframes dot-flashing {
+            0% {
+                background-color: #64748b;
+            }
+
+            50%,
+            100% {
+                background-color: rgba(100, 116, 139, 0.2);
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="bg-slate-100 dark:bg-[#0f172a] text-slate-800 dark:text-slate-200 h-screen w-full flex overflow-hidden selection:bg-indigo-500/30 transition-colors duration-500">
+
+    <!-- Sidebar -->
+    <aside id="sidebar"
+        class="w-72 h-full flex flex-col glass-panel transform transition-transform duration-300 absolute md:relative z-20 md:translate-x-0 -translate-x-full">
+        <div class="p-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <i class="ph ph-sparkle-fill text-white text-lg"></i>
+                </div>
+                <h1 class="font-bold text-lg tracking-tight">Nexus<span
+                        class="text-indigo-500 dark:text-indigo-400">AI</span></h1>
+            </div>
+            <button id="closeSidebar"
+                class="md:hidden text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                <i class="ph ph-x text-xl"></i>
+            </button>
+        </div>
+
+        <div class="px-4 mb-6">
+            <button onclick="resetChat()"
+                class="w-full py-3 px-4 rounded-xl border border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10 hover:border-indigo-500/30 transition-all duration-200 flex items-center gap-3 group">
+                <i
+                    class="ph ph-plus text-indigo-500 dark:text-indigo-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-300"></i>
+                <span class="text-sm font-medium">New Chat</span>
+                <span
+                    class="ml-auto text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-black/20 px-2 py-0.5 rounded border border-slate-200 dark:border-white/5 group-hover:border-slate-300 dark:group-hover:border-white/10">⌘N</span>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto px-2 space-y-6">
+            <div>
+                <h3 class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Today</h3>
+                <div class="space-y-0.5">
+                    <button
+                        class="w-full text-left px-4 py-2.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-100 border border-indigo-200 dark:border-indigo-500/20 flex items-center gap-3 transition-all">
+                        <i class="ph ph-chat-circle-text"></i>
+                        <span class="text-sm truncate">Premium UI Design Principles</span>
+                    </button>
+                    <button
+                        class="w-full text-left px-4 py-2.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-white/5 flex items-center gap-3 transition-all group">
+                        <i class="ph ph-code"></i>
+                        <span class="text-sm truncate group-hover:translate-x-0.5 transition-transform">React
+                            Performance Optimization</span>
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Yesterday</h3>
+                <div class="space-y-0.5">
+                    <button
+                        class="w-full text-left px-4 py-2.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-white/5 flex items-center gap-3 transition-all group">
+                        <i class="ph ph-paint-brush"></i>
+                        <span class="text-sm truncate group-hover:translate-x-0.5 transition-transform">Color Palette
+                            Generator</span>
+                    </button>
+                    <button
+                        class="w-full text-left px-4 py-2.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-white/5 flex items-center gap-3 transition-all group">
+                        <i class="ph ph-rocket-launch"></i>
+                        <span class="text-sm truncate group-hover:translate-x-0.5 transition-transform">Startup Pitch
+                            Deck Outline</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 border-t border-slate-200 dark:border-white/5">
+            <button
+                class="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-200/50 dark:hover:bg-white/5 transition-colors text-left">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User"
+                    class="w-9 h-9 rounded-full bg-slate-300 dark:bg-slate-700">
+                <div class="flex-1 overflow-hidden">
+                    <p class="text-sm font-medium text-slate-700 dark:text-white truncate">Alex Designer</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Pro Plan</p>
+                </div>
+                <i class="ph ph-dots-three-vertical text-slate-400 dark:text-slate-500"></i>
+            </button>
+        </div>
+    </aside>
+
+    <div id="sidebarOverlay"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-10 hidden md:hidden opacity-0 transition-opacity duration-300">
+    </div>
+
+    <main class="flex-1 flex flex-col h-full relative z-0">
+        <header
+            class="h-16 flex items-center justify-between px-4 md:px-8 border-b border-slate-200/50 dark:border-white/5 bg-slate-100/80 dark:bg-dark-bg/80 backdrop-blur-md sticky top-0 z-10 transition-colors duration-500">
+            <div class="flex items-center gap-3">
+                <button id="openSidebar"
+                    class="md:hidden text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white p-2">
+                    <i class="ph ph-list text-xl"></i>
+                </button>
+                <div
+                    class="flex items-center gap-2 cursor-pointer hover:bg-slate-200/50 dark:hover:bg-white/5 px-3 py-1.5 rounded-lg transition-colors group">
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Nexus 4.0</span>
+                    <i
+                        class="ph ph-caret-down text-xs text-slate-500 group-hover:text-slate-800 dark:group-hover:text-slate-300"></i>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button id="themeToggle"
+                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-white/5 rounded-lg transition-all duration-300 transform active:scale-95"
+                    title="Toggle Theme">
+                    <i id="themeIcon" class="ph ph-moon text-lg transition-transform duration-500 rotate-0"></i>
+                </button>
+                <div class="w-px h-6 bg-slate-300 dark:bg-white/10 mx-1"></div>
+                <button
+                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/5 rounded-lg transition-colors"
+                    title="Settings">
+                    <i class="ph ph-gear"></i>
+                </button>
+                <button
+                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/5 rounded-lg transition-colors"
+                    title="Export">
+                    <i class="ph ph-export"></i>
+                </button>
+            </div>
+        </header>
+
+        <div id="chatContainer" class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 scroll-smooth pb-32">
+            <div id="welcomeState"
+                class="h-full flex flex-col items-center justify-center text-center max-w-2xl mx-auto space-y-8 opacity-100 transition-opacity duration-500">
+                <div
+                    class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-indigo-500/20 to-purple-500/20 border border-indigo-100 dark:border-white/5 flex items-center justify-center shadow-2xl shadow-indigo-500/10 mb-4 animate-pulse-slow">
+                    <i class="ph ph-sparkle-fill text-4xl text-indigo-500 dark:text-indigo-400"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-800 dark:text-white mb-3">How can I help you today?</h2>
+                    <p class="text-slate-500 dark:text-slate-400">I can write code, design interfaces, or help you
+                        brainstorm.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full text-left">
+                    <button onclick="fillInput('Draft a quarterly report structure')"
+                        class="p-4 rounded-xl border border-slate-200 dark:border-white/5 bg-white/60 dark:bg-white/[0.02] hover:bg-white dark:hover:bg-white/5 hover:border-indigo-500/30 hover:shadow-lg dark:hover:shadow-none transition-all group">
+                        <i class="ph ph-file-text text-purple-500 dark:text-purple-400 text-xl mb-2"></i>
+                        <p
+                            class="text-sm font-medium text-slate-700 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-white">
+                            Draft a quarterly report</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">Professional document structure</p>
+                    </button>
+                    <button onclick="fillInput('Explain Quantum Computing to a 5 year old')"
+                        class="p-4 rounded-xl border border-slate-200 dark:border-white/5 bg-white/60 dark:bg-white/[0.02] hover:bg-white dark:hover:bg-white/5 hover:border-indigo-500/30 hover:shadow-lg dark:hover:shadow-none transition-all group">
+                        <i class="ph ph-brain text-indigo-500 dark:text-indigo-400 text-xl mb-2"></i>
+                        <p
+                            class="text-sm font-medium text-slate-700 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-white">
+                            Explain Quantum Computing</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">Simplified educational explanation
+                        </p>
+                    </button>
+                    <button onclick="fillInput('Write a Python script to scrape a website')"
+                        class="p-4 rounded-xl border border-slate-200 dark:border-white/5 bg-white/60 dark:bg-white/[0.02] hover:bg-white dark:hover:bg-white/5 hover:border-indigo-500/30 hover:shadow-lg dark:hover:shadow-none transition-all group">
+                        <i class="ph ph-code text-emerald-500 dark:text-emerald-400 text-xl mb-2"></i>
+                        <p
+                            class="text-sm font-medium text-slate-700 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-white">
+                            Write a Python script</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">Web scraping utility</p>
+                    </button>
+                    <button onclick="fillInput('Design a futuristic electric car concept')"
+                        class="p-4 rounded-xl border border-slate-200 dark:border-white/5 bg-white/60 dark:bg-white/[0.02] hover:bg-white dark:hover:bg-white/5 hover:border-indigo-500/30 hover:shadow-lg dark:hover:shadow-none transition-all group">
+                        <i class="ph ph-paint-brush-broad text-pink-500 dark:text-pink-400 text-xl mb-2"></i>
+                        <p
+                            class="text-sm font-medium text-slate-700 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-white">
+                            Design a futuristic car</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">Creative visual description</p>
+                    </button>
+                </div>
+            </div>
+
+            <div id="messagesList" class="max-w-3xl mx-auto space-y-6 hidden"></div>
+        </div>
+
+        <div
+            class="absolute bottom-0 left-0 w-full p-4 md:p-6 bg-gradient-to-t from-slate-100 via-slate-100 dark:from-dark-bg dark:via-dark-bg to-transparent transition-colors duration-500">
+            <div class="max-w-3xl mx-auto">
+                <div
+                    class="glass-input rounded-2xl p-2 relative flex flex-col transition-all duration-300 shadow-sm dark:shadow-none">
+                    <textarea id="chatInput" rows="1" placeholder="Message Nexus..."
+                        class="w-full bg-transparent text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 text-base p-3 resize-none focus:outline-none max-h-48 overflow-y-auto"
+                        oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+
+                    <div class="flex justify-between items-center px-2 pb-1 mt-1">
+                        <div class="flex gap-2">
+                            <button
+                                class="p-2 text-slate-400 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/10 rounded-lg transition-colors"
+                                title="Attach File">
+                                <i class="ph ph-paperclip text-lg"></i>
+                            </button>
+                            <button
+                                class="p-2 text-slate-400 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/10 rounded-lg transition-colors"
+                                title="Voice Input">
+                                <i class="ph ph-microphone text-lg"></i>
+                            </button>
+                        </div>
+                        <button id="sendBtn" onclick="sendMessage()"
+                            class="p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+                            <i class="ph ph-paper-plane-right-fill text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+                <p class="text-center text-xs text-slate-400 dark:text-slate-600 mt-3">Nexus AI can make mistakes.
+                    Consider checking important information.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const knowledgeBase = [
+            {
+                keywords: ["hello", "hi", "hey", "greetings", "start"],
+                response: "Hello! I am Nexus AI. How can I assist you today? I can help with coding, design ideas, or writing."
+            },
+            {
+                keywords: ["report", "quarterly", "summary"],
+                response: "# Q3 Quarterly Report\n\n## Executive Summary\nPerformance metrics indicate a **15% growth** in user acquisition compared to Q2. Key drivers include:\n\n* New feature rollouts\n* Optimized marketing campaigns\n* Expansion into APAC region\n\n## Financial Highlights\n| Category | Amount | Change |\n| :--- | :--- | :--- |\n| Revenue | $2.4M | +12% |\n| OpEx | $1.1M | -5% |\n\nWe are well positioned for Q4."
+            },
+            {
+                keywords: ["code", "python", "script", "scrape", "programming"],
+                response: "Here is a Python script to scrape a website using BeautifulSoup:\n\n```python\nimport requests\nfrom bs4 import BeautifulSoup\n\nurl = 'https://example.com'\nresponse = requests.get(url)\nsoup = BeautifulSoup(response.content, 'html.parser')\n\n# Extract all links\nlinks = soup.find_all('a')\nfor link in links:\n    print(link.get('href'))\n```\n\nMake sure to install the required packages:\n```bash\npip install requests beautifulsoup4\n```"
+            },
+            {
+                keywords: ["quantum", "computing", "explain"],
+                response: "Imagine you have a magical coin that can be both heads AND tails at the same time! 🪙✨\n\nThat's kind of how quantum computers work. Regular computers use bits (0 or 1), but quantum computers use 'qubits' that can be 0, 1, or BOTH at once!\n\nThis lets them solve really hard puzzles much faster than regular computers. It's like having a super-smart friend who can think about many answers at the same time! 🚀"
+            },
+            {
+                keywords: ["design", "ui", "interface", "car", "futuristic"],
+                response: "🚗 **Futuristic Electric Car Concept: \"Aero Pulse\"**\n\n**Exterior Design:**\n- Sleek aerodynamic body with flowing LED light strips\n- Holographic displays on side panels\n- Self-cleaning solar panel roof\n- Butterfly doors with ambient lighting\n\n**Interior Features:**\n- 360° panoramic glass ceiling\n- AI-powered gesture controls\n- Mood-adaptive ambient lighting\n- Sustainable vegan leather seats\n\n**Tech Specs:**\n- 0-60 mph in 2.5 seconds\n- 500-mile range\n- Autonomous driving Level 5\n- Wireless charging capability"
+            },
+            {
+                keywords: ["help", "what can you do", "capabilities", "features"],
+                response: "I'm Nexus AI, and I can help you with:\n\n✨ **Creative Writing** - Stories, articles, reports\n💻 **Coding** - Python, JavaScript, and more\n🎨 **Design Ideas** - UI/UX concepts, branding\n📊 **Data Analysis** - Reports and insights\n🧠 **Problem Solving** - Brainstorming and strategy\n📚 **Learning** - Explanations and tutorials\n\nJust ask me anything, and I'll do my best to assist you!"
+            }
+        ];
+
+        let chatHistory = [];
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+
+            if (savedTheme === 'dark') {
+                html.classList.add('dark');
+                themeIcon.className = 'ph ph-moon text-lg transition-transform duration-500';
+            } else {
+                html.classList.remove('dark');
+                themeIcon.className = 'ph ph-sun text-lg transition-transform duration-500';
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            const isDark = html.classList.contains('dark');
+
+            if (isDark) {
+                html.classList.remove('dark');
+                themeIcon.className = 'ph ph-sun text-lg transition-transform duration-500 rotate-180';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                themeIcon.className = 'ph ph-moon text-lg transition-transform duration-500 rotate-0';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const openBtn = document.getElementById('openSidebar');
+            const closeBtn = document.getElementById('closeSidebar');
+
+            openBtn.addEventListener('click', () => {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.add('opacity-100'), 10);
+            });
+
+            function closeSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.remove('opacity-100');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+
+            closeBtn.addEventListener('click', closeSidebar);
+            overlay.addEventListener('click', closeSidebar);
+        });
+
+        function hideWelcome() {
+            const welcome = document.getElementById('welcomeState');
+            const messagesList = document.getElementById('messagesList');
+            welcome.classList.add('opacity-0');
+            setTimeout(() => {
+                welcome.classList.add('hidden');
+                messagesList.classList.remove('hidden');
+            }, 300);
+        }
+
+        function showWelcome() {
+            const welcome = document.getElementById('welcomeState');
+            const messagesList = document.getElementById('messagesList');
+            messagesList.classList.add('hidden');
+            welcome.classList.remove('hidden');
+            setTimeout(() => welcome.classList.remove('opacity-0'), 10);
+        }
+
+        function addMessage(content, isUser = false) {
+            const messagesList = document.getElementById('messagesList');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex gap-4 animate-slide-up ${isUser ? 'justify-end' : 'justify-start'}`;
+
+            if (isUser) {
+                messageDiv.innerHTML = `
+                    <div class="flex gap-3 items-start max-w-[80%]">
+                        <div class="msg-user px-5 py-3 rounded-2xl rounded-tr-sm shadow-lg">
+                            <p class="text-sm leading-relaxed">${escapeHtml(content)}</p>
+                        </div>
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" 
+                             alt="User" 
+                             class="w-8 h-8 rounded-full flex-shrink-0">
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="flex gap-3 items-start max-w-[85%]">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-lg">
+                            <i class="ph ph-sparkle-fill text-white text-sm"></i>
+                        </div>
+                        <div class="msg-ai px-5 py-3 rounded-2xl rounded-tl-sm backdrop-blur-sm">
+                            <div class="text-sm leading-relaxed prose prose-sm max-w-none dark:prose-invert">
+                                ${formatMessage(content)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            messagesList.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function addTypingIndicator() {
+            const messagesList = document.getElementById('messagesList');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'flex gap-3 items-start animate-slide-up';
+            typingDiv.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <i class="ph ph-sparkle-fill text-white text-sm"></i>
+                </div>
+                <div class="msg-ai px-5 py-3 rounded-2xl rounded-tl-sm backdrop-blur-sm">
+                    <div class="flex items-center gap-2">
+                        <div class="dot-flashing"></div>
+                    </div>
+                </div>
+            `;
+            messagesList.appendChild(typingDiv);
+            scrollToBottom();
+        }
+
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) indicator.remove();
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('chatContainer');
+            setTimeout(() => {
+                container.scrollTo({
+                    top: container.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }, 100);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatMessage(text) {
+            let formatted = escapeHtml(text);
+            formatted = formatted.replace(/^# (.+)$/gm, '<h1 class="text-xl font-bold mt-4 mb-2">$1</h1>');
+            formatted = formatted.replace(/^## (.+)$/gm, '<h2 class="text-lg font-bold mt-3 mb-2">$1</h2>');
+            formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold">$1</strong>');
+            formatted = formatted.replace(/^\* (.+)$/gm, '<li class="ml-4">• $1</li>');
+            formatted = formatted.replace(/```(\w+)?\n([\s\S]+?)```/g,
+                '<pre class="bg-slate-800 dark:bg-black/30 text-slate-100 p-4 rounded-lg overflow-x-auto my-3 text-xs"><code>$2</code></pre>');
+            formatted = formatted.replace(/\|(.+)\|/g, (match) => {
+                return '<div class="overflow-x-auto my-2"><table class="min-w-full text-xs border-collapse">' +
+                    match.split('\n').map(row => {
+                        if (row.includes(':---')) return '';
+                        return '<tr>' + row.split('|').filter(cell => cell.trim()).map((cell, i) =>
+                            `<td class="border border-slate-300 dark:border-slate-700 px-3 py-1">${cell.trim()}</td>`
+                        ).join('') + '</tr>';
+                    }).join('') + '</table></div>';
+            });
+            formatted = formatted.replace(/\n/g, '<br>');
+            return formatted;
+        }
+
+        function getAIResponse(userMessage) {
+            const lowerMessage = userMessage.toLowerCase();
+            for (const entry of knowledgeBase) {
+                if (entry.keywords.some(keyword => lowerMessage.includes(keyword))) {
+                    return entry.response;
+                }
+            }
+            return "I understand you're asking about: \"" + userMessage + "\"\n\nWhile I don't have a specific answer for that in my current knowledge base, I'm here to help! Could you rephrase your question or ask about:\n\n• Coding and programming\n• Design and creativity\n• Writing and reports\n• Explanations and learning\n\nWhat would you like to explore?";
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            if (chatHistory.length === 0) {
+                hideWelcome();
+            }
+
+            addMessage(message, true);
+            chatHistory.push({ role: 'user', content: message });
+
+            input.value = '';
+            input.style.height = '';
+
+            addTypingIndicator();
+
+            setTimeout(() => {
+                removeTypingIndicator();
+                const aiResponse = getAIResponse(message);
+                addMessage(aiResponse, false);
+                chatHistory.push({ role: 'assistant', content: aiResponse });
+            }, 1000 + Math.random() * 1000);
+        }
+
+        function resetChat() {
+            chatHistory = [];
+            const messagesList = document.getElementById('messagesList');
+            messagesList.innerHTML = '';
+            showWelcome();
+        }
+
+        function fillInput(text) {
+            const input = document.getElementById('chatInput');
+            input.value = text;
+            input.focus();
+            input.style.height = '';
+            input.style.height = input.scrollHeight + 'px';
+        }
+
+        document.getElementById('chatInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
+                e.preventDefault();
+                resetChat();
+            }
+        });
+    </script>
+</body>
+
+</html>
