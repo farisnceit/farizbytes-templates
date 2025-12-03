@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarePlus Medical Center</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Product+Sans:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Config & Styles -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Roboto', 'sans-serif'],
+                        display: ['Product Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        'google-blue': '#4285F4',
+                        'google-red': '#EA4335',
+                        'google-yellow': '#FBBC05',
+                        'google-green': '#34A853',
+                        'medical-50': '#f0f9ff',
+                        'medical-100': '#e0f2fe',
+                        'medical-500': '#0ea5e9',
+                        'medical-600': '#0284c7',
+                        'medical-900': '#0c4a6e',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Google-style Loader Animation */
+        .google-loader {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .dot:nth-child(1) {
+            background-color: #4285F4;
+            animation-delay: -0.32s;
+        }
+
+        .dot:nth-child(2) {
+            background-color: #EA4335;
+            animation-delay: -0.16s;
+        }
+
+        .dot:nth-child(3) {
+            background-color: #FBBC05;
+        }
+
+        .dot:nth-child(4) {
+            background-color: #34A853;
+            animation-delay: 0.16s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        /* Smooth Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* View Switching Logic */
+        .page-view {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .page-view.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Nav Link Active State */
+        .nav-link.active {
+            color: #2563eb;
+            /* blue-600 */
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-slate-800 antialiased relative flex flex-col min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 transition-all duration-300"
+        id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- Logo -->
+                <div class="flex items-center gap-2 cursor-pointer" onclick="navigateTo('home')">
+                    <div class="bg-blue-600 p-2 rounded-lg">
+                        <i data-lucide="plus" class="text-white w-6 h-6"></i>
+                    </div>
+                    <span class="font-display font-bold text-2xl text-gray-800">Care<span
+                            class="text-blue-600">Plus</span></span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <button onclick="navigateTo('home')"
+                        class="nav-link active text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                        data-page="home">Home</button>
+                    <button onclick="navigateTo('doctors')"
+                        class="nav-link text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                        data-page="doctors">Doctors</button>
+                    <button onclick="navigateTo('about')"
+                        class="nav-link text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                        data-page="about">About Us</button>
+                    <button onclick="navigateTo('contact')"
+                        class="nav-link text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                        data-page="contact">Contact</button>
+                    <button onclick="openBookingModal('General Appointment', '')"
+                        class="bg-blue-600 text-white px-6 py-2.5 rounded-full font-medium hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/30 transition-all transform hover:-translate-y-0.5">
+                        Book Appointment
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="p-2 rounded-md hover:bg-gray-100">
+                        <i data-lucide="menu" class="w-6 h-6 text-gray-600"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
+            <div class="px-4 pt-2 pb-4 space-y-1">
+                <button onclick="navigateTo('home')"
+                    class="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md">Home</button>
+                <button onclick="navigateTo('doctors')"
+                    class="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md">Doctors</button>
+                <button onclick="navigateTo('about')"
+                    class="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md">About</button>
+                <button onclick="navigateTo('contact')"
+                    class="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md">Contact</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow pt-20">
+
+        <!-- ================= HOME VIEW ================= -->
+        <div id="view-home" class="page-view active">
+            <!-- Hero Section -->
+            <header class="relative pt-12 pb-20 lg:pt-24 lg:pb-32 overflow-hidden">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="grid lg:grid-cols-2 gap-12 items-center">
+                        <!-- Text Content -->
+                        <div class="space-y-8 reveal active">
+                            <div
+                                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-sm font-medium">
+                                <span class="relative flex h-2 w-2">
+                                    <span
+                                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                </span>
+                                24/7 Emergency Service Available
+                            </div>
+
+                            <h1 class="text-5xl lg:text-7xl font-display font-bold text-gray-900 leading-tight">
+                                Your Health, <br>
+                                <span
+                                    class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500">Our
+                                    Priority.</span>
+                            </h1>
+
+                            <p class="text-lg text-gray-600 max-w-xl leading-relaxed">
+                                Experience world-class healthcare with our team of expert doctors and state-of-the-art
+                                facilities. Booking an appointment has never been easier.
+                            </p>
+
+                            <!-- Hero Buttons -->
+                            <div class="flex flex-col sm:flex-row gap-4 max-w-lg">
+                                <button onclick="navigateTo('doctors')"
+                                    class="bg-gray-900 text-white px-8 py-4 rounded-xl font-medium hover:bg-gray-800 transition-colors shadow-lg shadow-gray-200">
+                                    Find a Doctor
+                                </button>
+                                <button onclick="navigateTo('contact')"
+                                    class="px-8 py-4 rounded-xl font-medium text-gray-600 hover:bg-gray-100 border border-gray-200 transition-colors">
+                                    Contact Us
+                                </button>
+                            </div>
+
+                            <!-- Trust Indicators -->
+                            <div class="flex items-center gap-6 pt-4 text-sm text-gray-500 font-medium">
+                                <div class="flex -space-x-2">
+                                    <img class="w-8 h-8 rounded-full border-2 border-white"
+                                        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64"
+                                        alt="User">
+                                    <img class="w-8 h-8 rounded-full border-2 border-white"
+                                        src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&h=64"
+                                        alt="User">
+                                    <img class="w-8 h-8 rounded-full border-2 border-white"
+                                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=64&h=64"
+                                        alt="User">
+                                    <div
+                                        class="w-8 h-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-xs text-gray-600">
+                                        +2k</div>
+                                </div>
+                                <p>Happy Patients this week</p>
+                            </div>
+                        </div>
+
+                        <!-- Hero Image -->
+                        <div class="relative hidden lg:block reveal" style="transition-delay: 200ms;">
+                            <div
+                                class="absolute top-0 right-0 -mr-20 -mt-20 w-[600px] h-[600px] bg-gradient-to-br from-blue-50 to-teal-50 rounded-full blur-3xl opacity-60 z-0">
+                            </div>
+                            <div class="relative z-10">
+                                <img src="https://images.unsplash.com/photo-1638202993928-7267aad84c31?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                                    alt="Doctor Team"
+                                    class="rounded-3xl shadow-2xl transform hover:scale-[1.01] transition-transform duration-500 object-cover h-[600px] w-full">
+                                <!-- Floating Card -->
+                                <div class="absolute -bottom-8 -left-8 bg-white p-6 rounded-2xl shadow-xl animate-bounce"
+                                    style="animation-duration: 3s;">
+                                    <div class="flex items-center gap-4">
+                                        <div class="bg-green-100 p-3 rounded-full">
+                                            <i data-lucide="activity" class="text-green-600 w-6 h-6"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-gray-500">Recovery Rate</p>
+                                            <p class="text-xl font-bold text-gray-900">98.5%</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Google-like Animation Section -->
+            <section class="py-10 bg-white border-y border-gray-100">
+                <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <p class="font-display font-medium text-gray-500">Trusted by leading insurance partners</p>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-medium text-gray-400">Processing live updates</span>
+                        <div class="google-loader">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Services Grid -->
+            <section class="py-24 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+                        <h2 class="text-3xl font-display font-bold text-gray-900 mb-4">Comprehensive Care</h2>
+                        <p class="text-gray-600">We offer a wide range of medical services to ensure your health is
+                            covered from every angle.</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <!-- Service 1 -->
+                        <div
+                            class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer border border-gray-100 reveal">
+                            <div
+                                class="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors">
+                                <i data-lucide="heart-pulse"
+                                    class="w-7 h-7 text-blue-600 group-hover:text-white transition-colors"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3">Cardiology</h3>
+                            <p class="text-gray-500 mb-4">Expert care for your heart with advanced diagnostics and
+                                treatment plans.</p>
+                            <span
+                                class="text-blue-600 font-medium flex items-center gap-1 group-hover:gap-2 transition-all">Learn
+                                more <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                        </div>
+                        <!-- Service 2 -->
+                        <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer border border-gray-100 reveal"
+                            style="transition-delay: 100ms;">
+                            <div
+                                class="w-14 h-14 bg-green-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-600 transition-colors">
+                                <i data-lucide="brain"
+                                    class="w-7 h-7 text-green-600 group-hover:text-white transition-colors"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3">Neurology</h3>
+                            <p class="text-gray-500 mb-4">Specialized treatment for disorders of the nervous system and
+                                brain.</p>
+                            <span
+                                class="text-green-600 font-medium flex items-center gap-1 group-hover:gap-2 transition-all">Learn
+                                more <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                        </div>
+                        <!-- Service 3 -->
+                        <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer border border-gray-100 reveal"
+                            style="transition-delay: 200ms;">
+                            <div
+                                class="w-14 h-14 bg-orange-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-orange-600 transition-colors">
+                                <i data-lucide="baby"
+                                    class="w-7 h-7 text-orange-600 group-hover:text-white transition-colors"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3">Pediatrics</h3>
+                            <p class="text-gray-500 mb-4">Compassionate care for infants, children, and adolescents.</p>
+                            <span
+                                class="text-orange-600 font-medium flex items-center gap-1 group-hover:gap-2 transition-all">Learn
+                                more <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Appointment CTA -->
+            <section class="py-20 bg-gray-900 text-white relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-96 h-96 bg-blue-600 rounded-full blur-[100px] opacity-20"></div>
+                <div class="absolute bottom-0 left-0 w-96 h-96 bg-purple-600 rounded-full blur-[100px] opacity-20">
+                </div>
+                <div class="max-w-4xl mx-auto text-center px-4 relative z-10 reveal">
+                    <h2 class="text-4xl font-display font-bold mb-6">Ready to prioritize your health?</h2>
+                    <p class="text-gray-400 text-lg mb-10">Book an appointment online today and skip the waiting room.
+                        We're here to help you feel your best.</p>
+                    <button onclick="openBookingModal('General Appointment', '')"
+                        class="bg-blue-600 hover:bg-blue-500 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-blue-600/50 transform hover:-translate-y-1">
+                        Book an Appointment Now
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= DOCTORS VIEW ================= -->
+        <div id="view-doctors" class="page-view">
+            <section class="py-12 bg-white relative">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12">
+                        <span class="text-blue-600 font-bold tracking-wide uppercase text-sm">Our Team</span>
+                        <h2 class="text-4xl font-display font-bold text-gray-900 mt-2">Find a Specialist</h2>
+                        <p class="text-gray-600 mt-4 max-w-2xl mx-auto">Browse our directory of top-rated medical
+                            professionals. Filter by specialty or search by name to find the right care for you.</p>
+                    </div>
+
+                    <!-- Search & Filter (Visual only) -->
+                    <div class="flex flex-col md:flex-row gap-4 mb-12 justify-center">
+                        <div class="relative w-full md:w-96">
+                            <input type="text" placeholder="Search doctors..."
+                                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <i data-lucide="search" class="absolute left-3 top-3.5 text-gray-400 w-5 h-5"></i>
+                        </div>
+                        <select
+                            class="p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                            <option>All Specialties</option>
+                            <option>Cardiology</option>
+                            <option>Neurology</option>
+                            <option>Pediatrics</option>
+                        </select>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- Doctor Card 1 -->
+                        <div
+                            class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden">
+                            <div class="relative h-64 overflow-hidden bg-gray-100">
+                                <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80"
+                                    alt="Dr. Sarah Johnson"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <div
+                                    class="absolute top-4 right-4 bg-white/90 backdrop-blur text-xs font-bold px-2 py-1 rounded shadow-sm flex items-center gap-1">
+                                    <i data-lucide="star" class="w-3 h-3 text-yellow-400 fill-yellow-400"></i> 4.9
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div class="text-xs font-medium text-blue-600 mb-1">Cardiologist</div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">Dr. Sarah Johnson</h3>
+                                <p class="text-sm text-gray-500 mb-4">12 years experience</p>
+                                <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-50">
+                                    <span class="text-sm font-medium text-gray-900">$80 <span
+                                            class="text-gray-400 font-normal">/ visit</span></span>
+                                    <button onclick="openBookingModal('Dr. Sarah Johnson', 'Cardiology')"
+                                        class="text-sm font-medium bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">Book</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Doctor Card 2 -->
+                        <div
+                            class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden">
+                            <div class="relative h-64 overflow-hidden bg-gray-100">
+                                <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=400&q=80"
+                                    alt="Dr. Mark Wilson"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <div
+                                    class="absolute top-4 right-4 bg-white/90 backdrop-blur text-xs font-bold px-2 py-1 rounded shadow-sm flex items-center gap-1">
+                                    <i data-lucide="star" class="w-3 h-3 text-yellow-400 fill-yellow-400"></i> 4.8
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div class="text-xs font-medium text-blue-600 mb-1">Neurologist</div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">Dr. Mark Wilson</h3>
+                                <p class="text-sm text-gray-500 mb-4">15 years experience</p>
+                                <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-50">
+                                    <span class="text-sm font-medium text-gray-900">$95 <span
+                                            class="text-gray-400 font-normal">/ visit</span></span>
+                                    <button onclick="openBookingModal('Dr. Mark Wilson', 'Neurology')"
+                                        class="text-sm font-medium bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">Book</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Doctor Card 3 -->
+                        <div
+                            class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden">
+                            <div class="relative h-64 overflow-hidden bg-gray-100">
+                                <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80"
+                                    alt="Dr. Emily Chen"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <div
+                                    class="absolute top-4 right-4 bg-white/90 backdrop-blur text-xs font-bold px-2 py-1 rounded shadow-sm flex items-center gap-1">
+                                    <i data-lucide="star" class="w-3 h-3 text-yellow-400 fill-yellow-400"></i> 5.0
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div class="text-xs font-medium text-blue-600 mb-1">Pediatrician</div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">Dr. Emily Chen</h3>
+                                <p class="text-sm text-gray-500 mb-4">8 years experience</p>
+                                <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-50">
+                                    <span class="text-sm font-medium text-gray-900">$70 <span
+                                            class="text-gray-400 font-normal">/ visit</span></span>
+                                    <button onclick="openBookingModal('Dr. Emily Chen', 'Pediatrics')"
+                                        class="text-sm font-medium bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">Book</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Doctor Card 4 -->
+                        <div
+                            class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden">
+                            <div class="relative h-64 overflow-hidden bg-gray-100">
+                                <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80"
+                                    alt="Dr. James Carter"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <div
+                                    class="absolute top-4 right-4 bg-white/90 backdrop-blur text-xs font-bold px-2 py-1 rounded shadow-sm flex items-center gap-1">
+                                    <i data-lucide="star" class="w-3 h-3 text-yellow-400 fill-yellow-400"></i> 4.7
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div class="text-xs font-medium text-blue-600 mb-1">Dermatologist</div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">Dr. James Carter</h3>
+                                <p class="text-sm text-gray-500 mb-4">10 years experience</p>
+                                <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-50">
+                                    <span class="text-sm font-medium text-gray-900">$85 <span
+                                            class="text-gray-400 font-normal">/ visit</span></span>
+                                    <button onclick="openBookingModal('Dr. James Carter', 'Dermatology')"
+                                        class="text-sm font-medium bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">Book</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= ABOUT VIEW ================= -->
+        <div id="view-about" class="page-view">
+            <!-- About Hero -->
+            <div class="bg-blue-600 text-white py-20">
+                <div class="max-w-7xl mx-auto px-4 text-center">
+                    <h1 class="text-4xl font-display font-bold mb-4">About CarePlus</h1>
+                    <p class="text-blue-100 max-w-2xl mx-auto">Leading the way in medical excellence since 1995.</p>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="max-w-7xl mx-auto px-4 py-20">
+                <div class="grid md:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80"
+                            alt="Hospital Building" class="rounded-2xl shadow-xl mb-6">
+                        <div class="grid grid-cols-2 gap-4">
+                            <img src="https://images.unsplash.com/photo-1516549655169-df83a092dd14?auto=format&fit=crop&w=400&q=80"
+                                alt="Lab" class="rounded-xl shadow-lg">
+                            <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=400&q=80"
+                                alt="Surgery" class="rounded-xl shadow-lg">
+                        </div>
+                    </div>
+                    <div class="space-y-6">
+                        <h2 class="text-3xl font-display font-bold text-gray-900">Dedicated to Your Well-being</h2>
+                        <p class="text-gray-600 leading-relaxed">
+                            At CarePlus Medical Center, we believe that healthcare should be accessible, compassionate,
+                            and cutting-edge. Our state-of-the-art facility is equipped with the latest medical
+                            technology to ensure accurate diagnoses and effective treatments.
+                        </p>
+                        <p class="text-gray-600 leading-relaxed">
+                            Our team of board-certified physicians, nurses, and support staff work collaboratively to
+                            provide personalized care plans tailored to each patient's unique needs.
+                        </p>
+
+                        <div class="space-y-4 pt-4">
+                            <div class="flex items-start gap-4">
+                                <div class="bg-blue-100 p-2 rounded-lg text-blue-600">
+                                    <i data-lucide="target" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900">Our Mission</h4>
+                                    <p class="text-sm text-gray-500">To improve the health and quality of life of the
+                                        communities we serve through excellence in patient care.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="bg-blue-100 p-2 rounded-lg text-blue-600">
+                                    <i data-lucide="eye" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900">Our Vision</h4>
+                                    <p class="text-sm text-gray-500">To be the trusted leader in healthcare innovation
+                                        and patient-centered service.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= CONTACT VIEW ================= -->
+        <div id="view-contact" class="page-view">
+            <!-- Contact Hero -->
+            <div class="bg-gray-900 text-white py-20">
+                <div class="max-w-7xl mx-auto px-4 text-center">
+                    <h1 class="text-4xl font-display font-bold mb-4">Get in Touch</h1>
+                    <p class="text-gray-400 max-w-2xl mx-auto">We are here to answer any questions you may have.</p>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 py-20">
+                <div class="grid lg:grid-cols-3 gap-12">
+                    <!-- Contact Cards -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <div
+                                class="bg-blue-50 w-12 h-12 rounded-lg flex items-center justify-center text-blue-600 mb-4">
+                                <i data-lucide="map-pin" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="font-bold text-gray-900 mb-2">Visit Us</h3>
+                            <p class="text-gray-600 text-sm">123 Medical Center Dr,<br>New York, NY 10001</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <div
+                                class="bg-blue-50 w-12 h-12 rounded-lg flex items-center justify-center text-blue-600 mb-4">
+                                <i data-lucide="phone" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="font-bold text-gray-900 mb-2">Call Us</h3>
+                            <p class="text-gray-600 text-sm">Main: +1 (555) 123-4567<br>Emergency: +1 (555) 911-0000</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <div
+                                class="bg-blue-50 w-12 h-12 rounded-lg flex items-center justify-center text-blue-600 mb-4">
+                                <i data-lucide="clock" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="font-bold text-gray-900 mb-2">Working Hours</h3>
+                            <p class="text-gray-600 text-sm">Mon - Fri: 8:00 AM - 8:00 PM<br>Sat - Sun: 9:00 AM - 5:00
+                                PM</p>
+                        </div>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="lg:col-span-2 bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h3>
+                        <form onsubmit="event.preventDefault(); showToast();">
+                            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                    <input type="text"
+                                        class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                    <input type="text"
+                                        class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                <input type="email"
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                                <textarea rows="4"
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+                            <button
+                                class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors">
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="bg-blue-600 p-1.5 rounded-lg">
+                            <i data-lucide="plus" class="text-white w-5 h-5"></i>
+                        </div>
+                        <span class="font-bold text-xl text-gray-800">Care<span class="text-blue-600">Plus</span></span>
+                    </div>
+                    <p class="text-gray-500 text-sm leading-relaxed">
+                        Providing advanced medical care with compassion and integrity. Your health is our mission.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><button onclick="navigateTo('about')"
+                                class="hover:text-blue-600 transition-colors text-left">About Us</button></li>
+                        <li><button onclick="navigateTo('doctors')"
+                                class="hover:text-blue-600 transition-colors text-left">Our Doctors</button></li>
+                        <li><button onclick="navigateTo('home')"
+                                class="hover:text-blue-600 transition-colors text-left">Services</button></li>
+                        <li><button onclick="navigateTo('contact')"
+                                class="hover:text-blue-600 transition-colors text-left">Contact</button></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><a href="#" class="hover:text-blue-600 transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-blue-600 transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-blue-600 transition-colors">Cookie Policy</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-4">Contact Us</h4>
+                    <div class="space-y-3 text-sm text-gray-600">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-blue-600"></i>
+                            <span>123 Medical Center Dr, NY</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="phone" class="w-4 h-4 text-blue-600"></i>
+                            <span>+1 (555) 123-4567</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="mail" class="w-4 h-4 text-blue-600"></i>
+                            <span>contact@careplus.com</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-gray-400">© 2023 CarePlus Medical. All rights reserved.</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-blue-600"><i data-lucide="facebook"
+                            class="w-5 h-5"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-blue-600"><i data-lucide="twitter"
+                            class="w-5 h-5"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-blue-600"><i data-lucide="instagram"
+                            class="w-5 h-5"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Booking Modal -->
+    <div id="booking-modal" class="fixed inset-0 z-[60] hidden overflow-y-auto" aria-labelledby="modal-title"
+        role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity opacity-0" id="modal-backdrop">
+        </div>
+
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                id="modal-panel">
+
+                <!-- Modal Header -->
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 flex justify-between items-center border-b border-gray-100">
+                    <h3 class="text-lg font-semibold leading-6 text-gray-900" id="modal-title">Book Appointment</h3>
+                    <button type="button" onclick="closeBookingModal()"
+                        class="text-gray-400 hover:text-gray-500 focus:outline-none">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <form id="booking-form" onsubmit="handleBooking(event)">
+                        <div class="space-y-4">
+                            <!-- Dynamic Doctor Info -->
+                            <div class="bg-blue-50 p-3 rounded-lg flex items-center gap-3 mb-4">
+                                <div class="bg-blue-100 p-2 rounded-full">
+                                    <i data-lucide="user" class="w-5 h-5 text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Booking with</p>
+                                    <p class="font-bold text-gray-900" id="modal-doctor-name">Select a Doctor</p>
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="doctor-input" name="doctor">
+
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                                <input type="text" name="name" id="name" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+                                    <input type="date" name="date" id="date" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                                </div>
+                                <div>
+                                    <label for="time" class="block text-sm font-medium text-gray-700">Time</label>
+                                    <select name="time" id="time" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2 bg-white">
+                                        <option>09:00 AM</option>
+                                        <option>10:00 AM</option>
+                                        <option>11:00 AM</option>
+                                        <option>02:00 PM</option>
+                                        <option>03:00 PM</option>
+                                        <option>04:00 PM</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                                <input type="tel" name="phone" id="phone" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                            </div>
+
+                            <div>
+                                <label for="reason" class="block text-sm font-medium text-gray-700">Reason for
+                                    Visit</label>
+                                <textarea name="reason" id="reason" rows="3"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 flex items-center justify-end gap-3">
+                            <button type="button" onclick="closeBookingModal()"
+                                class="rounded-lg bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Cancel</button>
+                            <button type="submit"
+                                class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 flex items-center gap-2">
+                                <span>Confirm Booking</span>
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Toast -->
+    <div id="toast"
+        class="fixed bottom-4 right-4 bg-gray-900 text-white px-6 py-4 rounded-xl shadow-2xl transform translate-y-32 transition-transform duration-300 z-[70] flex items-center gap-4">
+        <div class="bg-green-500 p-2 rounded-full">
+            <i data-lucide="check" class="w-4 h-4 text-white"></i>
+        </div>
+        <div>
+            <h4 class="font-bold text-sm">Action Successful!</h4>
+            <p class="text-xs text-gray-400">We'll get back to you shortly.</p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 20) {
+                nav.classList.add('shadow-md');
+                nav.classList.add('bg-white/95');
+            } else {
+                nav.classList.remove('shadow-md');
+                nav.classList.remove('bg-white/95');
+            }
+        });
+
+        // Navigation Router Logic
+        function navigateTo(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-view').forEach(view => {
+                view.classList.remove('active');
+            });
+
+            // Show target page
+            const targetView = document.getElementById('view-' + pageId);
+            if (targetView) {
+                targetView.classList.add('active');
+                window.scrollTo(0, 0);
+            }
+
+            // Update Nav Active State
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-page') === pageId) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Close Mobile Menu if open
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+
+            // Trigger animations for the new page
+            setTimeout(reveal, 100);
+        }
+
+        // Smooth Reveal on Scroll
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        // Trigger once on load
+        reveal();
+
+        // Mobile Menu Logic
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Modal Logic
+        const modal = document.getElementById('booking-modal');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const modalPanel = document.getElementById('modal-panel');
+        const doctorNameSpan = document.getElementById('modal-doctor-name');
+        const doctorInput = document.getElementById('doctor-input');
+
+        function openBookingModal(doctorName, specialty) {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalBackdrop.classList.remove('opacity-0');
+                modalPanel.classList.remove('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
+                modalPanel.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+            }, 10);
+
+            doctorNameSpan.textContent = doctorName + (specialty ? ` (${specialty})` : '');
+            doctorInput.value = doctorName;
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').min = today;
+        }
+
+        function closeBookingModal() {
+            modalBackdrop.classList.add('opacity-0');
+            modalPanel.classList.remove('opacity-100', 'translate-y-0', 'sm:scale-100');
+            modalPanel.classList.add('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Form Handling
+        function handleBooking(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+
+            btn.innerHTML = `<div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div> Processing...`;
+            btn.disabled = true;
+
+            setTimeout(() => {
+                closeBookingModal();
+                showToast();
+                e.target.reset();
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 1500);
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('translate-y-32');
+            setTimeout(() => {
+                toast.classList.add('translate-y-32');
+            }, 4000);
+        }
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal || e.target === modalBackdrop) {
+                closeBookingModal();
+            }
+        });
+    </script>
+</body>
+
+</html>
