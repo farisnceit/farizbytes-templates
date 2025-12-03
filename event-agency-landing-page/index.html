@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina Events | Create Unforgettable Moments</title>
+    <meta name="description" content="Premium Event Planning Agency">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    },
+                    colors: {
+                        lumina: {
+                            dark: '#0f172a',
+                            light: '#f8fafc',
+                            accent: '#6366f1',
+                            purple: '#8b5cf6',
+                            gold: '#fbbf24'
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out 3s infinite',
+                        'spin-slow': 'spin 12s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6366f1;
+        }
+
+        /* Scroll Reveal Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Staggered delays for grids */
+        .reveal-delay-100 {
+            transition-delay: 100ms;
+        }
+
+        .reveal-delay-200 {
+            transition-delay: 200ms;
+        }
+
+        .reveal-delay-300 {
+            transition-delay: 300ms;
+        }
+
+        /* Blob Background in Hero */
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        /* Mobile Menu Transition */
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out;
+            transform-origin: top;
+        }
+
+        #mobile-menu.hidden-menu {
+            transform: scaleY(0);
+            opacity: 0;
+            height: 0;
+        }
+
+        #mobile-menu.visible-menu {
+            transform: scaleY(1);
+            opacity: 1;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body class="bg-lumina-dark text-slate-200 font-sans overflow-x-hidden selection:bg-lumina-accent selection:text-white">
+
+    <!-- Navigation -->
+    <nav id="navbar"
+        class="fixed w-full z-50 transition-all duration-300 py-4 px-6 lg:px-12 backdrop-blur-sm border-b border-transparent">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="text-2xl font-serif font-bold text-white flex items-center gap-2">
+                <div
+                    class="w-8 h-8 rounded-full bg-gradient-to-tr from-lumina-accent to-lumina-purple flex items-center justify-center">
+                    <i class="fa-solid fa-star text-xs text-white"></i>
+                </div>
+                LUMINA
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#services" class="text-sm font-medium hover:text-lumina-accent transition-colors">Services</a>
+                <a href="#work" class="text-sm font-medium hover:text-lumina-accent transition-colors">Portfolio</a>
+                <a href="#about" class="text-sm font-medium hover:text-lumina-accent transition-colors">About</a>
+                <a href="#contact"
+                    class="px-6 py-2 rounded-full border border-slate-600 hover:border-lumina-accent hover:bg-lumina-accent/10 transition-all text-sm font-medium">Let's
+                    Talk</a>
+            </div>
+
+            <!-- Mobile Toggle -->
+            <button id="menu-btn" class="md:hidden text-white text-2xl focus:outline-none">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu"
+            class="hidden-menu md:hidden absolute top-full left-0 w-full bg-slate-900/95 backdrop-blur-xl border-b border-slate-800 p-6 flex flex-col gap-4 shadow-2xl">
+            <a href="#services" class="mobile-link text-lg font-medium py-2 border-b border-slate-800">Services</a>
+            <a href="#work" class="mobile-link text-lg font-medium py-2 border-b border-slate-800">Portfolio</a>
+            <a href="#about" class="mobile-link text-lg font-medium py-2 border-b border-slate-800">About</a>
+            <a href="#contact" class="mobile-link text-lg font-medium py-2 text-lumina-accent">Contact Us</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <!-- Background Blobs -->
+        <div
+            class="blob w-96 h-96 bg-lumina-purple rounded-full top-0 left-0 -translate-x-1/2 -translate-y-1/2 animate-float">
+        </div>
+        <div
+            class="blob w-80 h-80 bg-lumina-accent rounded-full bottom-0 right-0 translate-x-1/3 translate-y-1/3 animate-float-delayed">
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <span
+                class="reveal inline-block py-1 px-3 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-semibold tracking-wider uppercase mb-6 text-lumina-accent">
+                Premier Event Management
+            </span>
+            <h1
+                class="reveal reveal-delay-100 text-5xl md:text-7xl lg:text-8xl font-serif font-bold leading-tight mb-8 text-white">
+                We Curate <br />
+                <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-lumina-accent via-lumina-purple to-pink-500">Unforgettable</span>
+                Experiences
+            </h1>
+            <p
+                class="reveal reveal-delay-200 text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+                From intimate corporate gatherings to large-scale music festivals. We handle the details so you can
+                enjoy the moment.
+            </p>
+            <div class="reveal reveal-delay-300 flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="#contact"
+                    class="px-8 py-4 rounded-full bg-white text-lumina-dark font-bold hover:bg-slate-200 transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                    Start Planning
+                </a>
+                <a href="#work"
+                    class="px-8 py-4 rounded-full border border-slate-700 hover:border-lumina-accent hover:text-lumina-accent transition-all flex items-center gap-2 group">
+                    View Portfolio <i
+                        class="fa-solid fa-arrow-right transform group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-slate-500">
+            <i class="fa-solid fa-chevron-down"></i>
+        </div>
+    </header>
+
+    <!-- Stats Section -->
+    <section class="py-20 border-y border-slate-800 bg-slate-900/50">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="reveal">
+                    <h3 class="text-4xl md:text-5xl font-serif font-bold text-white mb-2">500+</h3>
+                    <p class="text-slate-400 text-sm uppercase tracking-widest">Events Hosted</p>
+                </div>
+                <div class="reveal reveal-delay-100">
+                    <h3 class="text-4xl md:text-5xl font-serif font-bold text-white mb-2">12</h3>
+                    <p class="text-slate-400 text-sm uppercase tracking-widest">Years Active</p>
+                </div>
+                <div class="reveal reveal-delay-200">
+                    <h3 class="text-4xl md:text-5xl font-serif font-bold text-white mb-2">50+</h3>
+                    <p class="text-slate-400 text-sm uppercase tracking-widest">Team Experts</p>
+                </div>
+                <div class="reveal reveal-delay-300">
+                    <h3 class="text-4xl md:text-5xl font-serif font-bold text-white mb-2">100%</h3>
+                    <p class="text-slate-400 text-sm uppercase tracking-widest">Satisfaction</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-24 relative">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl md:text-5xl font-serif font-bold text-white mb-4">Our Expertise</h2>
+                <p class="text-slate-400 max-w-xl mx-auto">Precision planning meets creative brilliance. Choose the
+                    perfect package for your needs.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div
+                    class="group reveal relative bg-slate-800/30 p-8 rounded-2xl border border-slate-700 hover:border-lumina-accent/50 transition-all duration-300 hover:-translate-y-2 overflow-hidden">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-lumina-accent/10 rounded-full blur-2xl group-hover:bg-lumina-accent/20 transition-all">
+                    </div>
+                    <div
+                        class="w-12 h-12 rounded-lg bg-gradient-to-br from-lumina-accent to-lumina-purple flex items-center justify-center text-white mb-6 shadow-lg">
+                        <i class="fa-solid fa-briefcase"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Corporate Events</h3>
+                    <p class="text-slate-400 mb-6 text-sm leading-relaxed">Product launches, conferences, and galas
+                        designed to impress stakeholders and elevate your brand image.</p>
+                    <ul class="text-sm text-slate-500 space-y-2 mb-6">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-lumina-accent text-xs"></i>
+                            Brand Activation</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-lumina-accent text-xs"></i>
+                            Annual Summits</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-lumina-accent text-xs"></i>
+                            VIP Dinners</li>
+                    </ul>
+                </div>
+
+                <!-- Service 2 -->
+                <div
+                    class="group reveal reveal-delay-100 relative bg-slate-800/30 p-8 rounded-2xl border border-slate-700 hover:border-pink-500/50 transition-all duration-300 hover:-translate-y-2 overflow-hidden">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-pink-500/10 rounded-full blur-2xl group-hover:bg-pink-500/20 transition-all">
+                    </div>
+                    <div
+                        class="w-12 h-12 rounded-lg bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white mb-6 shadow-lg">
+                        <i class="fa-solid fa-rings-wedding"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Luxury Weddings</h3>
+                    <p class="text-slate-400 mb-6 text-sm leading-relaxed">Bespoke wedding planning service. We turn
+                        your dream day into a flawless reality with style and grace.</p>
+                    <ul class="text-sm text-slate-500 space-y-2 mb-6">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-pink-500 text-xs"></i> Full
+                            Coordination</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-pink-500 text-xs"></i>
+                            Destination Weddings</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-pink-500 text-xs"></i>
+                            Decor & Styling</li>
+                    </ul>
+                </div>
+
+                <!-- Service 3 -->
+                <div
+                    class="group reveal reveal-delay-200 relative bg-slate-800/30 p-8 rounded-2xl border border-slate-700 hover:border-lumina-gold/50 transition-all duration-300 hover:-translate-y-2 overflow-hidden">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-lumina-gold/10 rounded-full blur-2xl group-hover:bg-lumina-gold/20 transition-all">
+                    </div>
+                    <div
+                        class="w-12 h-12 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center text-white mb-6 shadow-lg">
+                        <i class="fa-solid fa-music"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Social & Live</h3>
+                    <p class="text-slate-400 mb-6 text-sm leading-relaxed">Concerts, festivals, and private parties. We
+                        manage the chaos so the energy remains high.</p>
+                    <ul class="text-sm text-slate-500 space-y-2 mb-6">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-lumina-gold text-xs"></i>
+                            Artist Management</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-lumina-gold text-xs"></i>
+                            Stage & Sound</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-lumina-gold text-xs"></i>
+                            Crowd Control</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Work/Gallery Section -->
+    <section id="work" class="py-24 bg-slate-900">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal">
+                <div>
+                    <h2 class="text-3xl md:text-5xl font-serif font-bold text-white mb-2">Recent Works</h2>
+                    <p class="text-slate-400">Snapshots from our favorite nights.</p>
+                </div>
+                <a href="#"
+                    class="hidden md:inline-block text-lumina-accent hover:text-white transition-colors mt-4 md:mt-0">View
+                    All Projects <i class="fa-solid fa-arrow-right ml-2"></i></a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[300px]">
+
+                <!-- Item 1 (Large) -->
+                <div class="reveal group relative rounded-xl overflow-hidden lg:col-span-2">
+                    <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2069&auto=format&fit=crop"
+                        alt="Wedding"
+                        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80">
+                    </div>
+                    <div
+                        class="absolute bottom-0 left-0 p-8 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <span
+                            class="text-lumina-accent text-xs font-bold uppercase tracking-wider mb-2 block">Wedding</span>
+                        <h3 class="text-2xl font-bold text-white">The Miller Celebration</h3>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="reveal reveal-delay-100 group relative rounded-xl overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=2012&auto=format&fit=crop"
+                        alt="Conference"
+                        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80">
+                    </div>
+                    <div
+                        class="absolute bottom-0 left-0 p-6 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <span
+                            class="text-lumina-accent text-xs font-bold uppercase tracking-wider mb-2 block">Corporate</span>
+                        <h3 class="text-xl font-bold text-white">Tech Summit 2024</h3>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="reveal group relative rounded-xl overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=2070&auto=format&fit=crop"
+                        alt="Concert"
+                        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80">
+                    </div>
+                    <div
+                        class="absolute bottom-0 left-0 p-6 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <span
+                            class="text-lumina-accent text-xs font-bold uppercase tracking-wider mb-2 block">Festival</span>
+                        <h3 class="text-xl font-bold text-white">Neon Nights</h3>
+                    </div>
+                </div>
+
+                <!-- Item 4 (Large) -->
+                <div class="reveal reveal-delay-100 group relative rounded-xl overflow-hidden lg:col-span-2">
+                    <img src="https://images.unsplash.com/photo-1519671482538-5810a2d46894?q=80&w=2070&auto=format&fit=crop"
+                        alt="Gala"
+                        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80">
+                    </div>
+                    <div
+                        class="absolute bottom-0 left-0 p-8 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <span class="text-lumina-accent text-xs font-bold uppercase tracking-wider mb-2 block">Private
+                            Party</span>
+                        <h3 class="text-2xl font-bold text-white">Silver Jubilee Gala</h3>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mt-8 text-center md:hidden">
+                <a href="#" class="inline-block text-lumina-accent font-medium">View All Projects <i
+                        class="fa-solid fa-arrow-right ml-2"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-24 bg-slate-800/20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <i class="fa-solid fa-quote-left text-4xl text-slate-700 mb-6"></i>
+                <h2 class="text-3xl md:text-5xl font-serif font-bold text-white mb-6">Clients Love Us</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Review 1 -->
+                <div class="reveal bg-slate-900 border border-slate-800 p-8 rounded-xl shadow-xl">
+                    <div class="flex items-center gap-1 text-yellow-500 mb-4 text-xs">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-slate-300 mb-6 italic">"Lumina transformed our annual conference into an experience
+                        people are still talking about. The attention to detail was unmatched."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User"
+                            class="w-10 h-10 rounded-full border border-slate-600">
+                        <div>
+                            <h4 class="text-white font-bold text-sm">Sarah Jenkins</h4>
+                            <p class="text-slate-500 text-xs">CEO, TechFlow</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="reveal reveal-delay-100 bg-slate-900 border border-slate-800 p-8 rounded-xl shadow-xl">
+                    <div class="flex items-center gap-1 text-yellow-500 mb-4 text-xs">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-slate-300 mb-6 italic">"Planning a wedding is stressful, but the Lumina team made it
+                        effortless. It was truly the magical day we envisioned."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User"
+                            class="w-10 h-10 rounded-full border border-slate-600">
+                        <div>
+                            <h4 class="text-white font-bold text-sm">David Chen</h4>
+                            <p class="text-slate-500 text-xs">Groom</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="reveal reveal-delay-200 bg-slate-900 border border-slate-800 p-8 rounded-xl shadow-xl">
+                    <div class="flex items-center gap-1 text-yellow-500 mb-4 text-xs">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-slate-300 mb-6 italic">"The best event agency we've worked with in 10 years.
+                        Professional, creative, and strictly on budget."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="User"
+                            class="w-10 h-10 rounded-full border border-slate-600">
+                        <div>
+                            <h4 class="text-white font-bold text-sm">Elena Rodriguez</h4>
+                            <p class="text-slate-500 text-xs">Director, ArtMuseum</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 relative overflow-hidden">
+        <!-- Decoration -->
+        <div
+            class="absolute top-0 right-0 w-96 h-96 bg-lumina-purple/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2">
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div
+                class="bg-slate-800/40 backdrop-blur-md rounded-3xl border border-slate-700 overflow-hidden shadow-2xl">
+                <div class="grid grid-cols-1 lg:grid-cols-2">
+
+                    <!-- Info Info -->
+                    <div class="p-10 md:p-14 flex flex-col justify-between bg-slate-900/50">
+                        <div>
+                            <h2 class="text-3xl font-serif font-bold text-white mb-6">Let's Create Magic</h2>
+                            <p class="text-slate-400 mb-10 leading-relaxed">Ready to start planning your next big event?
+                                Fill out the form or reach out directly. We book 6-12 months in advance.</p>
+
+                            <div class="space-y-6">
+                                <div class="flex items-start gap-4">
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-lumina-accent shrink-0">
+                                        <i class="fa-solid fa-location-dot"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-white font-semibold">Visit Us</h4>
+                                        <p class="text-slate-500 text-sm">123 Event Horizon Blvd, Suite 400<br>New York,
+                                            NY 10012</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-lumina-accent shrink-0">
+                                        <i class="fa-solid fa-envelope"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-white font-semibold">Email Us</h4>
+                                        <p class="text-slate-500 text-sm">hello@luminaevents.com</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-lumina-accent shrink-0">
+                                        <i class="fa-solid fa-phone"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-white font-semibold">Call Us</h4>
+                                        <p class="text-slate-500 text-sm">+1 (555) 012-3456</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 mt-10">
+                            <a href="#"
+                                class="w-10 h-10 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-white hover:bg-lumina-accent hover:border-lumina-accent transition-all"><i
+                                    class="fa-brands fa-instagram"></i></a>
+                            <a href="#"
+                                class="w-10 h-10 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-white hover:bg-lumina-accent hover:border-lumina-accent transition-all"><i
+                                    class="fa-brands fa-linkedin-in"></i></a>
+                            <a href="#"
+                                class="w-10 h-10 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-white hover:bg-lumina-accent hover:border-lumina-accent transition-all"><i
+                                    class="fa-brands fa-twitter"></i></a>
+                        </div>
+                    </div>
+
+                    <!-- Form -->
+                    <div class="p-10 md:p-14 bg-white/5">
+                        <form id="contactForm" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">First
+                                        Name</label>
+                                    <input type="text"
+                                        class="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-lumina-accent focus:ring-1 focus:ring-lumina-accent transition-all"
+                                        placeholder="John">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Last
+                                        Name</label>
+                                    <input type="text"
+                                        class="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-lumina-accent focus:ring-1 focus:ring-lumina-accent transition-all"
+                                        placeholder="Doe">
+                                </div>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Email
+                                    Address</label>
+                                <input type="email"
+                                    class="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-lumina-accent focus:ring-1 focus:ring-lumina-accent transition-all"
+                                    placeholder="john@example.com">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Event
+                                    Type</label>
+                                <select
+                                    class="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 text-slate-300 focus:outline-none focus:border-lumina-accent focus:ring-1 focus:ring-lumina-accent transition-all">
+                                    <option>Corporate Event</option>
+                                    <option>Wedding</option>
+                                    <option>Private Party</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Message</label>
+                                <textarea rows="4"
+                                    class="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-lumina-accent focus:ring-1 focus:ring-lumina-accent transition-all"
+                                    placeholder="Tell us about your event..."></textarea>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full bg-gradient-to-r from-lumina-accent to-lumina-purple text-white font-bold py-4 rounded-lg hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] transition-all transform hover:-translate-y-1">
+                                Send Inquiry
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-900 py-12">
+        <div class="container mx-auto px-6 text-center">
+            <a href="#" class="text-2xl font-serif font-bold text-white flex items-center justify-center gap-2 mb-6">
+                <div
+                    class="w-8 h-8 rounded-full bg-gradient-to-tr from-lumina-accent to-lumina-purple flex items-center justify-center">
+                    <i class="fa-solid fa-star text-xs text-white"></i>
+                </div>
+                LUMINA
+            </a>
+            <div class="flex flex-wrap justify-center gap-6 mb-8 text-sm text-slate-400">
+                <a href="#" class="hover:text-white transition-colors">About Us</a>
+                <a href="#" class="hover:text-white transition-colors">Services</a>
+                <a href="#" class="hover:text-white transition-colors">Careers</a>
+                <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+            </div>
+            <p class="text-slate-600 text-sm">&copy; 2024 Lumina Events Agency. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- 1. Navbar Scroll Effect ---
+        const navbar = document.getElementById('navbar');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-lumina-dark/90', 'shadow-lg', 'border-slate-800');
+                navbar.classList.remove('py-4', 'border-transparent');
+                navbar.classList.add('py-2');
+            } else {
+                navbar.classList.remove('bg-lumina-dark/90', 'shadow-lg', 'border-slate-800', 'py-2');
+                navbar.classList.add('py-4', 'border-transparent');
+            }
+        });
+
+        // --- 2. Mobile Menu Toggle ---
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+        let isMenuOpen = false;
+
+        function toggleMenu() {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+                mobileMenu.classList.remove('hidden-menu');
+                mobileMenu.classList.add('visible-menu');
+                menuBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+            } else {
+                mobileMenu.classList.add('hidden-menu');
+                mobileMenu.classList.remove('visible-menu');
+                menuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+            }
+        }
+
+        menuBtn.addEventListener('click', toggleMenu);
+
+        // Close menu when a link is clicked
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', toggleMenu);
+        });
+
+        // --- 3. Scroll Reveal Animation (Intersection Observer) ---
+        const revealElements = document.querySelectorAll('.reveal');
+
+        const revealCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        };
+
+        const revealOptions = {
+            threshold: 0.15, // Trigger when 15% of element is visible
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const revealObserver = new IntersectionObserver(revealCallback, revealOptions);
+
+        revealElements.forEach(el => {
+            revealObserver.observe(el);
+        });
+
+        // --- 4. Simple Form Feedback ---
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+
+            // Simulate sending state
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Sending...';
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Message Sent!';
+                btn.classList.remove('bg-gradient-to-r', 'from-lumina-accent', 'to-lumina-purple');
+                btn.classList.add('bg-green-600');
+
+                // Reset after 3 seconds
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('bg-green-600', 'opacity-75', 'cursor-not-allowed');
+                    btn.classList.add('bg-gradient-to-r', 'from-lumina-accent', 'to-lumina-purple');
+                    this.reset();
+                }, 3000);
+            }, 1500);
+        });
+
+    </script>
+</body>
+
+</html>

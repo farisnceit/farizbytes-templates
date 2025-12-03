@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVARE | Modern Luxury</title>
+
+    <!-- Google Fonts: Manrope for a clean, modern luxury feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Config for Custom Colors/Fonts -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Manrope', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        'novare-black': '#1a1a1a',
+                        'novare-gray': '#f4f4f4',
+                        'novare-beige': '#e8e6e1',
+                        'novare-accent': '#c2aea6', // Muted earthy tone
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'slide-in-right': 'slideInRight 1s ease-out forwards',
+                        'fade-in': 'fadeIn 0.3s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        slideInRight: {
+                            '0%': { width: '0%' },
+                            '100%': { width: '100%' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #fff;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1a1a1a;
+        }
+
+        /* Image Hover Zoom Effect */
+        .hover-zoom-img {
+            transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .group:hover .hover-zoom-img {
+            transform: scale(1.05);
+        }
+
+        /* Reveal Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Staggered Delays */
+        .delay-100 {
+            transition-delay: 0.1s;
+        }
+
+        .delay-200 {
+            transition-delay: 0.2s;
+        }
+
+        .delay-300 {
+            transition-delay: 0.3s;
+        }
+
+        /* Loader */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Modal Transitions */
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        .modal-enter-active {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 300ms ease-out, transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-exit {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .modal-exit-active {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 200ms ease-in, transform 200ms ease-in;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-novare-black antialiased overflow-x-hidden">
+
+    <!-- Loading Screen -->
+    <div id="loader">
+        <h1 class="text-4xl font-light tracking-[0.2em] animate-pulse">NOVARE</h1>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur-md border-b border-gray-100"
+        id="navbar">
+        <div class="max-w-[1440px] mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden" id="mobile-menu-btn">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+
+            <!-- Logo -->
+            <a href="#" class="text-2xl font-semibold tracking-[0.15em] uppercase">Novare</a>
+
+            <!-- Desktop Links -->
+            <div class="hidden md:flex space-x-8 text-xs font-medium tracking-widest uppercase">
+                <a href="#hero" class="hover:text-gray-500 transition-colors">Home</a>
+                <a href="#new-season" class="hover:text-gray-500 transition-colors">New In</a>
+                <a href="#collection" class="hover:text-gray-500 transition-colors">Collection</a>
+                <a href="#editorial" class="hover:text-gray-500 transition-colors">Editorial</a>
+            </div>
+
+            <!-- Icons -->
+            <div class="flex items-center space-x-5">
+                <button class="hover:text-gray-500 transition"><i data-lucide="search" class="w-5 h-5"></i></button>
+                <button class="hover:text-gray-500 transition relative">
+                    <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                    <span id="cart-count"
+                        class="absolute -top-1 -right-1 bg-black text-white text-[10px] w-3 h-3 flex items-center justify-center rounded-full opacity-0 transition-opacity">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu"
+            class="fixed inset-0 bg-white z-50 transform -translate-x-full transition-transform duration-500 flex flex-col justify-center items-center space-y-8 text-xl font-light">
+            <button id="close-menu-btn" class="absolute top-6 left-6"><i data-lucide="x" class="w-8 h-8"></i></button>
+            <a href="#" class="hover:text-gray-500">Home</a>
+            <a href="#" class="hover:text-gray-500">Woman</a>
+            <a href="#" class="hover:text-gray-500">Man</a>
+            <a href="#" class="hover:text-gray-500">Collections</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="hero" class="relative pt-20 md:pt-0 min-h-screen flex flex-col md:flex-row">
+        <!-- Left Image -->
+        <div class="w-full md:w-1/2 h-[60vh] md:h-screen relative overflow-hidden group">
+            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=2000&auto=format&fit=crop"
+                alt="Woman in Coat" class="absolute inset-0 w-full h-full object-cover object-center hover-zoom-img">
+        </div>
+
+        <!-- Right Content (Dark) -->
+        <div
+            class="w-full md:w-1/2 h-[40vh] md:h-screen bg-[#F8F8F8] flex flex-col justify-center items-start px-8 md:px-20 relative overflow-hidden">
+            <!-- Background Texture/Image blended -->
+            <div class="absolute inset-0 opacity-10 pointer-events-none">
+                <img src="https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?q=80&w=2000&auto=format&fit=crop"
+                    class="w-full h-full object-cover grayscale">
+            </div>
+
+            <div class="relative z-10 max-w-lg">
+                <span class="text-xs font-bold tracking-[0.3em] uppercase text-gray-500 mb-4 block reveal">New
+                    Collection 2024</span>
+                <h1 class="text-5xl md:text-7xl font-light leading-tight mb-8 reveal delay-100">
+                    Crafted for <br /> <span class="font-serif italic">the Modern You</span>
+                </h1>
+                <p class="text-gray-600 mb-10 leading-relaxed reveal delay-200 max-w-sm">
+                    Timeless silhouettes meet contemporary design. Discover the pieces that define the season.
+                </p>
+                <a href="#new-season"
+                    class="inline-flex items-center space-x-2 border-b border-black pb-1 hover:text-gray-600 transition-all reveal delay-300 group">
+                    <span class="uppercase tracking-widest text-sm font-medium">Discover Here</span>
+                    <i data-lucide="arrow-right"
+                        class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Philosophy / About Section -->
+    <section class="py-24 md:py-32 bg-white">
+        <div class="max-w-[1440px] mx-auto px-6">
+            <div class="flex flex-col md:flex-row gap-16 md:gap-24 items-center">
+                <!-- Text -->
+                <div class="w-full md:w-1/3 reveal">
+                    <h2 class="text-xs font-bold tracking-[0.3em] uppercase text-gray-400 mb-6">About Us</h2>
+                    <p class="text-2xl md:text-3xl font-light leading-snug">
+                        Our vision is rooted in <span
+                            class="font-serif italic text-3xl md:text-4xl">self-expression</span> — encouraging people
+                        to embrace their differences and transform uncertainty into creativity.
+                    </p>
+                    <div class="mt-8 flex gap-4">
+                        <div class="w-12 h-[1px] bg-black mt-3"></div>
+                        <p class="text-sm text-gray-500 leading-relaxed max-w-xs">
+                            Established in 2024, Novare redefines luxury through sustainable practices and
+                            uncompromising quality.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Staggered Images -->
+                <div class="w-full md:w-2/3 grid grid-cols-2 gap-4 md:gap-8 items-center">
+                    <div class="reveal delay-100 relative pt-12">
+                        <img src="https://images.unsplash.com/photo-1548624149-f9bc14c51b4c?q=80&w=800&auto=format&fit=crop"
+                            class="w-full aspect-[3/4] object-cover grayscale hover:grayscale-0 transition duration-700">
+                    </div>
+                    <div class="reveal delay-200 -mt-12">
+                        <img src="https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?q=80&w=800&auto=format&fit=crop"
+                            class="w-full aspect-[3/4] object-cover grayscale hover:grayscale-0 transition duration-700">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Split Section -->
+    <section class="grid grid-cols-1 md:grid-cols-2 h-[80vh] w-full" id="collection">
+        <!-- Man -->
+        <div class="relative group overflow-hidden cursor-pointer">
+            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=1200&auto=format&fit=crop"
+                class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                alt="Man">
+            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500"></div>
+            <div class="absolute inset-0 flex flex-col justify-center items-center text-white z-10">
+                <h2 class="text-6xl font-thin tracking-wider mb-4 opacity-90">MAN</h2>
+                <span
+                    class="opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 uppercase tracking-widest text-xs border border-white px-6 py-3">
+                    View Collection
+                </span>
+            </div>
+        </div>
+
+        <!-- Woman -->
+        <div class="relative group overflow-hidden cursor-pointer">
+            <img src="https://images.unsplash.com/photo-1582211594533-268f4f1edcb9?q=80&w=1200&auto=format&fit=crop"
+                class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                alt="Woman">
+            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500"></div>
+            <div class="absolute inset-0 flex flex-col justify-center items-center text-white z-10">
+                <h2 class="text-6xl font-thin tracking-wider mb-4 opacity-90">WOMAN</h2>
+                <span
+                    class="opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 uppercase tracking-widest text-xs border border-white px-6 py-3">
+                    View Collection
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Top Picks / Product Grid -->
+    <section class="py-24 bg-[#FAFAFA]" id="new-season">
+        <div class="max-w-[1440px] mx-auto px-6">
+            <div class="flex justify-between items-end mb-12 reveal">
+                <h3 class="text-3xl font-light">Top Picks of the Season</h3>
+                <a href="#"
+                    class="text-xs uppercase tracking-widest border-b border-gray-300 pb-1 hover:border-black transition-colors">View
+                    All</a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                <!-- Product 1 -->
+                <div class="group cursor-pointer reveal delay-100 product-card" data-title="Relaxed Wool Jacket"
+                    data-price="$215.00"
+                    data-img="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=800&auto=format&fit=crop">
+                    <div class="relative overflow-hidden mb-4 bg-gray-100 aspect-[3/4]">
+                        <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=800&auto=format&fit=crop"
+                            class="w-full h-full object-cover hover-zoom-img">
+                        <button
+                            class="absolute bottom-4 right-4 bg-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg hover:bg-black hover:text-white">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Outerwear</p>
+                            <h4 class="text-lg font-medium group-hover:underline decoration-1 underline-offset-4">
+                                Relaxed Wool Jacket</h4>
+                        </div>
+                        <span class="text-sm font-semibold">$215.00</span>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="group cursor-pointer reveal delay-200 product-card" data-title="Soft Linen Wrap Dress"
+                    data-price="$180.00"
+                    data-img="https://images.unsplash.com/photo-1550614000-4b9519e02d48?q=80&w=800&auto=format&fit=crop">
+                    <div class="relative overflow-hidden mb-4 bg-gray-100 aspect-[3/4]">
+                        <img src="https://images.unsplash.com/photo-1550614000-4b9519e02d48?q=80&w=800&auto=format&fit=crop"
+                            class="w-full h-full object-cover hover-zoom-img">
+                        <button
+                            class="absolute bottom-4 right-4 bg-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg hover:bg-black hover:text-white">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Dresses</p>
+                            <h4 class="text-lg font-medium group-hover:underline decoration-1 underline-offset-4">Soft
+                                Linen Wrap Dress</h4>
+                        </div>
+                        <span class="text-sm font-semibold">$180.00</span>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="group cursor-pointer reveal delay-300 product-card" data-title="Classic Jersey Sweatshirt"
+                    data-price="$78.00"
+                    data-img="https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=800&auto=format&fit=crop">
+                    <div class="relative overflow-hidden mb-4 bg-gray-100 aspect-[3/4]">
+                        <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=800&auto=format&fit=crop"
+                            class="w-full h-full object-cover hover-zoom-img">
+                        <button
+                            class="absolute bottom-4 right-4 bg-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg hover:bg-black hover:text-white">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Knits</p>
+                            <h4 class="text-lg font-medium group-hover:underline decoration-1 underline-offset-4">
+                                Classic Jersey Sweatshirt</h4>
+                        </div>
+                        <span class="text-sm font-semibold">$78.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Editorial / Parallax Section -->
+    <section class="relative h-[80vh] md:h-[600px] flex items-center overflow-hidden" id="editorial">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=2000&auto=format&fit=crop"
+                class="w-full h-full object-cover object-top" style="object-position: 50% 30%;">
+            <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
+        </div>
+
+        <div class="relative z-10 max-w-[1440px] mx-auto px-6 w-full text-white">
+            <div class="max-w-xl reveal">
+                <p class="text-xs font-bold tracking-[0.3em] uppercase mb-4 opacity-80">Editorial</p>
+                <h2 class="text-5xl md:text-6xl font-light leading-none mb-6">The New <br> Season Edit</h2>
+                <p class="text-lg opacity-90 mb-8 max-w-md font-light">
+                    Explore the textures and tones defining this year's most coveted looks. Minimalist aesthetics for
+                    maximum impact.
+                </p>
+                <button
+                    class="bg-white text-black px-8 py-4 uppercase tracking-widest text-xs font-bold hover:bg-neutral-200 transition-colors">
+                    Explore the Edit
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- More Products (Grid) -->
+    <section class="py-24 bg-white">
+        <div class="max-w-[1440px] mx-auto px-6">
+            <div class="flex justify-between items-end mb-12">
+                <h3 class="text-3xl font-light">Essentials</h3>
+                <div class="hidden md:flex space-x-6 text-xs font-bold uppercase tracking-widest text-gray-400">
+                    <a href="#" class="text-black border-b border-black pb-1">All</a>
+                    <a href="#" class="hover:text-black transition-colors">Jeans</a>
+                    <a href="#" class="hover:text-black transition-colors">Tops</a>
+                    <a href="#" class="hover:text-black transition-colors">Outerwear</a>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Compact Product Card 1 -->
+                <div class="group cursor-pointer reveal product-card" data-title="Textured Knit Vest"
+                    data-price="$69.00"
+                    data-img="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=600&auto=format&fit=crop">
+                    <div class="aspect-square bg-gray-50 overflow-hidden mb-3">
+                        <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=600&auto=format&fit=crop"
+                            class="w-full h-full object-cover hover-zoom-img mix-blend-multiply">
+                    </div>
+                    <h4 class="text-sm font-medium">Textured Knit Vest</h4>
+                    <p class="text-xs text-gray-500 mt-1">$69.00</p>
+                </div>
+
+                <!-- Compact Product Card 2 -->
+                <div class="group cursor-pointer reveal delay-100 product-card" data-title="Wide Sleeve Denim"
+                    data-price="$95.00"
+                    data-img="https://images.unsplash.com/photo-1578932750294-f5075e85f44a?q=80&w=600&auto=format&fit=crop">
+                    <div class="aspect-square bg-gray-50 overflow-hidden mb-3">
+                        <img src="https://images.unsplash.com/photo-1578932750294-f5075e85f44a?q=80&w=600&auto=format&fit=crop"
+                            class="w-full h-full object-cover hover-zoom-img mix-blend-multiply">
+                    </div>
+                    <h4 class="text-sm font-medium">Wide Sleeve Denim</h4>
+                    <p class="text-xs text-gray-500 mt-1">$95.00</p>
+                </div>
+
+                <!-- Compact Product Card 3 -->
+                <div class="group cursor-pointer reveal delay-200 product-card" data-title="Linen Shirt"
+                    data-price="$55.00"
+                    data-img="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?q=80&w=600&auto=format&fit=crop">
+                    <div class="aspect-square bg-gray-50 overflow-hidden mb-3">
+                        <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?q=80&w=600&auto=format&fit=crop"
+                            class="w-full h-full object-cover hover-zoom-img mix-blend-multiply">
+                    </div>
+                    <h4 class="text-sm font-medium">Linen Shirt</h4>
+                    <p class="text-xs text-gray-500 mt-1">$55.00</p>
+                </div>
+
+                <!-- Compact Product Card 4 -->
+                <div class="group cursor-pointer reveal delay-300 product-card" data-title="High Waist Shorts"
+                    data-price="$45.00"
+                    data-img="https://images.unsplash.com/photo-1591195853828-11db59a44f6b?q=80&w=600&auto=format&fit=crop">
+                    <div class="aspect-square bg-gray-50 overflow-hidden mb-3">
+                        <img src="https://images.unsplash.com/photo-1591195853828-11db59a44f6b?q=80&w=600&auto=format&fit=crop"
+                            class="w-full h-full object-cover hover-zoom-img mix-blend-multiply">
+                    </div>
+                    <h4 class="text-sm font-medium">High Waist Shorts</h4>
+                    <p class="text-xs text-gray-500 mt-1">$45.00</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Banner / CTA -->
+    <section class="relative py-32 bg-[#1a1a1a] text-white overflow-hidden">
+        <div class="absolute right-0 top-0 h-full w-full md:w-1/2 opacity-30">
+            <img src="https://images.unsplash.com/photo-1534126511673-b6899657816a?q=80&w=1500&auto=format&fit=crop"
+                class="w-full h-full object-cover grayscale">
+        </div>
+        <div class="max-w-[1440px] mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center justify-between">
+            <div class="max-w-xl mb-8 md:mb-0 reveal">
+                <h2 class="text-4xl md:text-5xl font-light mb-6">Find the style that <br> <span
+                        class="font-serif italic text-gray-400">feels like you.</span></h2>
+                <div
+                    class="flex items-center space-x-2 border-b border-white pb-2 w-fit cursor-pointer hover:text-gray-300 hover:border-gray-300 transition-colors">
+                    <span class="uppercase tracking-widest text-sm">Shop Now</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Footer -->
+    <footer class="bg-[#111] text-white pt-20 pb-10 border-t border-gray-800">
+        <div class="max-w-[1440px] mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-start mb-16">
+                <div class="mb-10 md:mb-0">
+                    <h2 class="text-3xl font-light tracking-[0.2em] uppercase mb-8">Novare</h2>
+                    <p class="text-gray-400 text-sm max-w-xs leading-relaxed">
+                        Designed for the modern individual. Quality, sustainability, and timeless aesthetics.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-12 md:gap-24 text-sm text-gray-400">
+                    <div class="flex flex-col space-y-4">
+                        <h4 class="text-white font-bold uppercase tracking-widest text-xs mb-2">Company</h4>
+                        <a href="#" class="hover:text-white transition">Our Story</a>
+                        <a href="#" class="hover:text-white transition">Sustainability</a>
+                        <a href="#" class="hover:text-white transition">Careers</a>
+                        <a href="#" class="hover:text-white transition">Press</a>
+                    </div>
+                    <div class="flex flex-col space-y-4">
+                        <h4 class="text-white font-bold uppercase tracking-widest text-xs mb-2">Support</h4>
+                        <a href="#" class="hover:text-white transition">Shipping</a>
+                        <a href="#" class="hover:text-white transition">Returns</a>
+                        <a href="#" class="hover:text-white transition">Sizing Guide</a>
+                        <a href="#" class="hover:text-white transition">FAQ</a>
+                    </div>
+                    <div class="flex flex-col space-y-4">
+                        <h4 class="text-white font-bold uppercase tracking-widest text-xs mb-2">Social</h4>
+                        <a href="#" class="hover:text-white transition">Instagram</a>
+                        <a href="#" class="hover:text-white transition">Pinterest</a>
+                        <a href="#" class="hover:text-white transition">Twitter</a>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                <p>&copy; 2024 Novare Clothing. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white">Privacy Policy</a>
+                    <a href="#" class="hover:text-white">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- PRODUCT MODAL -->
+    <div id="product-modal-backdrop"
+        class="fixed inset-0 bg-black/60 z-[60] hidden transition-opacity duration-300 opacity-0 backdrop-blur-sm">
+    </div>
+    <div id="product-modal"
+        class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 pointer-events-none">
+        <div
+            class="bg-white w-full max-w-5xl h-auto max-h-[90vh] overflow-y-auto flex flex-col md:flex-row shadow-2xl relative pointer-events-auto modal-enter transition-all duration-300">
+            <!-- Close Button -->
+            <button id="close-modal-btn"
+                class="absolute top-4 right-4 z-20 bg-white/80 rounded-full p-2 hover:bg-black hover:text-white transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+
+            <!-- Left: Image -->
+            <div class="w-full md:w-1/2 bg-gray-100 relative min-h-[400px]">
+                <img id="modal-img" src="" alt="Product Detail" class="absolute inset-0 w-full h-full object-cover">
+            </div>
+
+            <!-- Right: Details -->
+            <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+                <span class="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-2">New Arrival</span>
+                <h2 id="modal-title" class="text-3xl md:text-4xl font-light mb-4 text-novare-black">Product Title</h2>
+                <p id="modal-price" class="text-xl font-medium mb-6">$0.00</p>
+
+                <p class="text-gray-500 leading-relaxed mb-8 text-sm">
+                    Expertly crafted from sustainable fibers, this piece embodies the Novare philosophy of understated
+                    luxury. Designed for versatility and built to last, it features a relaxed fit perfect for layering.
+                </p>
+
+                <!-- Size Selector -->
+                <div class="mb-8">
+                    <p class="text-xs font-bold uppercase tracking-widest mb-3">Select Size</p>
+                    <div class="flex space-x-3" id="size-selector">
+                        <button
+                            class="w-12 h-12 border border-gray-200 hover:border-black flex items-center justify-center text-sm transition-colors focus:bg-black focus:text-white focus:border-black">S</button>
+                        <button
+                            class="w-12 h-12 border border-gray-200 hover:border-black flex items-center justify-center text-sm transition-colors focus:bg-black focus:text-white focus:border-black">M</button>
+                        <button
+                            class="w-12 h-12 border border-gray-200 hover:border-black flex items-center justify-center text-sm transition-colors focus:bg-black focus:text-white focus:border-black">L</button>
+                        <button
+                            class="w-12 h-12 border border-gray-200 hover:border-black flex items-center justify-center text-sm transition-colors focus:bg-black focus:text-white focus:border-black">XL</button>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button id="add-to-cart-btn"
+                        class="flex-1 border border-black py-4 uppercase tracking-widest text-xs font-bold hover:bg-gray-50 transition-colors">
+                        Add to Cart
+                    </button>
+                    <button id="buy-now-btn"
+                        class="flex-1 bg-black text-white py-4 uppercase tracking-widest text-xs font-bold hover:bg-gray-800 transition-colors shadow-lg">
+                        Buy Now
+                    </button>
+                </div>
+
+                <p class="mt-6 text-xs text-gray-400 text-center flex items-center justify-center gap-2">
+                    <i data-lucide="truck" class="w-3 h-3"></i> Free shipping on orders over $200
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"
+        class="fixed bottom-6 right-6 bg-black text-white px-6 py-4 rounded shadow-2xl transform translate-y-20 opacity-0 transition-all duration-500 z-[80] flex items-center gap-3">
+        <i data-lucide="check-circle" class="text-green-400 w-5 h-5"></i>
+        <div>
+            <p class="text-sm font-bold">Added to Cart</p>
+            <p class="text-xs text-gray-400" id="toast-message">Relaxed Wool Jacket - Size M</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Loader
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 500);
+            }, 1000);
+        });
+
+        // Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-sm');
+                navbar.classList.add('py-3');
+                navbar.classList.remove('py-4');
+            } else {
+                navbar.classList.remove('shadow-sm');
+                navbar.classList.remove('py-3');
+                navbar.classList.add('py-4');
+            }
+        });
+
+        // Intersection Observer for Reveal Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Mobile Menu Logic
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        function toggleMenu() {
+            const isClosed = mobileMenu.classList.contains('-translate-x-full');
+            if (isClosed) {
+                mobileMenu.classList.remove('-translate-x-full');
+            } else {
+                mobileMenu.classList.add('-translate-x-full');
+            }
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+
+        // --- PRODUCT MODAL LOGIC ---
+        const modal = document.getElementById('product-modal');
+        const backdrop = document.getElementById('product-modal-backdrop');
+        const modalContent = modal.querySelector('.modal-enter');
+        const closeBtn = document.getElementById('close-modal-btn');
+        const productCards = document.querySelectorAll('.product-card');
+
+        // Elements to update
+        const modalImg = document.getElementById('modal-img');
+        const modalTitle = document.getElementById('modal-title');
+        const modalPrice = document.getElementById('modal-price');
+
+        // Cart Logic
+        let selectedSize = 'M'; // Default
+        const sizeButtons = document.querySelectorAll('#size-selector button');
+        const addToCartBtn = document.getElementById('add-to-cart-btn');
+        const buyNowBtn = document.getElementById('buy-now-btn');
+        const cartCount = document.getElementById('cart-count');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        let currentCartCount = 0;
+
+        // Open Modal
+        function openModal(card) {
+            const title = card.getAttribute('data-title');
+            const price = card.getAttribute('data-price');
+            const img = card.getAttribute('data-img');
+
+            modalTitle.innerText = title;
+            modalPrice.innerText = price;
+            modalImg.src = img;
+
+            backdrop.classList.remove('hidden');
+            modal.classList.remove('hidden');
+
+            // Animation Trigger
+            setTimeout(() => {
+                backdrop.classList.remove('opacity-0');
+                modalContent.classList.add('modal-enter-active');
+                modalContent.classList.remove('modal-enter');
+            }, 10);
+        }
+
+        // Close Modal
+        function closeModal() {
+            backdrop.classList.add('opacity-0');
+            modalContent.classList.remove('modal-enter-active');
+            modalContent.classList.add('modal-enter'); // Reset scale/opacity
+
+            setTimeout(() => {
+                backdrop.classList.add('hidden');
+                modal.classList.add('hidden');
+            }, 300); // Match transition duration
+        }
+
+        // Event Listeners for Products
+        productCards.forEach(card => {
+            card.addEventListener('click', () => openModal(card));
+        });
+
+        closeBtn.addEventListener('click', closeModal);
+        backdrop.addEventListener('click', closeModal);
+
+        // Size Selection
+        sizeButtons.forEach(btn => {
+            btn.addEventListener('click', function () {
+                // Reset others
+                sizeButtons.forEach(b => {
+                    b.classList.remove('bg-black', 'text-white', 'border-black');
+                    b.classList.add('border-gray-200');
+                });
+                // Activate clicked
+                this.classList.remove('border-gray-200');
+                this.classList.add('bg-black', 'text-white', 'border-black');
+                selectedSize = this.innerText;
+            });
+        });
+
+        // Initialize default size style
+        sizeButtons[1].click();
+
+        // Add to Cart
+        addToCartBtn.addEventListener('click', () => {
+            currentCartCount++;
+            cartCount.innerText = currentCartCount;
+            cartCount.classList.remove('opacity-0');
+
+            // Show Toast
+            toastMessage.innerText = `${modalTitle.innerText} - Size ${selectedSize}`;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+
+            // Hide Toast after 3s
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+
+            closeModal();
+        });
+
+        // Buy Now
+        buyNowBtn.addEventListener('click', () => {
+            alert(`Proceeding to checkout with ${modalTitle.innerText} (Size ${selectedSize})`);
+            closeModal();
+        });
+
+    </script>
+</body>
+
+</html>

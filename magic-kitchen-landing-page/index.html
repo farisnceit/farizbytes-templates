@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Gilded Cauldron | Magical Recipes</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Quicksand:wght@300;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --magic-purple: #2a0a3b;
+            --magic-indigo: #4b1d68;
+            --magic-gold: #ffd700;
+            --magic-accent: #ff00cc;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--magic-purple);
+            background: radial-gradient(circle at center, #3a1c52 0%, #150524 100%);
+            color: #fff;
+            font-family: 'Quicksand', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        .navbar-brand,
+        .modal-title {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* --- Animated Background --- */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- Navbar --- */
+        .navbar {
+            background: rgba(21, 5, 36, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .navbar-brand {
+            color: var(--magic-gold) !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .nav-link {
+            color: #ddd !important;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--magic-gold) !important;
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            padding: 100px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(to right, #fff, var(--magic-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #ccc;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .btn-magic {
+            background: linear-gradient(45deg, var(--magic-indigo), #7b2cbf);
+            border: 1px solid var(--magic-gold);
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 15px rgba(75, 29, 104, 0.5);
+        }
+
+        .btn-magic:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+            color: #fff;
+        }
+
+        .btn-magic::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-magic:hover::after {
+            left: 100%;
+        }
+
+        /* --- Recipe Cards --- */
+        .recipe-grid {
+            padding: 50px 0;
+        }
+
+        .magic-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 100%;
+            position: relative;
+            cursor: pointer;
+            /* Added cursor pointer */
+        }
+
+        .magic-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--magic-gold);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .card-img-wrapper {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .magic-card:hover .card-img-wrapper img {
+            transform: scale(1.1);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-title {
+            color: var(--magic-gold);
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        .card-text {
+            color: #ccc;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+
+        .magic-badge {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--magic-gold);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            margin-right: 5px;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        .recipe-stats {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 15px;
+            margin-top: 15px;
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+
+        /* --- Magic Modal Animations & Styles --- */
+        .modal.fade .modal-dialog {
+            transform: scale(0.7) translateY(50px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            /* Bouncy magic effect */
+        }
+
+        .modal.show .modal-dialog {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .magic-modal-content {
+            background: linear-gradient(135deg, #2a0a3b 0%, #150524 100%);
+            border: 2px solid var(--magic-gold);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);
+            color: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .magic-modal-header {
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .magic-modal-body {
+            padding: 0;
+        }
+
+        .modal-img-container {
+            height: 250px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-img-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to top, #150524, transparent);
+        }
+
+        .magic-list-group-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: #ddd;
+            margin-bottom: 5px;
+            border-radius: 5px !important;
+        }
+
+        .btn-close-magic {
+            background: none;
+            border: none;
+            color: var(--magic-gold);
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .btn-close-magic:hover {
+            transform: rotate(90deg) scale(1.1);
+            color: #fff;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid var(--glass-border);
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 50px;
+            color: #888;
+        }
+
+        /* --- Keyframe Animations --- */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Loader */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #150524;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+
+        .cauldron-loader {
+            font-size: 4rem;
+            color: var(--magic-gold);
+            animation: fa-bounce 2s infinite;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loader" class="loader-container">
+        <div class="text-center">
+            <i class="fa-solid fa-cauldron cauldron-loader"></i>
+            <p class="mt-3" style="color: var(--magic-gold); font-family: 'Cinzel';">Brewing Content...</p>
+        </div>
+    </div>
+
+    <!-- Animated Background -->
+    <canvas id="starfield"></canvas>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fa-solid fa-hat-wizard me-2"></i>The Gilded Cauldron</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Grimoire</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Potions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Culinary Sorcery</h1>
+            <p>Discover recipes forged in dragon fire and seasoned with starlight. Whimsical dishes for the adventurous
+                enchanter.</p>
+            <button class="btn btn-magic" onclick="scrollToRecipes()">View Grimoire</button>
+        </div>
+    </section>
+
+    <!-- Recipe Grid -->
+    <section class="recipe-grid" id="recipes-section">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <h2 class="mb-3" style="color: var(--magic-gold);">Latest Incantations</h2>
+                    <div class="d-flex justify-content-center gap-2">
+                        <button class="btn btn-sm btn-outline-light rounded-pill px-3 active"
+                            onclick="filterRecipes('all')">All</button>
+                        <button class="btn btn-sm btn-outline-light rounded-pill px-3"
+                            onclick="filterRecipes('potion')">Potions</button>
+                        <button class="btn btn-sm btn-outline-light rounded-pill px-3"
+                            onclick="filterRecipes('edible')">Edibles</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4" id="recipe-container">
+                <!-- Recipes will be injected here via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Magic Modal -->
+    <div class="modal fade" id="recipeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content magic-modal-content">
+                <div class="magic-modal-header p-3 d-flex justify-content-between align-items-center">
+                    <h4 class="modal-title m-0" id="modalTitle" style="color: var(--magic-gold);">Recipe Title</h4>
+                    <button type="button" class="btn-close-magic" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="magic-modal-body">
+                    <div class="modal-img-container">
+                        <img id="modalImage" src="" alt="">
+                        <div class="modal-img-overlay"></div>
+                    </div>
+                    <div class="p-4">
+                        <div class="row">
+                            <div class="col-md-4 border-end border-secondary">
+                                <h5 style="color: var(--magic-gold);"><i class="fa-solid fa-scroll me-2"></i>Ingredients
+                                </h5>
+                                <ul class="list-group list-group-flush" id="modalIngredients">
+                                    <!-- Ingredients injected here -->
+                                </ul>
+                                <div class="mt-4">
+                                    <p class="mb-1 text-muted"><i class="fa-solid fa-clock me-2"></i>Time: <span
+                                            id="modalTime" class="text-white"></span></p>
+                                    <p class="mb-1 text-muted"><i class="fa-solid fa-wand-sparkles me-2"></i>Difficulty:
+                                        <span id="modalDifficulty" class="text-white"></span></p>
+                                </div>
+                            </div>
+                            <div class="col-md-8 ps-md-4 mt-4 mt-md-0">
+                                <h5 style="color: var(--magic-gold);"><i
+                                        class="fa-solid fa-book-open me-2"></i>Instructions</h5>
+                                <p id="modalDescription" class="mb-4 fst-italic" style="color: #aaa;"></p>
+                                <div id="modalInstructions" style="line-height: 1.8;">
+                                    <!-- Instructions injected here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 The Gilded Cauldron. DO NOT feed the sprites after midnight.</p>
+            <div class="mt-3">
+                <a href="#" class="text-white me-3"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="text-white me-3"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#" class="text-white"><i class="fa-brands fa-discord"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Main Logic -->
+    <script>
+        // --- 1. The Magic Data (JSON) ---
+        const magicRecipes = [
+            {
+                id: 1,
+                title: "Phoenix Ember Soup",
+                category: "edible",
+                description: "A spicy tomato-basil broth that glows warmly. Restores vitality and cures the common cold.",
+                image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                ingredients: ["3 Fire Peppers", "1 cup Sun-dried Tomatoes", "1 Phoenix Feather (Mock)", "500ml Vegetable Broth"],
+                difficulty: "Medium",
+                prepTime: "45 min",
+                instructions: [
+                    "Roast the fire peppers until the skin blisters.",
+                    "Simmer tomatoes and vegetable broth in a copper pot.",
+                    "Add the roasted peppers and blend until smooth.",
+                    "Garnish with a mock Phoenix feather before serving to induce warmth."
+                ]
+            },
+            {
+                id: 2,
+                title: "Moonlight Berry Tart",
+                category: "edible",
+                description: "A delicate blueberry tart that shimmers under moonlight. Grants temporary night vision.",
+                image: "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                ingredients: ["2 cups Moonberries", "1 cup Star-dust Flour", "1/2 cup Silver Sugar", "Butter"],
+                difficulty: "Hard",
+                prepTime: "2 hrs",
+                instructions: [
+                    "Sift the Star-dust flour under the light of a full moon.",
+                    "Mix with butter to form a flaky crust and chill.",
+                    "Simmer Moonberries with Silver Sugar until thickened.",
+                    "Fill the tart shell and bake until the crust glimmers."
+                ]
+            },
+            {
+                id: 3,
+                title: "Elixir of Clarity",
+                category: "potion",
+                description: "A refreshing mint and lime concoction. Clears the mind and heightens focus.",
+                image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                ingredients: ["500ml Crystal Water", "Handful Mint Leaves", "2 Lime Essence Drops", "Ice from the North"],
+                difficulty: "Easy",
+                prepTime: "10 min",
+                instructions: [
+                    "Crush the mint leaves gently to release their oils.",
+                    "Pour Crystal Water over the mint and let steep.",
+                    "Add exactly two drops of Lime Essence.",
+                    "Serve over ice. Do not stir, or the clarity will cloud."
+                ]
+            },
+            {
+                id: 4,
+                title: "Goblin Gold Steaks",
+                category: "edible",
+                description: "Rich, savory glazed seitan steaks. A favorite among the mountain dwelling folk.",
+                image: "https://images.unsplash.com/photo-1600891964092-4316c288032e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                ingredients: ["2 Large Forest Mushrooms", "1/4 cup Gold Glaze", "Earth Spices (Cumin, Thyme)", "Seitan Block"],
+                difficulty: "Medium",
+                prepTime: "50 min",
+                instructions: [
+                    "Slice the Seitan into thick, hearty steaks.",
+                    "Marinate in Earth Spices for at least one hour.",
+                    "Sear in a hot iron skillet until browned.",
+                    "Brush generously with Gold Glaze before serving."
+                ]
+            },
+            {
+                id: 5,
+                title: "Levitation Lager",
+                category: "potion",
+                description: "A frothy, golden brew. Drink with caution: may cause temporary weightlessness.",
+                image: "https://images.unsplash.com/photo-1566633806327-68e152aaf26d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                ingredients: ["Cloud Hops", "Air Bubble Yeast", "Malted Barley", "Spring Water"],
+                difficulty: "Medium",
+                prepTime: "30 days",
+                instructions: [
+                    "Boil the Malted Barley with spring water.",
+                    "Add Cloud Hops at the very end of the boil.",
+                    "Cool and pitch the Air Bubble Yeast.",
+                    "Ferment for 30 days in a floating barrel. Secure with rope."
+                ]
+            },
+            {
+                id: 6,
+                title: "Enchanted Forest Salad",
+                category: "edible",
+                description: "Greens gathered by fairies. Tastes like spring rain and sunlight.",
+                image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                ingredients: ["Bunch of Emerald Kale", "Morning Dew Dressing", "Edible Flowers", "Toasted Nuts"],
+                difficulty: "Easy",
+                prepTime: "15 min",
+                instructions: [
+                    "Massage the Emerald Kale until tender.",
+                    "Toss gently with Morning Dew Dressing.",
+                    "Sprinkle with toasted nuts for crunch.",
+                    "Arrange edible flowers in a protective circle on top."
+                ]
+            }
+        ];
+
+        // --- 2. Rendering Logic ---
+        const container = document.getElementById('recipe-container');
+        const modal = new bootstrap.Modal(document.getElementById('recipeModal'));
+
+        function renderRecipes(filter = 'all') {
+            container.innerHTML = ''; // Clear existing
+
+            const filteredData = filter === 'all'
+                ? magicRecipes
+                : magicRecipes.filter(r => r.category === filter);
+
+            filteredData.forEach(recipe => {
+                const col = document.createElement('div');
+                col.className = 'col-md-6 col-lg-4';
+
+                // Ingredients badges (show first 3 only for card)
+                const badges = recipe.ingredients.slice(0, 3).map(ing => {
+                    // Clean up ingredient name for badge (remove amounts)
+                    const simpleName = ing.replace(/^\d+.*\s/, '');
+                    return `<span class="magic-badge">${simpleName}</span>`
+                }).join('');
+
+                // Icon selection based on category
+                const icon = recipe.category === 'potion' ? 'fa-flask' : 'fa-utensils';
+
+                col.innerHTML = `
+                    <div class="magic-card" onclick="openRecipeModal(${recipe.id})">
+                        <div class="card-img-wrapper">
+                            <img src="${recipe.image}" alt="${recipe.title}">
+                            <div style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.6); color:#fff; padding:5px 10px; border-radius:15px; font-size:0.8rem;">
+                                <i class="fa-solid ${icon}"></i> ${recipe.category.charAt(0).toUpperCase() + recipe.category.slice(1)}
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">${recipe.title}</h3>
+                            <p class="card-text">${recipe.description}</p>
+                            <div class="mb-3">
+                                ${badges}
+                            </div>
+                            <div class="recipe-stats">
+                                <span><i class="fa-regular fa-clock"></i> ${recipe.prepTime}</span>
+                                <span><i class="fa-solid fa-wand-sparkles"></i> ${recipe.difficulty}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Add fade-in animation
+                col.style.opacity = '0';
+                col.style.transform = 'translateY(20px)';
+                col.style.transition = 'all 0.5s ease';
+                container.appendChild(col);
+
+                // Trigger animation slightly staggered
+                setTimeout(() => {
+                    col.style.opacity = '1';
+                    col.style.transform = 'translateY(0)';
+                }, 100);
+            });
+        }
+
+        // --- Modal Logic ---
+        function openRecipeModal(id) {
+            const recipe = magicRecipes.find(r => r.id === id);
+            if (!recipe) return;
+
+            // Populate Modal Elements
+            document.getElementById('modalTitle').textContent = recipe.title;
+            document.getElementById('modalImage').src = recipe.image;
+            document.getElementById('modalDescription').textContent = recipe.description;
+            document.getElementById('modalTime').textContent = recipe.prepTime;
+            document.getElementById('modalDifficulty').textContent = recipe.difficulty;
+
+            // Populate Ingredients
+            const ingList = document.getElementById('modalIngredients');
+            ingList.innerHTML = recipe.ingredients.map(ing =>
+                `<li class="list-group-item magic-list-group-item"><i class="fa-solid fa-check text-warning me-2"></i>${ing}</li>`
+            ).join('');
+
+            // Populate Instructions
+            const instList = document.getElementById('modalInstructions');
+            instList.innerHTML = recipe.instructions.map((step, index) =>
+                `<div class="d-flex mb-3">
+                    <div class="me-3">
+                        <span class="badge rounded-circle bg-warning text-dark" style="width:25px; height:25px; display:flex; align-items:center; justify-content:center;">${index + 1}</span>
+                    </div>
+                    <div>${step}</div>
+                </div>`
+            ).join('');
+
+            // Show Modal
+            modal.show();
+        }
+
+        function filterRecipes(category) {
+            renderRecipes(category);
+            // Update active button state
+            const buttons = document.querySelectorAll('.btn-outline-light');
+            buttons.forEach(btn => {
+                if (btn.textContent.toLowerCase().includes(category === 'all' ? 'all' : category)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        function scrollToRecipes() {
+            document.getElementById('recipes-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- 3. Particle Background Animation (Canvas) ---
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let particlesArray;
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = (Math.random() * 1) - 0.5;
+                this.speedY = (Math.random() * 1) - 0.5;
+                this.color = Math.random() > 0.5 ? '#ffd700' : '#ffffff';
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                // Wrap around screen
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            const numberOfParticles = 100;
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
+        });
+
+        // --- Initialization ---
+        window.addEventListener('load', () => {
+            // Remove loader
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 500);
+
+            // Init content
+            renderRecipes();
+            initParticles();
+            animateParticles();
+        });
+
+    </script>
+</body>
+
+</html>
