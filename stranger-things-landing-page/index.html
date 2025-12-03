@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stranger Things - Episode Guide</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Benguiat+ITC:wght@700&family=Libre+Baskerville:wght@400;700&family=Rubik+Glitch&display=swap"
+        rel="stylesheet">
+
+    <!-- Custom Styles configuration for Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        stranger: ['"Libre Baskerville"', 'serif'],
+                        mono: ['"Courier New"', 'monospace'],
+                    },
+                    colors: {
+                        red: {
+                            500: '#ff0000',
+                            600: '#c20000',
+                            900: '#880000',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 5s ease-in-out infinite',
+                        'bounce-short': 'bounceShort 1s infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)', opacity: '0.2' },
+                            '50%': { transform: 'translateY(-20px)', opacity: '0.5' },
+                        },
+                        bounceShort: {
+                            '0%, 100%': { transform: 'translateY(0) rotate(-12deg)' },
+                            '50%': { transform: 'translateY(-5px) rotate(-12deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #000;
+            color: #c20000;
+            overflow-x: hidden;
+        }
+
+        /* Text Effects */
+        .text-glow {
+            text-shadow: 0 0 10px #c20000, 0 0 20px #c20000, 0 0 30px #c20000;
+        }
+
+        .text-glow-soft {
+            text-shadow: 0 0 5px #c20000;
+        }
+
+        /* CRT Effect */
+        .crt-overlay {
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+        }
+
+        /* UI Elements */
+        .clip-path-slant {
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+        }
+
+        .card-hover:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 25px rgba(194, 0, 0, 0.4);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #880000;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c20000;
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body class="font-serif selection:bg-red-900 selection:text-white">
+
+    <!-- CRT Overlay -->
+    <div class="crt-overlay"></div>
+
+    <!-- Navigation -->
+    <nav
+        class="fixed top-0 w-full z-40 bg-black/80 backdrop-blur-md border-b border-red-900/30 px-6 py-4 flex justify-between items-center transition-all duration-300">
+        <div class="font-stranger text-2xl md:text-3xl font-bold text-red-600 tracking-widest text-glow-soft">
+            STRANGER THINGS
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="hidden md:block text-xs text-red-400 font-mono tracking-widest">
+                PROGRESS: <span id="progress-text">0%</span>
+            </div>
+            <div class="w-24 md:w-32 h-2 bg-gray-900 rounded-full overflow-hidden border border-red-900/50">
+                <div id="progress-bar" class="h-full bg-red-600 transition-all duration-500 shadow-[0_0_10px_#ff0000]"
+                    style="width: 0%"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative h-[80vh] flex flex-col justify-center items-center text-center overflow-hidden">
+        <!-- Background Animation -->
+        <div
+            class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-red-900/20 via-black to-black opacity-60 animate-pulse-slow">
+        </div>
+
+        <!-- Floating Particles Container -->
+        <div id="particles" class="absolute inset-0 pointer-events-none"></div>
+
+        <div id="hero-content" class="relative z-10 transition-all duration-1000 transform">
+            <h1
+                class="font-stranger text-5xl md:text-8xl lg:text-9xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-red-500 to-red-900 leading-tight tracking-tighter drop-shadow-[0_0_15px_rgba(255,0,0,0.5)] mb-4">
+                STRANGER<br />THINGS
+            </h1>
+            <p class="font-mono text-red-400/70 text-sm md:text-lg tracking-[0.3em] uppercase mb-12">
+                The Upside Down Awaits
+            </p>
+
+            <button onclick="document.getElementById('episodes-section').scrollIntoView()"
+                class="group relative px-8 py-3 bg-transparent border border-red-600 text-red-500 font-mono uppercase tracking-widest hover:bg-red-600 hover:text-black transition-all duration-300 cursor-pointer">
+                <span class="relative z-10 flex items-center gap-2">
+                    Enter Hawkins <i data-lucide="chevron-down" class="w-4 h-4 group-hover:animate-bounce"></i>
+                </span>
+                <div
+                    class="absolute inset-0 bg-red-600/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                </div>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="episodes-section" class="relative z-10 container mx-auto px-4 py-12 md:py-24">
+
+        <!-- Season Selector -->
+        <div id="season-selector"
+            class="flex flex-wrap justify-center gap-4 mb-16 sticky top-20 z-30 py-4 bg-gradient-to-b from-black via-black/90 to-transparent backdrop-blur-sm">
+            <!-- Buttons injected by JS -->
+        </div>
+
+        <!-- Season Info Header -->
+        <div class="text-center mb-12 animate-fade-in">
+            <h2 id="season-title" class="font-stranger text-4xl md:text-5xl text-red-500 mb-2 text-glow-soft">Season 1
+            </h2>
+            <div
+                class="flex items-center justify-center gap-4 text-red-800 font-mono text-sm uppercase tracking-widest">
+                <span id="season-year">1983</span>
+                <span>•</span>
+                <span id="season-count">8 Episodes</span>
+                <span>•</span>
+                <span id="season-status">Status: 0/8 Watched</span>
+            </div>
+        </div>
+
+        <!-- Episodes Grid -->
+        <div id="episodes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <!-- Episode Cards injected by JS -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 border-t border-red-900/30 bg-black py-12 mt-12 text-center">
+        <div class="container mx-auto px-4">
+            <div class="font-stranger text-3xl text-red-900/50 mb-4 select-none">
+                HAWKINS NATIONAL LABORATORY
+            </div>
+            <p class="text-zinc-600 text-xs font-mono max-w-lg mx-auto leading-relaxed mb-8">
+                WARNING: RESTRICTED AREA. AUTHORIZED PERSONNEL ONLY.
+                ANY ATTEMPT TO ACCESS CLASSIFIED MATERIALS WITHOUT PROPER CLEARANCE WILL BE PROSECUTED.
+                MONITORING OF SUBJECT #011 IS ACTIVE.
+            </p>
+            <div class="flex justify-center gap-4 text-zinc-700">
+                <i data-lucide="tv" class="w-5 h-5 hover:text-red-600 transition-colors cursor-pointer"></i>
+                <i data-lucide="alert-triangle" class="w-5 h-5 hover:text-red-600 transition-colors cursor-pointer"></i>
+            </div>
+            <p class="mt-8 text-zinc-800 text-[10px] font-mono">
+                DATA GENERATED FROM IMDB RECORDS. 2025.
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Data ---
+        // Using high-quality unsplash images with specific keywords to match the vibe
+        const getBaseImage = (keywords) => `https://images.unsplash.com/photo-${keywords}?auto=format&fit=crop&q=80&w=600&h=340`;
+
+        // Specific IDs for reliable images
+        const IMG_MAP = {
+            bike: "1534253896584-638787c80084", // Kids on bikes
+            forest: "1445633748201-9c1788c03d0d", // Dark forest
+            lights: "1567119561081-34440539169f", // Christmas lights / neon
+            lab: "1576487132104-5858c7344933", // Industrial/Lab
+            arcade: "1551696472-a722e035124b", // Arcade/Neon
+            monster: "1509248961158-e54f6934749c", // Spooky texture
+            mall: "1560420025-992a72061325", // Shopping mall
+            russia: "1478720568477-152d9b164e63", // Snowy/Dark
+            house: "1505504746465-2766863c32b9", // Creepy house
+            dnd: "1612680214878-a28d57866385" // Dice/Game
+        };
+
+        const SEASONS_DATA = [
+            {
+                id: 1,
+                title: "Season 1",
+                year: "1983",
+                episodes: [
+                    { id: "s1e1", title: "Chapter One: The Vanishing of Will Byers", runtime: "47m", image: getBaseImage(IMG_MAP.forest) },
+                    { id: "s1e2", title: "Chapter Two: The Weirdo on Maple Street", runtime: "55m", image: getBaseImage(IMG_MAP.house) },
+                    { id: "s1e3", title: "Chapter Three: Holly, Jolly", runtime: "51m", image: getBaseImage(IMG_MAP.lights) },
+                    { id: "s1e4", title: "Chapter Four: The Body", runtime: "49m", image: getBaseImage("1519074069444-1ba4fff66d16") }, // Quarry/Water
+                    { id: "s1e5", title: "Chapter Five: The Flea and the Acrobat", runtime: "53m", image: getBaseImage(IMG_MAP.bike) },
+                    { id: "s1e6", title: "Chapter Six: The Monster", runtime: "46m", image: getBaseImage(IMG_MAP.monster) },
+                    { id: "s1e7", title: "Chapter Seven: The Bathtub", runtime: "42m", image: getBaseImage(IMG_MAP.lab) },
+                    { id: "s1e8", title: "Chapter Eight: The Upside Down", runtime: "55m", image: getBaseImage("1542475586-44476a6ce46d") } // Red/Dark
+                ]
+            },
+            {
+                id: 2,
+                title: "Season 2",
+                year: "1984",
+                episodes: [
+                    { id: "s2e1", title: "Chapter One: MADMAX", runtime: "48m", image: getBaseImage(IMG_MAP.arcade) },
+                    { id: "s2e2", title: "Chapter Two: Trick or Treat, Freak", runtime: "56m", image: getBaseImage("1508363778367-af363f107cbb") }, // Pumpkin
+                    { id: "s2e3", title: "Chapter Three: The Pollywog", runtime: "51m", image: getBaseImage("1470115636492-6d2b56f9146d") }, // Creature nature
+                    { id: "s2e4", title: "Chapter Four: Will the Wise", runtime: "46m", image: getBaseImage("1515510885239-055a420b9e83") }, // Drawing
+                    { id: "s2e5", title: "Chapter Five: Dig Dug", runtime: "58m", image: getBaseImage("1536768652010-023a1005e808") }, // Dirt/Tunnel
+                    { id: "s2e6", title: "Chapter Six: The Spy", runtime: "51m", image: getBaseImage(IMG_MAP.lab) },
+                    { id: "s2e7", title: "Chapter Seven: The Lost Sister", runtime: "45m", image: getBaseImage("1485394548489-39726206c4b2") }, // City lights
+                    { id: "s2e8", title: "Chapter Eight: The Mind Flayer", runtime: "47m", image: getBaseImage(IMG_MAP.monster) },
+                    { id: "s2e9", title: "Chapter Nine: The Gate", runtime: "62m", image: getBaseImage("1496030136279-d59456c7062d") } // Fire/Light
+                ]
+            },
+            {
+                id: 3,
+                title: "Season 3",
+                year: "1985",
+                episodes: [
+                    { id: "s3e1", title: "Chapter One: Suzie, Do You Copy?", runtime: "50m", image: getBaseImage("1526660682181-e374df6c5896") }, // Radio tower
+                    { id: "s3e2", title: "Chapter Two: The Mall Rats", runtime: "50m", image: getBaseImage(IMG_MAP.mall) },
+                    { id: "s3e3", title: "Chapter Three: The Case of the Missing Lifeguard", runtime: "49m", image: getBaseImage("1576014131341-fe14868e612f") }, // Pool
+                    { id: "s3e4", title: "Chapter Four: The Sauna Test", runtime: "52m", image: getBaseImage("1584622031730-8041c53243f7") }, // Steam/Heat
+                    { id: "s3e5", title: "Chapter Five: The Flayed", runtime: "51m", image: getBaseImage(IMG_MAP.monster) },
+                    { id: "s3e6", title: "Chapter Six: E Pluribus Unum", runtime: "59m", image: getBaseImage(IMG_MAP.lab) },
+                    { id: "s3e7", title: "Chapter Seven: The Bite", runtime: "55m", image: getBaseImage("1599908868694-874e03f90117") }, // Wound/Bandage style
+                    { id: "s3e8", title: "Chapter Eight: The Battle of Starcourt", runtime: "77m", image: getBaseImage("1533220456184-f7a372d82915") } // Fireworks
+                ]
+            },
+            {
+                id: 4,
+                title: "Season 4",
+                year: "1986",
+                episodes: [
+                    { id: "s4e1", title: "Chapter One: The Hellfire Club", runtime: "76m", image: getBaseImage(IMG_MAP.dnd) },
+                    { id: "s4e2", title: "Chapter Two: Vecna's Curse", runtime: "75m", image: getBaseImage("1516575150278-77136aed6920") }, // Clock
+                    { id: "s4e3", title: "Chapter Three: The Monster and the Superhero", runtime: "63m", image: getBaseImage("1535905557558-afc4877a26fc") }, // Roller skate
+                    { id: "s4e4", title: "Chapter Four: Dear Billy", runtime: "77m", image: getBaseImage("1533552086884-3c6628d01119") }, // Cemetery
+                    { id: "s4e5", title: "Chapter Five: The Nina Project", runtime: "74m", image: getBaseImage("1580910051051-4b521c322749") }, // Desert
+                    { id: "s4e6", title: "Chapter Six: The Dive", runtime: "73m", image: getBaseImage("1544983087-01306c55d9d7") }, // Underwater
+                    { id: "s4e7", title: "Chapter Seven: The Massacre at Hawkins Lab", runtime: "98m", image: getBaseImage(IMG_MAP.lab) },
+                    { id: "s4e8", title: "Chapter Eight: Papa", runtime: "85m", image: getBaseImage("1504903332717-b715a0c7c7f7") }, // Explosion
+                    { id: "s4e9", title: "Chapter Nine: The Piggyback", runtime: "139m", image: getBaseImage("1534447677768-be436bb09401") } // Lightning/Guitar vibes
+                ]
+            },
+            {
+                id: 5,
+                title: "Season 5",
+                year: "1987",
+                episodes: [
+                    { id: "s5e1", title: "Chapter One: The Crawl", runtime: "TBA", image: getBaseImage("1504194302636-646e7f259798") }, // Cave/Dark
+                    { id: "s5e2", title: "Chapter Two: The Vanishing of...", runtime: "TBA", image: getBaseImage(IMG_MAP.forest) },
+                    { id: "s5e3", title: "Chapter Three: The Turnbow Trap", runtime: "TBA", image: getBaseImage("1550100136-e074fa714874") }, // Trap/Net
+                    { id: "s5e4", title: "Chapter Four: Sorcerer", runtime: "TBA", image: getBaseImage("1597843827557-080517565983") }, // Magic/Smoke
+                    { id: "s5e5", title: "Chapter Five: Shock Jock", runtime: "TBA", image: getBaseImage("1593076899479-0524cb2a77a9") }, // Radio/Mic
+                    { id: "s5e6", title: "Chapter Six: Escape from Camazotz", runtime: "TBA", image: getBaseImage("1478131143081-80f7f84ca84d") }, // Bats/Cave
+                    { id: "s5e7", title: "Chapter Seven: The Bridge", runtime: "TBA", image: getBaseImage("1513476686016-52c66d21396a") }, // Bridge
+                    { id: "s5e8", title: "Chapter Eight: The Rightside Up", runtime: "TBA", image: getBaseImage("1451187580459-43490279c0fa") } // Sunrise/Hope or Destruction
+                ]
+            }
+        ];
+
+        // --- State ---
+        let watchedEpisodes = {};
+        let activeSeason = 1;
+
+        // --- Init ---
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            renderParticles();
+            renderSeasonSelector();
+            renderEpisodes();
+            updateProgress();
+
+            // Re-initialize icons
+            lucide.createIcons();
+
+            // Scroll listener
+            window.addEventListener('scroll', handleScroll);
+        });
+
+        // --- Logic ---
+        function loadState() {
+            const saved = localStorage.getItem('strangerThingsWatched');
+            if (saved) {
+                watchedEpisodes = JSON.parse(saved);
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('strangerThingsWatched', JSON.stringify(watchedEpisodes));
+            updateProgress();
+            renderSeasonInfo(); // Update status text
+        }
+
+        function toggleWatched(id) {
+            watchedEpisodes[id] = !watchedEpisodes[id];
+            saveState();
+
+            // Re-render specific card or update class
+            const card = document.getElementById(`card-${id}`);
+            const isWatched = watchedEpisodes[id];
+
+            // Update styling directly for performance
+            if (isWatched) {
+                card.classList.add('opacity-60', 'grayscale-[50%]');
+                card.querySelector('.check-overlay').classList.remove('hidden');
+                card.querySelector('.card-title').classList.add('text-zinc-500');
+                card.querySelector('.card-title').classList.remove('text-gray-100', 'group-hover:text-red-500');
+
+                const btn = card.querySelector('.action-btn');
+                btn.className = 'action-btn text-xs font-mono uppercase tracking-widest flex items-center gap-2 px-3 py-1.5 border transition-all duration-300 border-green-900 text-green-700 bg-green-900/10';
+                btn.innerHTML = '<i data-lucide="check" class="w-3 h-3"></i> Completed';
+            } else {
+                card.classList.remove('opacity-60', 'grayscale-[50%]');
+                card.querySelector('.check-overlay').classList.add('hidden');
+                card.querySelector('.card-title').classList.remove('text-zinc-500');
+                card.querySelector('.card-title').classList.add('text-gray-100', 'group-hover:text-red-500');
+
+                const btn = card.querySelector('.action-btn');
+                btn.className = 'action-btn text-xs font-mono uppercase tracking-widest flex items-center gap-2 px-3 py-1.5 border transition-all duration-300 border-red-900/50 text-red-500 group-hover:bg-red-600 group-hover:text-black';
+                btn.innerHTML = '<i data-lucide="eye" class="w-3 h-3"></i> Mark Watched';
+            }
+            lucide.createIcons();
+        }
+
+        function switchSeason(id) {
+            activeSeason = id;
+            renderSeasonSelector();
+            renderEpisodes();
+            lucide.createIcons();
+        }
+
+        function updateProgress() {
+            const totalEpisodes = SEASONS_DATA.reduce((acc, season) => acc + season.episodes.length, 0);
+            const watchedCount = Object.values(watchedEpisodes).filter(Boolean).length;
+            const percentage = Math.round((watchedCount / totalEpisodes) * 100);
+
+            document.getElementById('progress-text').textContent = `${percentage}%`;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+        }
+
+        // --- Rendering ---
+        function renderSeasonSelector() {
+            const container = document.getElementById('season-selector');
+            container.innerHTML = SEASONS_DATA.map(season => {
+                const isActive = activeSeason === season.id;
+                const activeClasses = 'bg-red-600 text-black border-red-600 shadow-[0_0_20px_rgba(220,38,38,0.6)] font-bold transform scale-105';
+                const inactiveClasses = 'bg-black text-red-800 border-red-900/50 hover:text-red-500 hover:border-red-500';
+
+                return `
+                    <button onclick="switchSeason(${season.id})"
+                        class="px-6 py-2 border font-mono tracking-widest text-sm md:text-base transition-all duration-300 clip-path-slant ${isActive ? activeClasses : inactiveClasses}">
+                        SEASON ${season.id}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function renderSeasonInfo() {
+            const season = SEASONS_DATA.find(s => s.id === activeSeason);
+            document.getElementById('season-title').textContent = season.title;
+            document.getElementById('season-year').textContent = season.year;
+            document.getElementById('season-count').textContent = `${season.episodes.length} Episodes`;
+
+            const watchedInSeason = season.episodes.filter(e => watchedEpisodes[e.id]).length;
+            const statusEl = document.getElementById('season-status');
+            statusEl.textContent = `Status: ${watchedInSeason}/${season.episodes.length} Watched`;
+            statusEl.className = watchedInSeason === season.episodes.length ? "text-green-500" : "";
+        }
+
+        function renderEpisodes() {
+            const season = SEASONS_DATA.find(s => s.id === activeSeason);
+            renderSeasonInfo();
+
+            const container = document.getElementById('episodes-grid');
+            container.innerHTML = season.episodes.map(episode => {
+                const isWatched = watchedEpisodes[episode.id];
+
+                return `
+                    <div id="card-${episode.id}" onclick="toggleWatched('${episode.id}')"
+                        class="group relative bg-zinc-900/50 border border-zinc-800 overflow-hidden cursor-pointer transition-all duration-500 card-hover ${isWatched ? 'opacity-60 grayscale-[50%]' : 'opacity-100'}">
+                        
+                        <!-- Check Overlay -->
+                        <div class="check-overlay absolute inset-0 z-20 bg-black/60 flex items-center justify-center backdrop-blur-[2px] ${isWatched ? '' : 'hidden'}">
+                            <div class="border-4 border-red-600 rounded-full p-4 transform rotate-[-12deg] shadow-[0_0_30px_rgba(220,38,38,0.8)] animate-bounce-short">
+                                <span class="font-stranger text-red-500 text-xl md:text-2xl font-bold uppercase tracking-widest">Watched</span>
+                            </div>
+                        </div>
+
+                        <!-- Top Secret Badge -->
+                        <div class="absolute top-2 left-2 z-10 px-2 py-0.5 bg-red-600/20 border border-red-600 text-[10px] text-red-500 font-mono uppercase tracking-widest backdrop-blur-md">
+                            Confidential
+                        </div>
+
+                        <!-- Image -->
+                        <div class="relative aspect-video overflow-hidden">
+                            <img src="${episode.image}" alt="${episode.title}" loading="lazy"
+                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 filter sepia-[50%] contrast-125 brightness-75 group-hover:brightness-100">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="p-5 relative">
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="text-zinc-500 text-xs font-mono uppercase tracking-wider">${episode.id.toUpperCase()}</span>
+                                <span class="text-zinc-500 text-xs font-mono flex items-center gap-1">
+                                    <i data-lucide="film" class="w-3 h-3"></i> ${episode.runtime}
+                                </span>
+                            </div>
+                            
+                            <h3 class="card-title font-stranger text-lg md:text-xl leading-snug mb-2 transition-colors duration-300 ${isWatched ? 'text-zinc-500' : 'text-gray-100 group-hover:text-red-500'}">
+                                ${episode.title}
+                            </h3>
+
+                            <div class="mt-4 flex items-center justify-between">
+                                <button class="action-btn text-xs font-mono uppercase tracking-widest flex items-center gap-2 px-3 py-1.5 border transition-all duration-300 ${isWatched ? 'border-green-900 text-green-700 bg-green-900/10' : 'border-red-900/50 text-red-500 group-hover:bg-red-600 group-hover:text-black'}">
+                                    ${isWatched ? '<i data-lucide="check" class="w-3 h-3"></i> Completed' : '<i data-lucide="eye" class="w-3 h-3"></i> Mark Watched'}
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Line Decoration -->
+                        <div class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-red-900 to-transparent opacity-50"></div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- Visual Effects ---
+        function renderParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 20;
+
+            for (let i = 0; i < particleCount; i++) {
+                const el = document.createElement('div');
+                el.className = 'absolute bg-white rounded-full opacity-20 animate-float';
+                el.style.top = `${Math.random() * 100}%`;
+                el.style.left = `${Math.random() * 100}%`;
+                el.style.width = `${Math.random() * 3}px`;
+                el.style.height = `${Math.random() * 3}px`;
+                el.style.animationDuration = `${5 + Math.random() * 10}s`;
+                el.style.animationDelay = `${Math.random() * 5}s`;
+                container.appendChild(el);
+            }
+        }
+
+        function handleScroll() {
+            const hero = document.getElementById('hero-content');
+            if (window.scrollY > 300) {
+                hero.classList.add('opacity-0', 'translate-y-10');
+            } else {
+                hero.classList.remove('opacity-0', 'translate-y-10');
+            }
+        }
+    </script>
+</body>
+
+</html>
