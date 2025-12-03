@@ -141,13 +141,21 @@
 
     <!-- Hero Section -->
     <header class="relative h-[80vh] flex flex-col justify-center items-center text-center overflow-hidden">
+        <!-- Background Image -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1511497584788-876760a7b7e1?auto=format&fit=crop&q=80&w=1920"
+                alt="Dark Forest Background"
+                class="w-full h-full object-cover opacity-30 filter brightness-50 contrast-125">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black"></div>
+        </div>
+
         <!-- Background Animation -->
         <div
-            class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-red-900/20 via-black to-black opacity-60 animate-pulse-slow">
+            class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-red-900/20 via-transparent to-transparent opacity-60 animate-pulse-slow z-[1]">
         </div>
 
         <!-- Floating Particles Container -->
-        <div id="particles" class="absolute inset-0 pointer-events-none"></div>
+        <div id="particles" class="absolute inset-0 pointer-events-none z-[2]"></div>
 
         <div id="hero-content" class="relative z-10 transition-all duration-1000 transform">
             <h1
@@ -247,14 +255,14 @@
                 title: "Season 1",
                 year: "1983",
                 episodes: [
-                    { id: "s1e1", title: "Chapter One: The Vanishing of Will Byers", runtime: "47m", image: getBaseImage(IMG_MAP.forest) },
-                    { id: "s1e2", title: "Chapter Two: The Weirdo on Maple Street", runtime: "55m", image: getBaseImage(IMG_MAP.house) },
-                    { id: "s1e3", title: "Chapter Three: Holly, Jolly", runtime: "51m", image: getBaseImage(IMG_MAP.lights) },
-                    { id: "s1e4", title: "Chapter Four: The Body", runtime: "49m", image: getBaseImage("1519074069444-1ba4fff66d16") }, // Quarry/Water
-                    { id: "s1e5", title: "Chapter Five: The Flea and the Acrobat", runtime: "53m", image: getBaseImage(IMG_MAP.bike) },
-                    { id: "s1e6", title: "Chapter Six: The Monster", runtime: "46m", image: getBaseImage(IMG_MAP.monster) },
-                    { id: "s1e7", title: "Chapter Seven: The Bathtub", runtime: "42m", image: getBaseImage(IMG_MAP.lab) },
-                    { id: "s1e8", title: "Chapter Eight: The Upside Down", runtime: "55m", image: getBaseImage("1542475586-44476a6ce46d") } // Red/Dark
+                    { id: "s1e1", title: "Chapter One: The Vanishing of Will Byers", runtime: "47m", image: "https://images.unsplash.com/photo-1511497584788-876760a7b7e1?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s1e2", title: "Chapter Two: The Weirdo on Maple Street", runtime: "55m", image: "https://images.unsplash.com/photo-1505504746465-2766863c32b9?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s1e3", title: "Chapter Three: Holly, Jolly", runtime: "51m", image: "https://images.unsplash.com/photo-1512389142860-9c449e58a543?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s1e4", title: "Chapter Four: The Body", runtime: "49m", image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s1e5", title: "Chapter Five: The Flea and the Acrobat", runtime: "53m", image: "https://images.unsplash.com/photo-1534253896584-638787c80084?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s1e6", title: "Chapter Six: The Monster", runtime: "46m", image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s1e7", title: "Chapter Seven: The Bathtub", runtime: "42m", image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s1e8", title: "Chapter Eight: The Upside Down", runtime: "55m", image: "https://images.unsplash.com/photo-1542475586-44476a6ce46d?auto=format&fit=crop&q=80&w=600&h=340" }
                 ]
             },
             {
@@ -262,15 +270,15 @@
                 title: "Season 2",
                 year: "1984",
                 episodes: [
-                    { id: "s2e1", title: "Chapter One: MADMAX", runtime: "48m", image: getBaseImage(IMG_MAP.arcade) },
-                    { id: "s2e2", title: "Chapter Two: Trick or Treat, Freak", runtime: "56m", image: getBaseImage("1508363778367-af363f107cbb") }, // Pumpkin
-                    { id: "s2e3", title: "Chapter Three: The Pollywog", runtime: "51m", image: getBaseImage("1470115636492-6d2b56f9146d") }, // Creature nature
-                    { id: "s2e4", title: "Chapter Four: Will the Wise", runtime: "46m", image: getBaseImage("1515510885239-055a420b9e83") }, // Drawing
-                    { id: "s2e5", title: "Chapter Five: Dig Dug", runtime: "58m", image: getBaseImage("1536768652010-023a1005e808") }, // Dirt/Tunnel
-                    { id: "s2e6", title: "Chapter Six: The Spy", runtime: "51m", image: getBaseImage(IMG_MAP.lab) },
-                    { id: "s2e7", title: "Chapter Seven: The Lost Sister", runtime: "45m", image: getBaseImage("1485394548489-39726206c4b2") }, // City lights
-                    { id: "s2e8", title: "Chapter Eight: The Mind Flayer", runtime: "47m", image: getBaseImage(IMG_MAP.monster) },
-                    { id: "s2e9", title: "Chapter Nine: The Gate", runtime: "62m", image: getBaseImage("1496030136279-d59456c7062d") } // Fire/Light
+                    { id: "s2e1", title: "Chapter One: MADMAX", runtime: "48m", image: "https://images.unsplash.com/photo-1551696472-a722e035124b?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s2e2", title: "Chapter Two: Trick or Treat, Freak", runtime: "56m", image: "https://images.unsplash.com/photo-1508363778367-af363f107cbb?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s2e3", title: "Chapter Three: The Pollywog", runtime: "51m", image: "https://images.unsplash.com/photo-1470115636492-6d2b56f9146d?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s2e4", title: "Chapter Four: Will the Wise", runtime: "46m", image: "https://images.unsplash.com/photo-1515510885239-055a420b9e83?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s2e5", title: "Chapter Five: Dig Dug", runtime: "58m", image: "https://images.unsplash.com/photo-1536768652010-023a1005e808?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s2e6", title: "Chapter Six: The Spy", runtime: "51m", image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s2e7", title: "Chapter Seven: The Lost Sister", runtime: "45m", image: "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s2e8", title: "Chapter Eight: The Mind Flayer", runtime: "47m", image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s2e9", title: "Chapter Nine: The Gate", runtime: "62m", image: "https://images.unsplash.com/photo-1525267219888-bb077b8792cc?auto=format&fit=crop&q=80&w=600&h=340" }
                 ]
             },
             {
@@ -278,14 +286,14 @@
                 title: "Season 3",
                 year: "1985",
                 episodes: [
-                    { id: "s3e1", title: "Chapter One: Suzie, Do You Copy?", runtime: "50m", image: getBaseImage("1526660682181-e374df6c5896") }, // Radio tower
-                    { id: "s3e2", title: "Chapter Two: The Mall Rats", runtime: "50m", image: getBaseImage(IMG_MAP.mall) },
-                    { id: "s3e3", title: "Chapter Three: The Case of the Missing Lifeguard", runtime: "49m", image: getBaseImage("1576014131341-fe14868e612f") }, // Pool
-                    { id: "s3e4", title: "Chapter Four: The Sauna Test", runtime: "52m", image: getBaseImage("1584622031730-8041c53243f7") }, // Steam/Heat
-                    { id: "s3e5", title: "Chapter Five: The Flayed", runtime: "51m", image: getBaseImage(IMG_MAP.monster) },
-                    { id: "s3e6", title: "Chapter Six: E Pluribus Unum", runtime: "59m", image: getBaseImage(IMG_MAP.lab) },
-                    { id: "s3e7", title: "Chapter Seven: The Bite", runtime: "55m", image: getBaseImage("1599908868694-874e03f90117") }, // Wound/Bandage style
-                    { id: "s3e8", title: "Chapter Eight: The Battle of Starcourt", runtime: "77m", image: getBaseImage("1533220456184-f7a372d82915") } // Fireworks
+                    { id: "s3e1", title: "Chapter One: Suzie, Do You Copy?", runtime: "50m", image: "https://images.unsplash.com/photo-1593076899479-0524cb2a77a9?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s3e2", title: "Chapter Two: The Mall Rats", runtime: "50m", image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s3e3", title: "Chapter Three: The Case of the Missing Lifeguard", runtime: "49m", image: "https://images.unsplash.com/photo-1576014131341-fe14868e612f?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s3e4", title: "Chapter Four: The Sauna Test", runtime: "52m", image: "https://images.unsplash.com/photo-1584622031730-8041c53243f7?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s3e5", title: "Chapter Five: The Flayed", runtime: "51m", image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s3e6", title: "Chapter Six: E Pluribus Unum", runtime: "59m", image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s3e7", title: "Chapter Seven: The Bite", runtime: "55m", image: "https://images.unsplash.com/photo-1599908868694-874e03f90117?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s3e8", title: "Chapter Eight: The Battle of Starcourt", runtime: "77m", image: "https://images.unsplash.com/photo-1533220456184-f7a372d82915?auto=format&fit=crop&q=80&w=600&h=340" }
                 ]
             },
             {
@@ -293,15 +301,15 @@
                 title: "Season 4",
                 year: "1986",
                 episodes: [
-                    { id: "s4e1", title: "Chapter One: The Hellfire Club", runtime: "76m", image: getBaseImage(IMG_MAP.dnd) },
-                    { id: "s4e2", title: "Chapter Two: Vecna's Curse", runtime: "75m", image: getBaseImage("1516575150278-77136aed6920") }, // Clock
-                    { id: "s4e3", title: "Chapter Three: The Monster and the Superhero", runtime: "63m", image: getBaseImage("1535905557558-afc4877a26fc") }, // Roller skate
-                    { id: "s4e4", title: "Chapter Four: Dear Billy", runtime: "77m", image: getBaseImage("1533552086884-3c6628d01119") }, // Cemetery
-                    { id: "s4e5", title: "Chapter Five: The Nina Project", runtime: "74m", image: getBaseImage("1580910051051-4b521c322749") }, // Desert
-                    { id: "s4e6", title: "Chapter Six: The Dive", runtime: "73m", image: getBaseImage("1544983087-01306c55d9d7") }, // Underwater
-                    { id: "s4e7", title: "Chapter Seven: The Massacre at Hawkins Lab", runtime: "98m", image: getBaseImage(IMG_MAP.lab) },
-                    { id: "s4e8", title: "Chapter Eight: Papa", runtime: "85m", image: getBaseImage("1504903332717-b715a0c7c7f7") }, // Explosion
-                    { id: "s4e9", title: "Chapter Nine: The Piggyback", runtime: "139m", image: getBaseImage("1534447677768-be436bb09401") } // Lightning/Guitar vibes
+                    { id: "s4e1", title: "Chapter One: The Hellfire Club", runtime: "76m", image: "https://images.unsplash.com/photo-1612680214878-a28d57866385?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s4e2", title: "Chapter Two: Vecna's Curse", runtime: "75m", image: "https://images.unsplash.com/photo-1501139083538-0139583c060f?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s4e3", title: "Chapter Three: The Monster and the Superhero", runtime: "63m", image: "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s4e4", title: "Chapter Four: Dear Billy", runtime: "77m", image: "https://images.unsplash.com/photo-1533552086884-3c6628d01119?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s4e5", title: "Chapter Five: The Nina Project", runtime: "74m", image: "https://images.unsplash.com/photo-1509316785289-9aaacb4e5e36?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s4e6", title: "Chapter Six: The Dive", runtime: "73m", image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s4e7", title: "Chapter Seven: The Massacre at Hawkins Lab", runtime: "98m", image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s4e8", title: "Chapter Eight: Papa", runtime: "85m", image: "https://images.unsplash.com/photo-1504903332717-b715a0c7c7f7?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s4e9", title: "Chapter Nine: The Piggyback", runtime: "139m", image: "https://images.unsplash.com/photo-1500740516770-92bd004b996e?auto=format&fit=crop&q=80&w=600&h=340" }
                 ]
             },
             {
@@ -309,14 +317,14 @@
                 title: "Season 5",
                 year: "1987",
                 episodes: [
-                    { id: "s5e1", title: "Chapter One: The Crawl", runtime: "TBA", image: getBaseImage("1504194302636-646e7f259798") }, // Cave/Dark
-                    { id: "s5e2", title: "Chapter Two: The Vanishing of...", runtime: "TBA", image: getBaseImage(IMG_MAP.forest) },
-                    { id: "s5e3", title: "Chapter Three: The Turnbow Trap", runtime: "TBA", image: getBaseImage("1550100136-e074fa714874") }, // Trap/Net
-                    { id: "s5e4", title: "Chapter Four: Sorcerer", runtime: "TBA", image: getBaseImage("1597843827557-080517565983") }, // Magic/Smoke
-                    { id: "s5e5", title: "Chapter Five: Shock Jock", runtime: "TBA", image: getBaseImage("1593076899479-0524cb2a77a9") }, // Radio/Mic
-                    { id: "s5e6", title: "Chapter Six: Escape from Camazotz", runtime: "TBA", image: getBaseImage("1478131143081-80f7f84ca84d") }, // Bats/Cave
-                    { id: "s5e7", title: "Chapter Seven: The Bridge", runtime: "TBA", image: getBaseImage("1513476686016-52c66d21396a") }, // Bridge
-                    { id: "s5e8", title: "Chapter Eight: The Rightside Up", runtime: "TBA", image: getBaseImage("1451187580459-43490279c0fa") } // Sunrise/Hope or Destruction
+                    { id: "s5e1", title: "Chapter One: The Crawl", runtime: "TBA", image: "https://images.unsplash.com/photo-1504194302636-646e7f259798?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s5e2", title: "Chapter Two: The Vanishing of...", runtime: "TBA", image: "https://images.unsplash.com/photo-1511497584788-876760a7b7e1?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s5e3", title: "Chapter Three: The Turnbow Trap", runtime: "TBA", image: "https://images.unsplash.com/photo-1550100136-e074fa714874?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s5e4", title: "Chapter Four: Sorcerer", runtime: "TBA", image: "https://images.unsplash.com/photo-1597843827557-080517565983?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s5e5", title: "Chapter Five: Shock Jock", runtime: "TBA", image: "https://images.unsplash.com/photo-1593076899479-0524cb2a77a9?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s5e6", title: "Chapter Six: Escape from Camazotz", runtime: "TBA", image: "https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s5e7", title: "Chapter Seven: The Bridge", runtime: "TBA", image: "https://images.unsplash.com/photo-1513476686016-52c66d21396a?auto=format&fit=crop&q=80&w=600&h=340" },
+                    { id: "s5e8", title: "Chapter Eight: The Rightside Up", runtime: "TBA", image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=600&h=340" }
                 ]
             }
         ];
