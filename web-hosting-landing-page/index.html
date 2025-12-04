@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusHost | Next-Gen Cloud Hosting</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Google Fonts - Switched to Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #4F46E5;
+            --secondary-color: #7C3AED;
+            --accent-color: #0ea5e9;
+            --dark-bg: #0f172a;
+            --card-bg: #ffffff;
+            --text-muted: #64748b;
+        }
+
+        body {
+            /* Updated Font Family */
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            color: #1e293b;
+        }
+
+        /* Navbar Customization */
+        .navbar {
+            transition: all 0.3s ease;
+            padding: 1.5rem 0;
+        }
+        
+        .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            font-weight: 600;
+            color: #334155;
+            margin: 0 10px;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .btn-primary-custom {
+            background: var(--primary-color);
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .btn-primary-custom:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+            padding: 9rem 0 6rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-title {
+            font-weight: 800;
+            font-size: 3.5rem;
+            line-height: 1.2;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Custom Floating Animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .hero-img-container {
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .server-stack {
+            font-size: 15rem;
+            color: var(--primary-color);
+            text-shadow: 0 20px 50px rgba(79, 70, 229, 0.3);
+        }
+
+        .floating-badge {
+            position: absolute;
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            animation: float 5s ease-in-out infinite reverse;
+        }
+
+        .badge-1 { top: 10%; right: 10%; }
+        .badge-2 { bottom: 20%; left: 0%; }
+
+        /* Domain Search */
+        .domain-search {
+            background: white;
+            padding: 3rem 0;
+            margin-top: -3rem;
+            position: relative;
+            z-index: 10;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group-custom {
+            border: 2px solid #e2e8f0;
+            border-radius: 50px;
+            overflow: hidden;
+            padding: 5px;
+            background: white;
+            transition: border-color 0.3s;
+        }
+
+        .input-group-custom:focus-within {
+            border-color: var(--primary-color);
+        }
+
+        .input-group-custom input {
+            border: none;
+            box-shadow: none;
+            padding-left: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Features */
+        .feature-card {
+            border: none;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            height: 100%;
+            border: 1px solid #f1f5f9;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border-color: transparent;
+        }
+
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Pricing */
+        .pricing-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 2.5rem;
+            background: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-color);
+        }
+
+        .pricing-card.popular {
+            background: #0f172a;
+            color: white;
+            border: none;
+        }
+
+        .pricing-card.popular .text-muted {
+            color: #94a3b8 !important;
+        }
+
+        .pricing-card.popular .btn {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+        }
+        
+        .pricing-card.popular .btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .check-icon {
+            color: #10b981;
+            margin-right: 10px;
+        }
+
+        .badge-popular {
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: var(--secondary-color);
+            color: white;
+            padding: 5px 40px;
+            transform: rotate(45deg);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Testimonials */
+        .testimonial-card {
+            background: white;
+            border: none;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            height: 100%;
+        }
+        
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #e0e7ff;
+        }
+
+        /* Blog */
+        .blog-card {
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            height: 100%;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .blog-img {
+            height: 200px;
+            background-color: #e2e8f0;
+            position: relative;
+        }
+
+        /* FAQ Accordion */
+        .accordion-item {
+            border: none;
+            margin-bottom: 1rem;
+            border-radius: 12px !important;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .accordion-button {
+            background: white;
+            font-weight: 600;
+            padding: 1.5rem;
+            border: none;
+            box-shadow: none !important;
+        }
+
+        .accordion-button:not(.collapsed) {
+            color: var(--primary-color);
+            background-color: #f8fafc;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: var(--dark-bg);
+            color: white;
+            padding: 4rem 0;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent-color);
+        }
+
+        /* Footer */
+        .footer {
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 4rem 0 2rem 0;
+        }
+        
+        .footer h5 {
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer a:hover {
+            color: white;
+        }
+
+        /* Responsive Fixes */
+        @media (max-width: 991px) {
+            .hero-title { font-size: 2.5rem; }
+            .hero-img-container { margin-top: 3rem; text-align: center; }
+            .badge-1 { right: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                <i class="fa-solid fa-cloud-bolt fa-2x" style="color: var(--primary-color);"></i>
+                <span style="font-weight: 800; color: #0f172a; font-size: 1.5rem;">NexusHost</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#blog">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+                    <li class="nav-item ms-lg-3">
+                        <a href="#" class="btn btn-primary-custom text-white shadow-sm">Get Started</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section d-flex align-items-center">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6" data-aos="fade-right" data-aos-duration="1000">
+                    <span class="badge bg-primary bg-opacity-10 text-primary mb-3 px-3 py-2 rounded-pill fw-bold">🚀 Fastest Hosting 2024</span>
+                    <h1 class="hero-title">Lightning Fast Cloud Hosting for Your Big Ideas</h1>
+                    <p class="lead text-secondary mb-4">Deploy your website in seconds with our globally distributed cloud infrastructure. 99.99% Uptime Guaranteed.</p>
+                    <div class="d-flex gap-3 flex-column flex-sm-row">
+                        <a href="#pricing" class="btn btn-primary-custom btn-lg text-white shadow">Start Free Trial</a>
+                        <a href="#" class="btn btn-outline-secondary btn-lg rounded-pill fw-bold bg-white">View Demo</a>
+                    </div>
+                    <div class="mt-4 text-small text-muted">
+                        <i class="fa-solid fa-check text-success me-2"></i> No credit card required
+                        <i class="fa-solid fa-check text-success ms-3 me-2"></i> Cancel anytime
+                    </div>
+                </div>
+                <div class="col-lg-6 position-relative" data-aos="fade-left" data-aos-duration="1000">
+                    <div class="hero-img-container text-center">
+                        <i class="fa-solid fa-server server-stack"></i>
+                        
+                        <!-- Floating Badges -->
+                        <div class="floating-badge badge-1">
+                            <div class="bg-success rounded-circle p-2 d-flex align-items-center justify-content-center text-white" style="width: 40px; height: 40px;">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.8rem; color: #64748b;">Security</div>
+                                <div style="color: #0f172a;">SSL Secured</div>
+                            </div>
+                        </div>
+
+                        <div class="floating-badge badge-2">
+                            <div class="bg-warning rounded-circle p-2 d-flex align-items-center justify-content-center text-white" style="width: 40px; height: 40px;">
+                                <i class="fa-solid fa-bolt"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.8rem; color: #64748b;">Speed</div>
+                                <div style="color: #0f172a;">0.2s Load</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Domain Search Section -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="domain-search text-center" data-aos="fade-up">
+                    <h3 class="fw-bold mb-4">Find your perfect domain name</h3>
+                    <div class="row justify-content-center">
+                        <div class="col-md-9">
+                            <div class="input-group-custom d-flex">
+                                <input type="text" class="form-control" placeholder="Search your domain name (e.g. myawesomesite.com)">
+                                <button class="btn btn-primary-custom text-white m-1 px-4">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3 d-flex justify-content-center gap-4 flex-wrap text-muted fw-bold">
+                        <span>.com $9.99</span>
+                        <span>.net $8.99</span>
+                        <span>.io $32.99</span>
+                        <span>.tech $4.99</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section id="features" class="py-5 mt-5">
+        <div class="container py-5">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h6 class="text-primary fw-bold text-uppercase ls-wide">Why Choose NexusHost</h6>
+                <h2 class="fw-bold display-5">Built for speed, designed for security</h2>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-card">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-rocket"></i>
+                        </div>
+                        <h4>Blazing Fast Speed</h4>
+                        <p class="text-muted">Our custom NVMe SSD architecture ensures your website loads up to 20x faster than traditional hard drives.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        <h4>Ironclad Security</h4>
+                        <p class="text-muted">Free SSL certificates, DDoS protection, and automated daily backups keep your data safe and secure.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                        <h4>24/7 Expert Support</h4>
+                        <p class="text-muted">Our team of hosting experts is available round the clock to help you solve any technical challenges.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-card">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-globe"></i>
+                        </div>
+                        <h4>Global CDN</h4>
+                        <p class="text-muted">Deliver content to your visitors from the nearest server location with our integrated Content Delivery Network.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-wordpress"></i>
+                        </div>
+                        <h4>WordPress Optimized</h4>
+                        <p class="text-muted">One-click WordPress installation with pre-configured caching rules for optimal CMS performance.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <h4>99.9% Uptime</h4>
+                        <p class="text-muted">We guarantee that your site will be up and running. If we miss the mark, we pay you back.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-4 mb-4 mb-md-0" data-aos="zoom-in">
+                    <div class="stat-number counter" data-target="2">2.5M+</div>
+                    <p class="lead">Websites Hosted</p>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="stat-number">0.2s</div>
+                    <p class="lead">Average Load Time</p>
+                </div>
+                <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="stat-number">24/7</div>
+                    <p class="lead">Support Availability</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-5 bg-light">
+        <div class="container py-5">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h6 class="text-primary fw-bold text-uppercase">Flexible Pricing</h6>
+                <h2 class="fw-bold display-5">Choose the plan that fits you</h2>
+                <div class="btn-group mt-3" role="group">
+                    <button type="button" class="btn btn-primary-custom text-white">Monthly</button>
+                    <button type="button" class="btn btn-outline-primary border-0 bg-transparent text-primary">Yearly (Save 20%)</button>
+                </div>
+            </div>
+
+            <div class="row align-items-center g-4">
+                <!-- Starter Plan -->
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="0">
+                    <div class="pricing-card text-center">
+                        <h4 class="fw-bold mb-3">Starter</h4>
+                        <p class="text-muted">Perfect for personal blogs.</p>
+                        <h1 class="display-4 fw-bold my-4">$2.99<span class="fs-5 text-muted fw-normal">/mo</span></h1>
+                        <a href="#" class="btn btn-outline-primary rounded-pill w-100 fw-bold mb-4">Get Started</a>
+                        <ul class="list-unstyled text-start mx-auto" style="max-width: 250px;">
+                            <li class="mb-3"><i class="fa-solid fa-check check-icon"></i> 1 Website</li>
+                            <li class="mb-3"><i class="fa-solid fa-check check-icon"></i> 10GB SSD Storage</li>
+                            <li class="mb-3"><i class="fa-solid fa-check check-icon"></i> Free SSL Certificate</li>
+                            <li class="mb-3"><i class="fa-solid fa-check check-icon"></i> 1 Email Account</li>
+                            <li class="text-muted text-decoration-line-through"><i class="fa-solid fa-xmark me-2"></i> Free Domain</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="pricing-card popular text-center">
+                        <div class="badge-popular">POPULAR</div>
+                        <h4 class="fw-bold mb-3">Professional</h4>
+                        <p class="text-muted text-light opacity-75">For growing businesses.</p>
+                        <h1 class="display-4 fw-bold my-4">$5.99<span class="fs-5 text-light opacity-75 fw-normal">/mo</span></h1>
+                        <a href="#" class="btn btn-light rounded-pill w-100 fw-bold mb-4 text-primary">Get Started</a>
+                        <ul class="list-unstyled text-start mx-auto" style="max-width: 250px;">
+                            <li class="mb-3"><i class="fa-solid fa-check check-icon"></i> Unlimited Websites</li>
+                            <li class="mb-3"><i class="fa-solid fa-check check-icon"></i> 50GB NVMe Storage</li>
+                            <li class="mb-3"><i class="fa-solid fa-check check-icon"></i> Free SSL & Domain</li>
+                            <li class="mb-3"><i class="fa-solid fa-check check-icon"></i> Unlimited Emails</li>
+                            <li class="mb-3"><i class="fa-solid fa-check check-icon"></i> 2x Speed Boost</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="pricing-card text-center">
+                        <h4 class="fw-bold mb-3">Enterprise</h4>
+                        <p class="text-muted">For high-traffic sites.</p>
+                        <h1 class="display-4 fw-bold my-4">$14.99<span class="fs-5 text-muted fw-normal">/mo</span></h1>
+                        <a href="#" class="btn btn-outline-primary rounded-pill w-100 fw-bold mb-4">Get Started</a>
+                        <ul class="list-unstyled text-start mx-auto" style="max-width: 250px;">
+                            <li class="mb-3"><i class="fa-solid fa-check check-icon"></i> Unlimited Everything</li>
+                            <li class="mb-3"><i class="fa-solid fa-check check-icon"></i> Dedicated IP</li>
+                            <li class="mb-3"><i class="fa-solid fa-check check-icon"></i> Priority Support</li>
+                            <li class="mb-3"><i class="fa-solid fa-check check-icon"></i> Daily Backups</li>
+                            <li class="mb-3"><i class="fa-solid fa-check check-icon"></i> Malware Protection</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-5">
+        <div class="container py-5">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h6 class="text-primary fw-bold text-uppercase">Testimonials</h6>
+                <h2 class="fw-bold display-5">Loved by developers</h2>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="testimonial-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://i.pravatar.cc/150?img=11" alt="User" class="user-avatar me-3">
+                            <div>
+                                <h6 class="fw-bold mb-0">Sarah Jenkins</h6>
+                                <small class="text-muted">CTO at TechFlow</small>
+                            </div>
+                        </div>
+                        <div class="text-warning mb-2">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-muted">"NexusHost changed the game for us. The migration was seamless and our site speed improved by 200% instantly."</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="testimonial-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://i.pravatar.cc/150?img=33" alt="User" class="user-avatar me-3">
+                            <div>
+                                <h6 class="fw-bold mb-0">Mike Ross</h6>
+                                <small class="text-muted">Freelance Developer</small>
+                            </div>
+                        </div>
+                        <div class="text-warning mb-2">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                        </div>
+                        <p class="text-muted">"The support team is incredible. I had an issue at 3 AM and they resolved it within 10 minutes via live chat."</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="testimonial-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://i.pravatar.cc/150?img=5" alt="User" class="user-avatar me-3">
+                            <div>
+                                <h6 class="fw-bold mb-0">Elena Rodriguez</h6>
+                                <small class="text-muted">Founder, StartUpX</small>
+                            </div>
+                        </div>
+                        <div class="text-warning mb-2">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-muted">"Best value for money. The control panel is intuitive and the free SSL setup was automatic. Highly recommended."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="py-5 bg-light">
+        <div class="container py-5">
+            <div class="d-flex justify-content-between align-items-end mb-5" data-aos="fade-up">
+                <div>
+                    <h6 class="text-primary fw-bold text-uppercase">Latest News</h6>
+                    <h2 class="fw-bold display-5">Insights & Updates</h2>
+                </div>
+                <a href="#" class="btn btn-outline-primary rounded-pill fw-bold d-none d-md-block">View All Posts</a>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="blog-card bg-white">
+                        <div class="blog-img" style="background: url('https://placehold.co/600x400/4F46E5/ffffff?text=Web+Perf') no-repeat center/cover;"></div>
+                        <div class="p-4">
+                            <div class="text-primary fw-bold text-uppercase fs-7 mb-2" style="font-size: 0.8rem;">Performance</div>
+                            <h5 class="fw-bold mb-3">10 Tips to Speed Up Your WordPress Site</h5>
+                            <p class="text-muted mb-3">Learn how to optimize your database and images to get lightning fast load times.</p>
+                            <a href="#" class="text-decoration-none fw-bold">Read More <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="blog-card bg-white">
+                        <div class="blog-img" style="background: url('https://placehold.co/600x400/7C3AED/ffffff?text=Security') no-repeat center/cover;"></div>
+                        <div class="p-4">
+                            <div class="text-primary fw-bold text-uppercase fs-7 mb-2" style="font-size: 0.8rem;">Security</div>
+                            <h5 class="fw-bold mb-3">Why SSL is Crucial for SEO in 2024</h5>
+                            <p class="text-muted mb-3">Google's latest update emphasizes security. Here is what you need to know about SSL.</p>
+                            <a href="#" class="text-decoration-none fw-bold">Read More <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="blog-card bg-white">
+                        <div class="blog-img" style="background: url('https://placehold.co/600x400/0ea5e9/ffffff?text=Cloud+Tech') no-repeat center/cover;"></div>
+                        <div class="p-4">
+                            <div class="text-primary fw-bold text-uppercase fs-7 mb-2" style="font-size: 0.8rem;">Technology</div>
+                            <h5 class="fw-bold mb-3">Understanding Cloud vs Shared Hosting</h5>
+                            <p class="text-muted mb-3">Not sure which architecture fits your business? We break down the pros and cons.</p>
+                            <a href="#" class="text-decoration-none fw-bold">Read More <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-5">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="text-center mb-5" data-aos="fade-up">
+                        <h6 class="text-primary fw-bold text-uppercase">FAQ</h6>
+                        <h2 class="fw-bold display-5">Frequently Asked Questions</h2>
+                    </div>
+
+                    <div class="accordion" id="faqAccordion" data-aos="fade-up">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    How long does it take to activate my account?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">
+                                    Accounts are activated instantly upon payment confirmation. You will receive a welcome email with your login details within minutes.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    Can I upgrade my plan later?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">
+                                    Absolutely! You can upgrade or downgrade your hosting plan at any time directly from your client area. The cost difference will be calculated automatically.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    Do you offer free website migration?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">
+                                    Yes, we offer free migration for all new accounts. Our team will handle the transfer of your files and databases to ensure zero downtime.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    Is there a money-back guarantee?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">
+                                    We offer a 30-day money-back guarantee. If you are not completely satisfied with our service, we will refund your hosting fees, no questions asked.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Support Section -->
+    <section id="support" class="py-5 bg-dark">
+        <div class="container py-5">
+            <div class="text-center mb-5 text-white" data-aos="fade-up">
+                <h6 class="text-accent fw-bold text-uppercase" style="color: var(--accent-color);">Support</h6>
+                <h2 class="fw-bold display-5">We are here to help</h2>
+                <p class="lead text-white-50">Choose how you want to get in touch.</p>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card h-100 bg-light border-0 text-center p-4 rounded-4">
+                        <div class="card-body">
+                            <div class="icon-box mx-auto mb-4 bg-white rounded-circle shadow-sm" style="width: 80px; height: 80px;">
+                                <i class="fa-regular fa-comments fa-2x"></i>
+                            </div>
+                            <h4 class="fw-bold mb-2">Live Chat</h4>
+                            <p class="text-muted mb-4">Get instant answers from our agents.</p>
+                            <a href="#" class="btn btn-outline-primary rounded-pill w-100 fw-bold">Start Chat</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card h-100 bg-light border-0 text-center p-4 rounded-4">
+                        <div class="card-body">
+                            <div class="icon-box mx-auto mb-4 bg-white rounded-circle shadow-sm" style="width: 80px; height: 80px;">
+                                <i class="fa-solid fa-ticket fa-2x"></i>
+                            </div>
+                            <h4 class="fw-bold mb-2">Submit Ticket</h4>
+                            <p class="text-muted mb-4">For complex technical issues.</p>
+                            <a href="#" class="btn btn-primary-custom text-white w-100">Open Ticket</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card h-100 bg-light border-0 text-center p-4 rounded-4">
+                        <div class="card-body">
+                            <div class="icon-box mx-auto mb-4 bg-white rounded-circle shadow-sm" style="width: 80px; height: 80px;">
+                                <i class="fa-solid fa-book fa-2x"></i>
+                            </div>
+                            <h4 class="fw-bold mb-2">Knowledge Base</h4>
+                            <p class="text-muted mb-4">Browse tutorials and guides.</p>
+                            <a href="#" class="btn btn-outline-primary rounded-pill w-100 fw-bold">Read Docs</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <a class="d-flex align-items-center gap-2 mb-3 text-white text-decoration-none" href="#">
+                        <i class="fa-solid fa-cloud-bolt fa-2x text-primary"></i>
+                        <span style="font-weight: 800; font-size: 1.5rem;">NexusHost</span>
+                    </a>
+                    <p>Premium cloud hosting services designed for speed, security, and scalability. Start your journey with us today.</p>
+                    <div class="d-flex gap-3 mt-4">
+                        <a href="#"><i class="fa-brands fa-twitter fa-lg"></i></a>
+                        <a href="#"><i class="fa-brands fa-facebook fa-lg"></i></a>
+                        <a href="#"><i class="fa-brands fa-instagram fa-lg"></i></a>
+                        <a href="#"><i class="fa-brands fa-linkedin fa-lg"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h5>Hosting</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Shared Hosting</a></li>
+                        <li><a href="#">VPS Hosting</a></li>
+                        <li><a href="#">Dedicated Servers</a></li>
+                        <li><a href="#">Cloud Hosting</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h5>Company</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4 mb-4">
+                    <h5>Newsletter</h5>
+                    <p>Subscribe to our newsletter for the latest updates and offers.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control border-0" placeholder="Enter email">
+                        <button class="btn btn-primary-custom text-white" style="border-radius: 0 5px 5px 0;">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="border-secondary mt-5">
+            <div class="text-center pt-3">
+                <p class="mb-0">&copy; 2024 NexusHost. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize Animate On Scroll
+        AOS.init({
+            once: true, // Animation happens only once
+            offset: 100, // Offset (in px) from the original trigger point
+            duration: 800, // Duration of animation
+            easing: 'ease-out-cubic',
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

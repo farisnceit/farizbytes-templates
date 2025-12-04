@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina - The Future of Task Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Modern Font: Plus Jakarta Sans */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Modern Grid Background */
+        .bg-grid-pattern {
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        }
+
+        /* Custom Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float-delayed {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .animate-float-delayed {
+            animation: float-delayed 5s ease-in-out infinite;
+            animation-delay: 1s;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); }
+        }
+
+        .glow-effect {
+            animation: pulse-glow 3s infinite;
+        }
+
+        /* Reveal on Scroll Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); /* Snappier easing */
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712; /* Darker track */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        
+        /* Mobile Menu Transition */
+        #mobile-menu {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        #mobile-menu.open {
+            max-height: 400px;
+            opacity: 1;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .glass-panel:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#7c3aed', // Violet 600 - slightly deeper
+                        secondary: '#db2777', // Pink 600
+                        dark: '#030712',    // Gray 950 - deeper black/blue
+                        surface: '#111827', // Gray 900
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-dark text-slate-200 overflow-x-hidden selection:bg-primary selection:text-white">
+
+    <!-- Background Grid -->
+    <div class="fixed inset-0 z-0 bg-grid-pattern pointer-events-none opacity-40"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-dark/70 backdrop-blur-xl border-b border-white/5 supports-[backdrop-filter]:bg-dark/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer group" onclick="window.scrollTo(0,0)">
+                    <div class="relative w-10 h-10 flex items-center justify-center">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-primary to-secondary rounded-xl blur opacity-75 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="relative w-full h-full bg-dark rounded-xl border border-white/10 flex items-center justify-center">
+                            <i class="fa-solid fa-bolt text-transparent bg-clip-text bg-gradient-to-tr from-primary to-secondary text-xl"></i>
+                        </div>
+                    </div>
+                    <span class="font-bold text-2xl tracking-tight text-white">Lumina</span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-slate-400 hover:text-white transition-colors text-sm font-medium">Features</a>
+                    <a href="#how-it-works" class="text-slate-400 hover:text-white transition-colors text-sm font-medium">How it Works</a>
+                    <a href="#testimonials" class="text-slate-400 hover:text-white transition-colors text-sm font-medium">Reviews</a>
+                    <button class="bg-white text-dark px-6 py-2.5 rounded-full font-bold hover:bg-slate-200 transition-all transform hover:scale-105 active:scale-95 text-sm shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.4)]">
+                        Download V2
+                    </button>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-slate-300 hover:text-white focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="md:hidden bg-dark border-b border-white/5 backdrop-blur-xl">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="#features" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Features</a>
+                <a href="#how-it-works" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">How it Works</a>
+                <a href="#testimonials" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Reviews</a>
+                <div class="pt-4">
+                    <button class="w-full bg-primary text-white px-5 py-3 rounded-xl font-bold hover:bg-violet-600 transition-colors">
+                        Get the App
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden z-10">
+        <!-- Modern Glow Effects -->
+        <div class="absolute top-20 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 animate-pulse mix-blend-screen"></div>
+        <div class="absolute bottom-0 right-0 w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[100px] translate-y-1/4 pointer-events-none mix-blend-screen"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+                <!-- Text Content -->
+                <div class="text-center lg:text-left reveal active">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-300 text-xs font-semibold mb-8 hover:bg-white/10 transition-colors cursor-default">
+                        <span class="relative flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                        <span>New Release 2.0</span>
+                    </div>
+                    <h1 class="text-5xl lg:text-7xl font-extrabold leading-[1.1] mb-6 tracking-tight text-white">
+                        Organize life <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-secondary animate-gradient-x">at light speed.</span>
+                    </h1>
+                    <p class="text-lg text-slate-400 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
+                        Lumina helps you track tasks, collaborate with teams, and hit deadlines without the chaos. Beautifully designed for modern focus.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <button class="group flex items-center justify-center gap-3 bg-white text-dark px-8 py-4 rounded-2xl font-bold hover:bg-slate-100 transition-all hover:-translate-y-1 shadow-[0_10px_40px_-10px_rgba(255,255,255,0.2)]">
+                            <i class="fa-brands fa-apple text-2xl group-hover:scale-110 transition-transform"></i>
+                            <div class="text-left leading-tight">
+                                <div class="text-[10px] uppercase tracking-wider font-bold opacity-60">Download on the</div>
+                                <div class="text-base">App Store</div>
+                            </div>
+                        </button>
+                        <button class="group flex items-center justify-center gap-3 bg-white/5 text-white px-8 py-4 rounded-2xl font-bold hover:bg-white/10 backdrop-blur-md border border-white/10 transition-all hover:-translate-y-1">
+                            <i class="fa-brands fa-google-play text-xl text-slate-300 group-hover:text-white transition-colors"></i>
+                            <div class="text-left leading-tight">
+                                <div class="text-[10px] uppercase tracking-wider font-bold opacity-60">Get it on</div>
+                                <div class="text-base">Google Play</div>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="mt-10 flex items-center justify-center lg:justify-start gap-5 text-sm font-medium text-slate-500">
+                        <div class="flex -space-x-3">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" class="w-10 h-10 rounded-full border-2 border-dark bg-gray-800">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka" alt="User" class="w-10 h-10 rounded-full border-2 border-dark bg-gray-800">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mark" alt="User" class="w-10 h-10 rounded-full border-2 border-dark bg-gray-800">
+                            <div class="w-10 h-10 rounded-full border-2 border-dark bg-surface flex items-center justify-center text-xs text-white font-bold">+2k</div>
+                        </div>
+                        <p>Join the community</p>
+                    </div>
+                </div>
+
+                <!-- Phone Mockup (CSS Only) -->
+                <div class="relative lg:h-[650px] flex justify-center items-center reveal active delay-200 perspective-[1000px]">
+                    <!-- The Phone Container -->
+                    <div class="relative w-[320px] h-[650px] bg-dark rounded-[3.5rem] border-[8px] border-gray-800 shadow-2xl animate-float overflow-hidden ring-1 ring-white/10 z-20">
+                        <!-- Screen Reflection/Gloss -->
+                        <div class="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none z-30 rounded-[3rem]"></div>
+                        
+                        <!-- Notch -->
+                        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-36 h-7 bg-gray-800 rounded-b-2xl z-20"></div>
+                        
+                        <!-- Screen Content -->
+                        <div class="w-full h-full bg-gradient-to-b from-slate-900 to-black pt-14 px-6 relative overflow-hidden flex flex-col">
+                            <!-- Header inside phone -->
+                            <div class="flex justify-between items-center mb-8">
+                                <div>
+                                    <h3 class="text-white font-bold text-xl tracking-tight">Good Morning</h3>
+                                    <p class="text-slate-400 text-xs font-medium">4 tasks pending</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary p-[2px]">
+                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="rounded-full bg-black w-full h-full" alt="profile">
+                                </div>
+                            </div>
+
+                            <!-- Floating Cards inside phone -->
+                            <div class="space-y-4 flex-1">
+                                <!-- Card 1 -->
+                                <div class="glass-panel p-5 rounded-2xl transform hover:scale-[1.02] transition-transform cursor-pointer group">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors">
+                                            <i class="fa-solid fa-pen-nib"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold bg-blue-500/10 text-blue-300 px-2.5 py-1 rounded-full border border-blue-500/20">DESIGN</span>
+                                    </div>
+                                    <h4 class="text-white font-bold text-base mb-1">Website Redesign</h4>
+                                    <div class="flex justify-between items-center mt-3">
+                                        <div class="w-2/3 bg-gray-800 h-1.5 rounded-full overflow-hidden">
+                                            <div class="bg-blue-500 h-full rounded-full w-3/4"></div>
+                                        </div>
+                                        <span class="text-[10px] text-slate-400">75%</span>
+                                    </div>
+                                </div>
+
+                                <!-- Card 2 -->
+                                <div class="glass-panel p-5 rounded-2xl transform hover:scale-[1.02] transition-transform cursor-pointer group">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center border border-purple-500/20 group-hover:bg-purple-500/20 transition-colors">
+                                            <i class="fa-solid fa-code"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold bg-purple-500/10 text-purple-300 px-2.5 py-1 rounded-full border border-purple-500/20">DEV</span>
+                                    </div>
+                                    <h4 class="text-white font-bold text-base mb-1">API Integration</h4>
+                                    <div class="flex justify-between items-center mt-3">
+                                        <div class="w-2/3 bg-gray-800 h-1.5 rounded-full overflow-hidden">
+                                            <div class="bg-purple-500 h-full rounded-full w-1/2"></div>
+                                        </div>
+                                        <span class="text-[10px] text-slate-400">50%</span>
+                                    </div>
+                                </div>
+
+                                <!-- Card 3 -->
+                                <div class="glass-panel p-5 rounded-2xl transform hover:scale-[1.02] transition-transform cursor-pointer group">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div class="w-10 h-10 rounded-xl bg-pink-500/10 text-pink-400 flex items-center justify-center border border-pink-500/20 group-hover:bg-pink-500/20 transition-colors">
+                                            <i class="fa-solid fa-video"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold bg-pink-500/10 text-pink-300 px-2.5 py-1 rounded-full border border-pink-500/20">SYNC</span>
+                                    </div>
+                                    <h4 class="text-white font-bold text-base mb-1">Team Standup</h4>
+                                    <div class="flex -space-x-2 mt-3">
+                                        <div class="w-6 h-6 rounded-full bg-gray-600 border border-gray-900"></div>
+                                        <div class="w-6 h-6 rounded-full bg-gray-500 border border-gray-900"></div>
+                                        <div class="w-6 h-6 rounded-full bg-gray-400 border border-gray-900 flex items-center justify-center text-[8px] text-black font-bold">+2</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Bottom Nav inside phone -->
+                            <div class="mb-6 mx-2 bg-white/5 backdrop-blur-2xl rounded-2xl p-4 flex justify-around items-center border border-white/5">
+                                <i class="fa-solid fa-house text-primary text-lg"></i>
+                                <i class="fa-solid fa-calendar text-slate-500 hover:text-white transition-colors"></i>
+                                <div class="w-12 h-12 bg-gradient-to-tr from-primary to-secondary rounded-xl flex items-center justify-center -mt-8 shadow-lg shadow-primary/40 text-white transform hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-plus"></i>
+                                </div>
+                                <i class="fa-solid fa-comment text-slate-500 hover:text-white transition-colors"></i>
+                                <i class="fa-solid fa-user text-slate-500 hover:text-white transition-colors"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Elements behind phone (Glows & Icons) -->
+                    <div class="absolute -right-8 top-1/4 bg-surface/50 backdrop-blur-xl p-4 rounded-2xl border border-white/10 animate-float-delayed shadow-xl">
+                        <i class="fa-solid fa-check-circle text-green-400 text-3xl drop-shadow-[0_0_10px_rgba(74,222,128,0.5)]"></i>
+                    </div>
+                    <div class="absolute -left-12 bottom-1/3 bg-surface/80 backdrop-blur-xl pl-4 pr-6 py-3 rounded-2xl border border-white/10 animate-float flex items-center gap-3 shadow-xl z-30">
+                        <div class="relative">
+                            <div class="w-3 h-3 rounded-full bg-red-500 animate-ping absolute"></div>
+                            <div class="w-3 h-3 rounded-full bg-red-500 relative"></div>
+                        </div>
+                        <div>
+                            <div class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Status</div>
+                            <div class="text-sm font-bold text-white">Live Syncing</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trusted By Section -->
+    <section class="py-12 border-y border-white/5 bg-black/20 backdrop-blur-sm relative z-10">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-xs text-slate-500 mb-8 uppercase tracking-[0.2em] font-bold">Trusted by innovative teams</p>
+            <div class="flex flex-wrap justify-center gap-10 md:gap-20 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
+                <div class="flex items-center gap-2 text-2xl font-bold hover:text-white transition-colors"><i class="fa-brands fa-aws"></i> Amazon</div>
+                <div class="flex items-center gap-2 text-2xl font-bold hover:text-white transition-colors"><i class="fa-brands fa-google"></i> Google</div>
+                <div class="flex items-center gap-2 text-2xl font-bold hover:text-white transition-colors"><i class="fa-brands fa-spotify"></i> Spotify</div>
+                <div class="flex items-center gap-2 text-2xl font-bold hover:text-white transition-colors"><i class="fa-brands fa-stripe"></i> Stripe</div>
+                <div class="flex items-center gap-2 text-2xl font-bold hover:text-white transition-colors"><i class="fa-brands fa-slack"></i> Slack</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section id="features" class="py-32 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-24 reveal">
+                <h2 class="text-primary font-bold tracking-wider uppercase text-xs mb-4">Core Features</h2>
+                <h3 class="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight text-white">Focus on what matters. <br><span class="text-slate-500">We handle the rest.</span></h3>
+                <p class="text-slate-400 text-lg leading-relaxed">We stripped away the clutter and kept only what matters. A minimal interface with maximum power.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Feature 1 -->
+                <div class="glass-panel p-8 rounded-3xl transition-all hover:-translate-y-2 reveal group">
+                    <div class="w-14 h-14 bg-gradient-to-br from-blue-500/20 to-blue-600/5 rounded-2xl flex items-center justify-center text-blue-400 text-2xl mb-6 group-hover:scale-110 transition-transform border border-blue-500/10">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3 text-white">Instant Sync</h4>
+                    <p class="text-slate-400 leading-relaxed text-sm">Changes made on your phone update instantly on your desktop. No refresh buttons, ever.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="glass-panel p-8 rounded-3xl transition-all hover:-translate-y-2 reveal delay-100 group">
+                    <div class="w-14 h-14 bg-gradient-to-br from-purple-500/20 to-purple-600/5 rounded-2xl flex items-center justify-center text-purple-400 text-2xl mb-6 group-hover:scale-110 transition-transform border border-purple-500/10">
+                        <i class="fa-solid fa-shield"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3 text-white">Bank-Grade Security</h4>
+                    <p class="text-slate-400 leading-relaxed text-sm">Your data is encrypted end-to-end. We can't see your tasks, and neither can anyone else.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="glass-panel p-8 rounded-3xl transition-all hover:-translate-y-2 reveal delay-200 group">
+                    <div class="w-14 h-14 bg-gradient-to-br from-pink-500/20 to-pink-600/5 rounded-2xl flex items-center justify-center text-pink-400 text-2xl mb-6 group-hover:scale-110 transition-transform border border-pink-500/10">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3 text-white">Smart Analytics</h4>
+                    <p class="text-slate-400 leading-relaxed text-sm">Visualize your productivity trends over time. See where you spend most of your energy.</p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="glass-panel p-8 rounded-3xl transition-all hover:-translate-y-2 reveal group">
+                    <div class="w-14 h-14 bg-gradient-to-br from-green-500/20 to-green-600/5 rounded-2xl flex items-center justify-center text-green-400 text-2xl mb-6 group-hover:scale-110 transition-transform border border-green-500/10">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3 text-white">Team Collaboration</h4>
+                    <p class="text-slate-400 leading-relaxed text-sm">Assign tasks, leave comments, and share files without leaving the app context.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="glass-panel p-8 rounded-3xl transition-all hover:-translate-y-2 reveal delay-100 group">
+                    <div class="w-14 h-14 bg-gradient-to-br from-orange-500/20 to-orange-600/5 rounded-2xl flex items-center justify-center text-orange-400 text-2xl mb-6 group-hover:scale-110 transition-transform border border-orange-500/10">
+                        <i class="fa-solid fa-moon"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3 text-white">Dark Mode First</h4>
+                    <p class="text-slate-400 leading-relaxed text-sm">Designed for late-night inspiration. Easy on the eyes, saving battery and reducing strain.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="glass-panel p-8 rounded-3xl transition-all hover:-translate-y-2 reveal delay-200 group">
+                    <div class="w-14 h-14 bg-gradient-to-br from-teal-500/20 to-teal-600/5 rounded-2xl flex items-center justify-center text-teal-400 text-2xl mb-6 group-hover:scale-110 transition-transform border border-teal-500/10">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3 text-white">AI Suggestions</h4>
+                    <p class="text-slate-400 leading-relaxed text-sm">Lumina suggests priority tasks based on your habits and deadlines automatically.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="py-32 bg-black/20 border-y border-white/5 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-16 items-center mb-24 reveal">
+                <div class="order-2 md:order-1 relative group">
+                    <!-- Abstract Image representation using CSS -->
+                    <div class="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                    <div class="relative w-full aspect-square max-w-md mx-auto bg-surface rounded-3xl border border-white/10 p-8 shadow-2xl flex flex-col gap-4 overflow-hidden">
+                        <div class="absolute inset-0 bg-grid-pattern opacity-20"></div>
+                        <div class="w-full h-14 bg-white/5 rounded-xl animate-pulse"></div>
+                        <div class="w-2/3 h-14 bg-white/5 rounded-xl"></div>
+                        <div class="w-full h-40 bg-primary/10 rounded-xl border border-primary/20 mt-4 p-6 flex flex-col justify-between">
+                            <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white mb-2 font-bold shadow-lg shadow-primary/30">1</div>
+                            <div class="h-2 w-24 bg-primary/30 rounded"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 md:order-2">
+                    <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 text-primary flex items-center justify-center text-xl font-bold mb-8">1</div>
+                    <h3 class="text-3xl md:text-4xl font-bold mb-6 text-white">Create your workspace</h3>
+                    <p class="text-slate-400 text-lg leading-relaxed mb-8">Start by creating spaces for different areas of your life. Keep "Work", "Personal", and "Hobby" completely separate but easily accessible.</p>
+                    <ul class="space-y-4">
+                        <li class="flex items-center gap-4 text-slate-300">
+                            <div class="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center"><i class="fa-solid fa-check text-green-400 text-xs"></i></div> Customizable templates
+                        </li>
+                        <li class="flex items-center gap-4 text-slate-300">
+                             <div class="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center"><i class="fa-solid fa-check text-green-400 text-xs"></i></div> Import from other tools
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-16 items-center reveal">
+                <div>
+                    <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 text-secondary flex items-center justify-center text-xl font-bold mb-8">2</div>
+                    <h3 class="text-3xl md:text-4xl font-bold mb-6 text-white">Invite your team</h3>
+                    <p class="text-slate-400 text-lg leading-relaxed mb-8">Send a link and get everyone on board in seconds. Assign roles, set permissions, and start collaborating in real-time.</p>
+                    <ul class="space-y-4">
+                        <li class="flex items-center gap-4 text-slate-300">
+                            <div class="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center"><i class="fa-solid fa-check text-green-400 text-xs"></i></div> Unlimited guests
+                        </li>
+                        <li class="flex items-center gap-4 text-slate-300">
+                             <div class="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center"><i class="fa-solid fa-check text-green-400 text-xs"></i></div> Granular permissions
+                        </li>
+                    </ul>
+                </div>
+                <div class="relative group">
+                    <!-- Abstract Image representation using CSS -->
+                    <div class="absolute -inset-1 bg-gradient-to-r from-secondary to-purple-600 rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                    <div class="relative w-full aspect-square max-w-md mx-auto bg-surface rounded-3xl border border-white/10 p-8 shadow-2xl flex items-center justify-center overflow-hidden">
+                        <div class="absolute inset-0 bg-grid-pattern opacity-20"></div>
+                        <!-- Profile bubbles -->
+                        <div class="relative w-48 h-48 animate-[spin_10s_linear_infinite]">
+                             <div class="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-20 bg-blue-500 rounded-full border-[6px] border-surface shadow-xl z-10 flex items-center justify-center text-2xl animate-[spin_10s_linear_infinite_reverse]">👨‍💻</div>
+                             <div class="absolute bottom-2 left-2 w-20 h-20 bg-secondary rounded-full border-[6px] border-surface shadow-xl z-20 flex items-center justify-center text-2xl animate-[spin_10s_linear_infinite_reverse]">👩‍🎨</div>
+                             <div class="absolute bottom-2 right-2 w-20 h-20 bg-green-500 rounded-full border-[6px] border-surface shadow-xl z-10 flex items-center justify-center text-2xl animate-[spin_10s_linear_infinite_reverse]">🚀</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-32 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-center mb-20 reveal text-white tracking-tight">Loved by designers <br>& developers</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Review 1 -->
+                <div class="glass-panel p-10 rounded-3xl reveal relative">
+                    <div class="absolute -top-4 -left-4 text-6xl text-white/5 font-serif">"</div>
+                    <div class="flex text-yellow-400 mb-6 gap-1 text-sm">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-slate-300 mb-8 leading-relaxed font-medium">"Lumina completely changed how I manage my freelance projects. The mobile app is actually usable, unlike Trello's."</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center font-bold text-white border border-white/10">SJ</div>
+                        <div>
+                            <div class="font-bold text-white">Sarah Jenkins</div>
+                            <div class="text-xs text-primary font-bold uppercase tracking-wide">Product Designer</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="glass-panel p-10 rounded-3xl reveal delay-100 relative">
+                     <div class="absolute -top-4 -left-4 text-6xl text-white/5 font-serif">"</div>
+                    <div class="flex text-yellow-400 mb-6 gap-1 text-sm">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-slate-300 mb-8 leading-relaxed font-medium">"Finally, a dark mode that doesn't hurt my eyes. The sync speed is incredible. Highly recommended."</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center font-bold text-white border border-white/10">MR</div>
+                        <div>
+                            <div class="font-bold text-white">Mike Ross</div>
+                            <div class="text-xs text-primary font-bold uppercase tracking-wide">Frontend Dev</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="glass-panel p-10 rounded-3xl reveal delay-200 relative">
+                     <div class="absolute -top-4 -left-4 text-6xl text-white/5 font-serif">"</div>
+                    <div class="flex text-yellow-400 mb-6 gap-1 text-sm">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                    </div>
+                    <p class="text-slate-300 mb-8 leading-relaxed font-medium">"The AI prioritization feature actually works. It saved me from missing a critical deadline last week."</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center font-bold text-white border border-white/10">AL</div>
+                        <div>
+                            <div class="font-bold text-white">Amy Lee</div>
+                            <div class="text-xs text-primary font-bold uppercase tracking-wide">Project Manager</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 px-4 relative z-10">
+        <div class="max-w-5xl mx-auto relative">
+            <div class="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-[3rem] blur-2xl opacity-40 transform translate-y-4"></div>
+            <div class="relative bg-surface border border-white/10 rounded-[3rem] p-12 md:p-24 text-center overflow-hidden">
+                 <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
+                <!-- Decor Circles -->
+                <div class="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-[80px] translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+                
+                <h2 class="text-4xl md:text-6xl font-extrabold mb-8 text-white relative z-10 tracking-tight">Ready to streamline <br>your workflow?</h2>
+                <p class="text-slate-400 text-xl mb-12 max-w-2xl mx-auto relative z-10 font-medium">Join the beta today and get 3 months of Premium for free. No credit card required.</p>
+                
+                <div class="flex flex-col sm:flex-row gap-5 justify-center relative z-10">
+                    <button class="bg-white text-dark px-8 py-4 rounded-2xl font-bold text-lg hover:bg-slate-200 transition-all hover:-translate-y-1 shadow-xl">
+                        Download for iOS
+                    </button>
+                    <button class="bg-white/10 text-white border border-white/10 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-white/20 transition-all hover:-translate-y-1 backdrop-blur-md">
+                        Download for Android
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 pt-20 pb-10 bg-dark relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-16">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-tr from-primary to-secondary rounded-xl flex items-center justify-center">
+                            <i class="fa-solid fa-bolt text-white text-lg"></i>
+                        </div>
+                        <span class="font-bold text-2xl text-white">Lumina</span>
+                    </div>
+                    <p class="text-slate-500 text-sm mb-6 leading-relaxed">Making productivity beautiful and efficient for everyone. Built for the modern web.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all"><i class="fa-brands fa-linkedin"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-6 text-white">Product</h4>
+                    <ul class="space-y-4 text-slate-400 text-sm">
+                        <li><a href="#" class="hover:text-primary transition-colors">Features</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Integrations</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Pricing</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Changelog</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-6 text-white">Company</h4>
+                    <ul class="space-y-4 text-slate-400 text-sm">
+                        <li><a href="#" class="hover:text-primary transition-colors">About Us</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Careers</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-6 text-white">Legal</h4>
+                    <ul class="space-y-4 text-slate-400 text-sm">
+                        <li><a href="#" class="hover:text-primary transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-600">
+                <p>&copy; 2024 Lumina App Inc. All rights reserved.</p>
+                <div class="flex items-center gap-2 mt-4 md:mt-0">
+                    <span>Made with <i class="fa-solid fa-heart text-secondary mx-1"></i> in San Francisco</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('open');
+            // Animate hamburger icon
+            const icon = btn.querySelector('i');
+            if(menu.classList.contains('open')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+            } else {
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Intersection Observer for Scroll Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth Scroll for Anchor Links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                if(menu.classList.contains('open')) {
+                   menu.classList.remove('open');
+                   const icon = btn.querySelector('i');
+                   icon.classList.remove('fa-xmark');
+                   icon.classList.add('fa-bars');
+                }
+                
+                const target = document.querySelector(this.getAttribute('href'));
+                if(target){
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
