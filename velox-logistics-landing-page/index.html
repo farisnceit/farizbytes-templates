@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Velox Logistics | Smart Global Shipping</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f4ff',
+                            100: '#e0eaff',
+                            500: '#6366f1', // Indigo primary
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#1e1b4b', // Deep dark blue/black
+                        },
+                        glass: {
+                            100: 'rgba(255, 255, 255, 0.1)',
+                            200: 'rgba(255, 255, 255, 0.2)',
+                            dark: 'rgba(15, 23, 42, 0.6)',
+                        }
+                    },
+                    backgroundImage: {
+                        'hero-pattern': "url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?q=80&w=2940&auto=format&fit=crop')",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles for Glassmorphism & Utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card-dark {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Smooth scroll hiding */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        .clip-path-slant {
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+        }
+
+        .clip-path-slant-inv {
+            clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 100%);
+        }
+
+        details>summary {
+            list-style: none;
+        }
+
+        details>summary::-webkit-details-marker {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-950 text-white overflow-x-hidden selection:bg-brand-500 selection:text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-6" id="navbar">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-2 group cursor-pointer">
+                <div
+                    class="w-10 h-10 bg-gradient-to-br from-brand-500 to-violet-600 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform">
+                    <i data-lucide="box" class="text-white w-6 h-6"></i>
+                </div>
+                <span class="text-2xl font-bold tracking-tight">Velox</span>
+            </a>
+
+            <!-- Desktop Menu -->
+            <div
+                class="hidden md:flex items-center gap-1 bg-white/5 backdrop-blur-md px-2 py-1.5 rounded-full border border-white/10 shadow-lg">
+                <a href="#home"
+                    class="px-5 py-2 text-sm font-medium text-white bg-white/10 rounded-full transition-all hover:bg-white/20">Home</a>
+                <a href="#how-it-works"
+                    class="px-5 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors">Process</a>
+                <a href="#solutions"
+                    class="px-5 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors">Solutions</a>
+                <a href="#reviews"
+                    class="px-5 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors">Reviews</a>
+            </div>
+
+            <!-- CTA -->
+            <button
+                class="hidden md:flex items-center gap-2 bg-white text-slate-900 px-6 py-2.5 rounded-full font-semibold hover:bg-brand-50 transition-colors group">
+                Get Started
+                <div class="bg-slate-900 rounded-full p-1 group-hover:bg-brand-600 transition-colors">
+                    <i data-lucide="arrow-up-right" class="w-3 h-3 text-white"></i>
+                </div>
+            </button>
+
+            <!-- Mobile Menu Btn -->
+            <button class="md:hidden p-2 text-white">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section id="home" class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-900/90 to-slate-900/40 z-10"></div>
+            <div class="absolute inset-0 bg-hero-pattern bg-cover bg-center opacity-60 scale-105" id="hero-bg"></div>
+            <!-- Bottom Fade -->
+            <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-950 to-transparent z-10">
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-6 relative z-20 w-full grid md:grid-cols-2 gap-12 items-center">
+
+            <!-- Left Content -->
+            <div class="hero-content space-y-8">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-300 text-xs font-semibold tracking-wider uppercase backdrop-blur-sm animate-fade-in-up">
+                    <span class="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span>
+                    Smart Shipping 2.0
+                </div>
+
+                <h1 class="text-5xl md:text-7xl font-bold leading-[1.1] text-white">
+                    Future-Proof <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-violet-400">Global
+                        Logistics</span>
+                </h1>
+
+                <p class="text-lg text-slate-300 max-w-lg font-light leading-relaxed">
+                    Velox provides AI-driven supply chain visibility, ensuring your cargo moves faster, safer, and
+                    cheaper across borders.
+                </p>
+
+                <div class="flex flex-wrap gap-4 pt-4">
+                    <button
+                        class="bg-brand-600 hover:bg-brand-700 text-white px-8 py-4 rounded-2xl font-semibold flex items-center gap-3 transition-all shadow-lg shadow-brand-600/25 hover:shadow-brand-600/40 hover:-translate-y-1">
+                        Track Shipment
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+                    <button
+                        class="glass-panel text-white px-8 py-4 rounded-2xl font-semibold flex items-center gap-3 hover:bg-white/10 transition-all backdrop-blur-md">
+                        <div class="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center">
+                            <i data-lucide="play" class="w-3 h-3 ml-0.5 fill-white"></i>
+                        </div>
+                        Watch Demo
+                    </button>
+                </div>
+
+                <!-- Bottom Slider Controls Mockup -->
+                <div class="pt-12 flex items-center gap-6 opacity-60">
+                    <div class="flex gap-2">
+                        <button class="p-3 rounded-full border border-white/20 hover:bg-white/10 transition"><i
+                                data-lucide="arrow-left" class="w-4 h-4"></i></button>
+                        <button class="p-3 rounded-full border border-white/20 hover:bg-white/10 transition"><i
+                                data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    </div>
+                    <div class="h-[1px] w-24 bg-white/20 relative">
+                        <div class="absolute left-0 top-0 bottom-0 w-1/2 bg-brand-400"></div>
+                    </div>
+                    <span class="text-sm font-mono">01/04</span>
+                </div>
+            </div>
+
+            <!-- Right Content: Floating Cards -->
+            <div class="relative h-[600px] hidden md:block select-none pointer-events-none">
+
+                <!-- Main Intelligence Card -->
+                <div class="absolute right-0 top-1/4 max-w-sm w-full glass-card-dark p-6 rounded-3xl z-20 floating-card"
+                    id="card-1">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="flex items-center gap-3">
+                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=100&h=100"
+                                class="w-12 h-12 rounded-full border-2 border-brand-500 object-cover" alt="Agent">
+                            <div>
+                                <h4 class="font-bold text-white">Logistics AI</h4>
+                                <p class="text-xs text-brand-300">Route Optimization</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="p-1.5 rounded-full hover:bg-white/10 text-slate-400"><i
+                                    data-lucide="refresh-cw" class="w-4 h-4"></i></button>
+                            <button class="p-1.5 rounded-full hover:bg-white/10 text-slate-400"><i data-lucide="x"
+                                    class="w-4 h-4"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Fake Graph -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-xs text-slate-400">
+                            <span>Efficiency</span>
+                            <span class="text-green-400">+24%</span>
+                        </div>
+                        <div class="h-24 flex items-end justify-between gap-1">
+                            <div class="w-full bg-brand-500/20 rounded-t-sm h-[40%]"></div>
+                            <div class="w-full bg-brand-500/20 rounded-t-sm h-[60%]"></div>
+                            <div class="w-full bg-brand-500/40 rounded-t-sm h-[50%]"></div>
+                            <div class="w-full bg-brand-500/30 rounded-t-sm h-[70%]"></div>
+                            <div class="w-full bg-brand-500 rounded-t-sm h-[85%] relative group">
+                                <div
+                                    class="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-slate-900 text-xs font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+                                    98%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-white/10 flex items-center gap-4">
+                        <div class="bg-green-500/20 text-green-400 p-2 rounded-lg">
+                            <i data-lucide="check-circle" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium">Route #8292 Optimized</p>
+                            <p class="text-xs text-slate-400">Saved 4h 20m transit time</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secondary Floating Badge -->
+                <div
+                    class="absolute left-10 bottom-32 glass-panel p-4 rounded-2xl flex items-center gap-4 z-10 floating-card-delayed">
+                    <div class="bg-orange-500 rounded-lg p-2 text-white shadow-lg shadow-orange-500/20">
+                        <i data-lucide="box" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Active Shipments</p>
+                        <p class="text-xl font-bold font-mono">1,284</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- LOGO STRIP -->
+    <section class="border-y border-white/5 bg-slate-950/50">
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <p class="text-center text-xs font-semibold tracking-widest text-slate-500 uppercase mb-6">Trusted by
+                industry leaders</p>
+            <div
+                class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+                <!-- Using Text as placeholder for logos for simplicity -->
+                <span class="text-xl font-bold font-sans">ACME Corp</span>
+                <span class="text-xl font-bold font-serif">GlobalTech</span>
+                <span class="text-xl font-bold font-mono">NEXUS</span>
+                <span class="text-xl font-bold italic">Horizon</span>
+                <span class="text-xl font-bold">StarkInd</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: HOW IT WORKS (New) -->
+    <section id="how-it-works" class="py-24 bg-slate-950">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="text-brand-400 font-semibold tracking-wider text-sm uppercase">Process</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-2">Simplify your logistics in <span
+                        class="text-brand-400">3 steps</span></h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 relative">
+                <!-- Connector Line (Desktop) -->
+                <div
+                    class="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-transparent via-brand-500/30 to-transparent">
+                </div>
+
+                <!-- Step 1 -->
+                <div class="relative text-center group">
+                    <div
+                        class="w-24 h-24 mx-auto bg-slate-900 border border-slate-800 rounded-full flex items-center justify-center mb-6 relative z-10 group-hover:border-brand-500 transition-colors shadow-lg shadow-black">
+                        <span
+                            class="absolute -top-2 -right-2 w-8 h-8 bg-brand-600 rounded-full flex items-center justify-center text-sm font-bold border-4 border-slate-950">1</span>
+                        <i data-lucide="clipboard-list"
+                            class="w-10 h-10 text-slate-400 group-hover:text-brand-400 transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Book Instantly</h3>
+                    <p class="text-slate-400 text-sm max-w-xs mx-auto">Get a quote in seconds and book your freight with
+                        guaranteed capacity.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative text-center group">
+                    <div
+                        class="w-24 h-24 mx-auto bg-slate-900 border border-slate-800 rounded-full flex items-center justify-center mb-6 relative z-10 group-hover:border-brand-500 transition-colors shadow-lg shadow-black">
+                        <span
+                            class="absolute -top-2 -right-2 w-8 h-8 bg-brand-600 rounded-full flex items-center justify-center text-sm font-bold border-4 border-slate-950">2</span>
+                        <i data-lucide="satellite"
+                            class="w-10 h-10 text-slate-400 group-hover:text-brand-400 transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Track in Real-Time</h3>
+                    <p class="text-slate-400 text-sm max-w-xs mx-auto">Watch your cargo move across the globe with our
+                        live satellite dashboard.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative text-center group">
+                    <div
+                        class="w-24 h-24 mx-auto bg-slate-900 border border-slate-800 rounded-full flex items-center justify-center mb-6 relative z-10 group-hover:border-brand-500 transition-colors shadow-lg shadow-black">
+                        <span
+                            class="absolute -top-2 -right-2 w-8 h-8 bg-brand-600 rounded-full flex items-center justify-center text-sm font-bold border-4 border-slate-950">3</span>
+                        <i data-lucide="package-check"
+                            class="w-10 h-10 text-slate-400 group-hover:text-brand-400 transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Secure Delivery</h3>
+                    <p class="text-slate-400 text-sm max-w-xs mx-auto">Automated proof of delivery and instant invoicing
+                        upon arrival.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: SERVICES (The "Smart Solutions") -->
+    <section id="solutions" class="py-24 bg-slate-900/50 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 max-w-2xl mx-auto space-y-4">
+                <span class="text-brand-400 font-semibold tracking-wider text-sm uppercase">Our Expertise</span>
+                <h2 class="text-3xl md:text-5xl font-bold">Solutions tailored for <span class="text-white">modern
+                        commerce.</span></h2>
+                <p class="text-slate-400">We don't just move boxes. We engineer the flow of goods with precision
+                    technology.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div
+                    class="group bg-slate-800/50 border border-slate-700/50 p-8 rounded-3xl hover:bg-slate-800 hover:border-brand-500/50 transition-all duration-500 relative overflow-hidden backdrop-blur-sm">
+                    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="plane" class="w-32 h-32 -mr-8 -mt-8 rotate-12"></i>
+                    </div>
+                    <div
+                        class="w-14 h-14 bg-slate-950 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-brand-600 transition-colors shadow-lg border border-slate-700">
+                        <i data-lucide="globe-2" class="text-white w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Global Freight</h3>
+                    <p class="text-slate-400 mb-6 text-sm leading-relaxed">Seamless air and ocean freight forwarding to
+                        over 140 countries with customs clearance included.</p>
+                    <a href="#"
+                        class="inline-flex items-center text-brand-400 text-sm font-semibold group-hover:translate-x-1 transition-transform">Learn
+                        more <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i></a>
+                </div>
+
+                <!-- Service 2 -->
+                <div
+                    class="group bg-slate-800/50 border border-slate-700/50 p-8 rounded-3xl hover:bg-slate-800 hover:border-brand-500/50 transition-all duration-500 relative overflow-hidden backdrop-blur-sm">
+                    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="truck" class="w-32 h-32 -mr-8 -mt-8 rotate-12"></i>
+                    </div>
+                    <div
+                        class="w-14 h-14 bg-slate-950 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-brand-600 transition-colors shadow-lg border border-slate-700">
+                        <i data-lucide="layout-dashboard" class="text-white w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Digital Warehousing</h3>
+                    <p class="text-slate-400 mb-6 text-sm leading-relaxed">Real-time inventory management across our
+                        distributed micro-fulfillment centers nationwide.</p>
+                    <a href="#"
+                        class="inline-flex items-center text-brand-400 text-sm font-semibold group-hover:translate-x-1 transition-transform">Learn
+                        more <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i></a>
+                </div>
+
+                <!-- Service 3 -->
+                <div
+                    class="group bg-slate-800/50 border border-slate-700/50 p-8 rounded-3xl hover:bg-slate-800 hover:border-brand-500/50 transition-all duration-500 relative overflow-hidden backdrop-blur-sm">
+                    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="container" class="w-32 h-32 -mr-8 -mt-8 rotate-12"></i>
+                    </div>
+                    <div
+                        class="w-14 h-14 bg-slate-950 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-brand-600 transition-colors shadow-lg border border-slate-700">
+                        <i data-lucide="shield-check" class="text-white w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Secure Transport</h3>
+                    <p class="text-slate-400 mb-6 text-sm leading-relaxed">High-value cargo protection with GPS-locked
+                        containers and 24/7 monitoring teams.</p>
+                    <a href="#"
+                        class="inline-flex items-center text-brand-400 text-sm font-semibold group-hover:translate-x-1 transition-transform">Learn
+                        more <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: FEATURES & STATS -->
+    <section id="features" class="py-24 bg-gradient-to-b from-slate-950 to-slate-900 clip-path-slant pb-48">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+            <div class="relative">
+                <div class="absolute -inset-4 bg-brand-500/20 rounded-full blur-3xl"></div>
+                <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2940&auto=format&fit=crop"
+                    alt="Warehouse"
+                    class="relative rounded-3xl shadow-2xl border border-white/10 z-10 rotate-3 hover:rotate-0 transition-all duration-700">
+
+                <!-- Floating Stat Card -->
+                <div
+                    class="absolute -bottom-8 -left-8 bg-white text-slate-900 p-6 rounded-2xl shadow-xl z-20 max-w-xs animate-float">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="p-3 bg-indigo-100 rounded-full text-brand-600">
+                            <i data-lucide="users" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-lg">24/7 Support</p>
+                            <p class="text-xs text-slate-500">Always here for you</p>
+                        </div>
+                    </div>
+                    <div class="flex -space-x-3">
+                        <img class="w-10 h-10 rounded-full border-2 border-white" src="https://i.pravatar.cc/100?img=1"
+                            alt="">
+                        <img class="w-10 h-10 rounded-full border-2 border-white" src="https://i.pravatar.cc/100?img=2"
+                            alt="">
+                        <img class="w-10 h-10 rounded-full border-2 border-white" src="https://i.pravatar.cc/100?img=3"
+                            alt="">
+                        <div
+                            class="w-10 h-10 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600">
+                            +4k</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-8">
+                <h2 class="text-4xl md:text-5xl font-bold">Data-Driven Decisions.<br>Real-Time Control.</h2>
+                <p class="text-slate-400 text-lg">Stop guessing where your cargo is. Velox gives you granular control
+                    over every step of the journey with our proprietary dashboard.</p>
+
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4">
+                        <div class="mt-1">
+                            <i data-lucide="check-circle-2" class="text-brand-400 w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg">Live Satellite Tracking</h4>
+                            <p class="text-slate-400 text-sm">Precision down to the meter, anywhere on Earth.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="mt-1">
+                            <i data-lucide="check-circle-2" class="text-brand-400 w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg">Predictive Analytics</h4>
+                            <p class="text-slate-400 text-sm">AI forecasts delays before they happen, suggesting
+                                alternative routes.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="mt-1">
+                            <i data-lucide="check-circle-2" class="text-brand-400 w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg">Automated Customs</h4>
+                            <p class="text-slate-400 text-sm">Digital paperwork generation to clear borders instantly.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: TESTIMONIALS (New) -->
+    <section id="reviews" class="py-24 bg-slate-900">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold">Trusted by logistics leaders</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Testimonial 1 -->
+                <div class="glass-panel p-8 rounded-3xl relative">
+                    <i data-lucide="quote" class="w-8 h-8 text-brand-500 mb-4 opacity-50"></i>
+                    <p class="text-slate-300 mb-6 italic">"Velox transformed our supply chain. The real-time tracking is
+                        a game changer for our high-value electronics shipments."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://i.pravatar.cc/100?img=11" alt="User"
+                            class="w-10 h-10 rounded-full border border-white/20">
+                        <div>
+                            <h4 class="font-bold text-sm">Sarah Jenkins</h4>
+                            <p class="text-xs text-slate-500">Ops Director, TechFlow</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="glass-panel p-8 rounded-3xl relative bg-white/5 border-brand-500/30">
+                    <i data-lucide="quote" class="w-8 h-8 text-brand-500 mb-4 opacity-50"></i>
+                    <p class="text-slate-300 mb-6 italic">"We reduced our customs delays by 40% thanks to their
+                        automated documentation system. Incredible service."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://i.pravatar.cc/100?img=33" alt="User"
+                            class="w-10 h-10 rounded-full border border-white/20">
+                        <div>
+                            <h4 class="font-bold text-sm">Marcus Chen</h4>
+                            <p class="text-xs text-slate-500">CEO, ImportOne</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="glass-panel p-8 rounded-3xl relative">
+                    <i data-lucide="quote" class="w-8 h-8 text-brand-500 mb-4 opacity-50"></i>
+                    <p class="text-slate-300 mb-6 italic">"Reliable, fast, and transparent. The dashboard gives us the
+                        control we need over our global inventory."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://i.pravatar.cc/100?img=5" alt="User"
+                            class="w-10 h-10 rounded-full border border-white/20">
+                        <div>
+                            <h4 class="font-bold text-sm">Elena Rodriguez</h4>
+                            <p class="text-xs text-slate-500">Logistics Manager, RetailCo</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: FAQ (New) -->
+    <section class="py-24 bg-slate-950">
+        <div class="max-w-3xl mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <details
+                    class="group bg-slate-900 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer border border-transparent hover:border-brand-500/30 transition-colors">
+                    <summary class="flex justify-between items-center font-semibold text-lg list-none">
+                        How does the real-time tracking work?
+                        <span class="transition group-open:rotate-180">
+                            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                        </span>
+                    </summary>
+                    <div class="text-slate-400 mt-4 leading-relaxed text-sm">
+                        We install proprietary IoT sensors on all containers that ping GPS coordinates via satellite
+                        every 10 minutes. This data is fed instantly into your dashboard.
+                    </div>
+                </details>
+
+                <!-- FAQ Item 2 -->
+                <details
+                    class="group bg-slate-900 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer border border-transparent hover:border-brand-500/30 transition-colors">
+                    <summary class="flex justify-between items-center font-semibold text-lg list-none">
+                        What regions do you cover?
+                        <span class="transition group-open:rotate-180">
+                            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                        </span>
+                    </summary>
+                    <div class="text-slate-400 mt-4 leading-relaxed text-sm">
+                        Velox operates in over 140 countries, with major hubs in North America, Europe, SE Asia, and the
+                        Middle East. We specialize in cross-border freight.
+                    </div>
+                </details>
+
+                <!-- FAQ Item 3 -->
+                <details
+                    class="group bg-slate-900 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer border border-transparent hover:border-brand-500/30 transition-colors">
+                    <summary class="flex justify-between items-center font-semibold text-lg list-none">
+                        Do you handle customs clearance?
+                        <span class="transition group-open:rotate-180">
+                            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                        </span>
+                    </summary>
+                    <div class="text-slate-400 mt-4 leading-relaxed text-sm">
+                        Yes! Our automated system generates the required documentation for 95% of goods. For specialized
+                        cargo, our brokerage team handles the filing manually.
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: CTA / Footer Pre-empt -->
+    <section class="py-24 bg-slate-900">
+        <div class="max-w-5xl mx-auto px-6">
+            <div
+                class="bg-gradient-to-r from-brand-600 to-violet-700 rounded-[2.5rem] p-12 md:p-20 text-center relative overflow-hidden">
+                <!-- Decorative Circles -->
+                <div
+                    class="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2">
+                </div>
+                <div
+                    class="absolute bottom-0 right-0 w-64 h-64 bg-black/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2">
+                </div>
+
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 relative z-10">Ready to accelerate your
+                    business?</h2>
+                <p class="text-brand-100 text-lg mb-10 max-w-2xl mx-auto relative z-10">Join 500+ global brands who
+                    trust Velox for their mission-critical logistics.</p>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
+                    <input type="email" placeholder="Enter your work email"
+                        class="px-6 py-4 rounded-full bg-white/10 border border-white/20 text-white placeholder-brand-200 focus:outline-none focus:bg-white/20 w-full sm:w-auto min-w-[300px] backdrop-blur-sm">
+                    <button
+                        class="bg-white text-brand-600 px-8 py-4 rounded-full font-bold hover:bg-brand-50 transition-colors shadow-lg">Get
+                        a Quote</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 pt-20 pb-10 border-t border-slate-900">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-12 mb-16">
+                <div class="space-y-6">
+                    <a href="#" class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center">
+                            <i data-lucide="box" class="text-white w-5 h-5"></i>
+                        </div>
+                        <span class="text-xl font-bold">Velox</span>
+                    </a>
+                    <p class="text-slate-400 text-sm leading-relaxed">Redefining logistics through technology and
+                        transparency. We move the world forward.</p>
+                    <div class="flex gap-4">
+                        <a href="#"
+                            class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-slate-400 hover:bg-brand-500 hover:text-white transition-all"><i
+                                data-lucide="twitter" class="w-4 h-4"></i></a>
+                        <a href="#"
+                            class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-slate-400 hover:bg-brand-500 hover:text-white transition-all"><i
+                                data-lucide="linkedin" class="w-4 h-4"></i></a>
+                        <a href="#"
+                            class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-slate-400 hover:bg-brand-500 hover:text-white transition-all"><i
+                                data-lucide="instagram" class="w-4 h-4"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold mb-6 text-white">Company</h4>
+                    <ul class="space-y-4 text-sm text-slate-400">
+                        <li><a href="#" class="hover:text-brand-400 transition">About Us</a></li>
+                        <li><a href="#" class="hover:text-brand-400 transition">Careers</a></li>
+                        <li><a href="#" class="hover:text-brand-400 transition">Press</a></li>
+                        <li><a href="#" class="hover:text-brand-400 transition">Partners</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold mb-6 text-white">Services</h4>
+                    <ul class="space-y-4 text-sm text-slate-400">
+                        <li><a href="#" class="hover:text-brand-400 transition">Air Freight</a></li>
+                        <li><a href="#" class="hover:text-brand-400 transition">Ocean Freight</a></li>
+                        <li><a href="#" class="hover:text-brand-400 transition">Warehousing</a></li>
+                        <li><a href="#" class="hover:text-brand-400 transition">Supply Chain</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold mb-6 text-white">Legal</h4>
+                    <ul class="space-y-4 text-sm text-slate-400">
+                        <li><a href="#" class="hover:text-brand-400 transition">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-brand-400 transition">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-brand-400 transition">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div
+                class="border-t border-slate-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+                <p>&copy; 2024 Velox Logistics Inc. All rights reserved.</p>
+                <div class="flex gap-8">
+                    <span>New York</span>
+                    <span>London</span>
+                    <span>Singapore</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS for Animation & Icons -->
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // GSAP Animations
+        document.addEventListener("DOMContentLoaded", (event) => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Navbar entrance
+            gsap.from("#navbar", {
+                y: -100,
+                opacity: 0,
+                duration: 1,
+                ease: "power3.out"
+            });
+
+            // Hero Text Entrance
+            gsap.from(".hero-content > *", {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.1,
+                ease: "power3.out",
+                delay: 0.2
+            });
+
+            // Floating Card Animation (Continuous)
+            gsap.to(".floating-card", {
+                y: -20,
+                duration: 3,
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            });
+
+            gsap.to(".floating-card-delayed", {
+                y: -15,
+                duration: 4,
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut",
+                delay: 1
+            });
+
+            // Hero Background Parallax
+            gsap.to("#hero-bg", {
+                yPercent: 20,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "#home",
+                    start: "top top",
+                    end: "bottom top",
+                    scrub: true
+                }
+            });
+
+            // Process Section Animation
+            gsap.from("#how-it-works .group", {
+                y: 30,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.2,
+                scrollTrigger: {
+                    trigger: "#how-it-works",
+                    start: "top 80%",
+                }
+            });
+
+            // Services Cards Entrance
+            gsap.from("#solutions .group", {
+                scale: 0.9,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.2,
+                scrollTrigger: {
+                    trigger: "#solutions",
+                    start: "top 90%", // Trigger earlier to ensure visibility
+                }
+            });
+
+            // Features Image Entrance
+            gsap.from("#features img", {
+                x: -50,
+                opacity: 0,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: "#features",
+                    start: "top 70%",
+                }
+            });
+
+            // Features Text Entrance
+            gsap.from("#features .space-y-8 > *", {
+                x: 50,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.1,
+                scrollTrigger: {
+                    trigger: "#features",
+                    start: "top 70%",
+                }
+            });
+
+            // Testimonials Entrance
+            gsap.from("#reviews .glass-panel", {
+                scale: 0.9,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.1,
+                scrollTrigger: {
+                    trigger: "#reviews",
+                    start: "top 80%",
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
