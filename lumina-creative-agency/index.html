@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina | Creative Agency</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        display: ['Syne', 'sans-serif'],
+                    },
+                    colors: {
+                        'lumina-black': '#0a0a0a',
+                        'lumina-dark': '#121212',
+                        'lumina-accent': '#CDF683', // Acid Green
+                        'lumina-purple': '#9D4EDD',
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Utilities */
+        body {
+            background-color: #0a0a0a;
+            color: white;
+            overflow-x: hidden;
+            cursor: none; /* Hide default cursor */
+        }
+
+        /* Custom Cursor */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #CDF683;
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(205, 246, 131, 0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        /* Hover state for cursor */
+        body.hovering .cursor-outline {
+            width: 70px;
+            height: 70px;
+            background-color: rgba(205, 246, 131, 0.1);
+            border-color: transparent;
+            backdrop-filter: blur(2px);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #CDF683;
+        }
+
+        /* Text Stroke */
+        .text-outline {
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+            color: transparent;
+            transition: all 0.3s ease;
+        }
+        .text-outline:hover {
+            -webkit-text-stroke: 1px #CDF683;
+            color: transparent;
+        }
+
+        /* Marquee Animation */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .clip-text-image {
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-image: linear-gradient(45deg, #fff, #999);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-lumina-accent selection:text-lumina-black">
+
+    <!-- Custom Cursor Elements -->
+    <div class="cursor-dot hidden md:block"></div>
+    <div class="cursor-outline hidden md:block"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 px-6 py-6 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="#" class="text-2xl font-display font-bold tracking-tighter hover-trigger z-50 mix-blend-difference">
+                LUMINA<span class="text-lumina-accent">.</span>
+            </a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-12 mix-blend-difference z-50">
+                <a href="#work" class="hover-trigger text-sm uppercase tracking-widest hover:text-lumina-accent transition-colors">Work</a>
+                <a href="#services" class="hover-trigger text-sm uppercase tracking-widest hover:text-lumina-accent transition-colors">Services</a>
+                <a href="#about" class="hover-trigger text-sm uppercase tracking-widest hover:text-lumina-accent transition-colors">About</a>
+                <a href="#contact" class="hover-trigger text-sm uppercase tracking-widest hover:text-lumina-accent transition-colors">Contact</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="menu-btn" class="md:hidden z-50 hover-trigger text-white">
+                <i data-lucide="menu" class="w-8 h-8"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-lumina-black z-40 transform translate-x-full transition-transform duration-500 flex flex-col justify-center items-center space-y-8">
+        <a href="#work" class="text-4xl font-display font-bold hover:text-lumina-accent mobile-link">Work</a>
+        <a href="#services" class="text-4xl font-display font-bold hover:text-lumina-accent mobile-link">Services</a>
+        <a href="#about" class="text-4xl font-display font-bold hover:text-lumina-accent mobile-link">About</a>
+        <a href="#contact" class="text-4xl font-display font-bold hover:text-lumina-accent mobile-link">Contact</a>
+    </div>
+
+    <!-- Hero Section -->
+    <header class="relative h-screen w-full flex items-center justify-center overflow-hidden">
+        <!-- Canvas Background -->
+        <canvas id="hero-canvas" class="absolute inset-0 z-0"></canvas>
+        
+        <!-- Gradient Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-lumina-black z-10 pointer-events-none"></div>
+
+        <div class="relative z-20 text-center px-4 max-w-5xl mx-auto">
+            <p class="reveal-text text-lumina-accent tracking-[0.2em] uppercase text-sm mb-4 font-bold">Digital Experience Agency</p>
+            <h1 class="font-display text-5xl md:text-8xl lg:text-9xl font-bold leading-tight mb-8 mix-blend-overlay">
+                <div class="overflow-hidden"><span class="reveal-h1 inline-block transform translate-y-full">WE CRAFT</span></div>
+                <div class="overflow-hidden"><span class="reveal-h1 inline-block transform translate-y-full">DIGITAL</span></div>
+                <div class="overflow-hidden"><span class="reveal-h1 inline-block transform translate-y-full text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">LEGACIES</span></div>
+            </h1>
+            <div class="mt-8 overflow-hidden">
+                <a href="#work" class="reveal-btn inline-flex items-center gap-2 border border-white/20 px-8 py-4 rounded-full hover:bg-lumina-accent hover:text-lumina-black hover:border-lumina-accent transition-all duration-300 group hover-trigger transform translate-y-full opacity-0">
+                    <span class="uppercase tracking-widest text-sm font-bold">View Projects</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce">
+            <i data-lucide="arrow-down" class="w-6 h-6 text-white/50"></i>
+        </div>
+    </header>
+
+    <!-- Marquee Section -->
+    <div class="py-12 bg-lumina-accent text-lumina-black border-y border-black overflow-hidden relative z-20 transform -rotate-1 origin-left scale-105">
+        <div class="marquee-container font-display text-4xl md:text-6xl font-bold uppercase tracking-tighter">
+            <div class="marquee-content">
+                Strategy • Branding • Web Design • Development • Motion • SEO • Strategy • Branding • Web Design • Development • Motion • SEO • 
+            </div>
+            <div class="marquee-content" aria-hidden="true">
+                Strategy • Branding • Web Design • Development • Motion • SEO • Strategy • Branding • Web Design • Development • Motion • SEO • 
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 md:py-32 px-6 relative">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            <div class="gsap-fade-up">
+                <h2 class="font-display text-4xl md:text-6xl font-bold mb-8 leading-tight">
+                    We don't just build websites.<br>
+                    <span class="text-gray-500">We build worlds.</span>
+                </h2>
+            </div>
+            <div class="space-y-6 text-lg text-gray-400 font-light gsap-fade-up" style="transition-delay: 0.1s;">
+                <p>
+                    Lumina is a collective of designers, developers, and strategists obsessed with pushing the boundaries of the digital landscape.
+                </p>
+                <p>
+                    We believe in the power of visual storytelling and robust engineering. Our work sits at the intersection of art and technology, creating immersive experiences that convert visitors into brand advocates.
+                </p>
+                <div class="pt-6 grid grid-cols-3 gap-8 border-t border-white/10 mt-8">
+                    <div>
+                        <h3 class="text-3xl font-display font-bold text-white mb-1">50+</h3>
+                        <p class="text-sm">Awards Won</p>
+                    </div>
+                    <div>
+                        <h3 class="text-3xl font-display font-bold text-white mb-1">120+</h3>
+                        <p class="text-sm">Projects</p>
+                    </div>
+                    <div>
+                        <h3 class="text-3xl font-display font-bold text-white mb-1">5yr</h3>
+                        <p class="text-sm">Experience</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Work/Portfolio Section -->
+    <section id="work" class="py-24 px-6 bg-lumina-dark">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gsap-fade-up">
+                <div>
+                    <span class="text-lumina-accent uppercase tracking-widest text-sm font-bold mb-2 block">Selected Works</span>
+                    <h2 class="font-display text-4xl md:text-6xl font-bold">Featured Projects</h2>
+                </div>
+                <a href="#" class="hidden md:inline-block text-gray-400 hover:text-white transition-colors border-b border-transparent hover:border-white pb-1 mt-4 md:mt-0">View All Archive</a>
+            </div>
+
+            <!-- Portfolio Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                
+                <!-- Project 1 -->
+                <div class="group relative cursor-none hover-trigger gsap-fade-up">
+                    <div class="aspect-[4/3] overflow-hidden rounded-lg bg-gray-800 relative">
+                        <!-- Mockup Placeholder -->
+                        <div class="absolute inset-0 bg-gray-800 flex items-center justify-center group-hover:scale-105 transition-transform duration-700 ease-out">
+                             <!-- Abstract shape/image placeholder -->
+                             <div class="w-full h-full bg-gradient-to-br from-purple-900 to-black opacity-80"></div>
+                             <h3 class="absolute text-8xl font-display font-bold text-white/5 group-hover:text-white/10 transition-colors">NEO</h3>
+                        </div>
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                    </div>
+                    <div class="mt-6 flex justify-between items-start">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-1 group-hover:text-lumina-accent transition-colors">Neo Bank App</h3>
+                            <p class="text-gray-400 text-sm">Fintech • UI/UX Design</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
+                            <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 (Offset top) -->
+                <div class="group relative cursor-none hover-trigger gsap-fade-up md:mt-24">
+                    <div class="aspect-[4/3] overflow-hidden rounded-lg bg-gray-800 relative">
+                        <div class="absolute inset-0 bg-gray-800 flex items-center justify-center group-hover:scale-105 transition-transform duration-700 ease-out">
+                             <div class="w-full h-full bg-gradient-to-bl from-blue-900 to-black opacity-80"></div>
+                             <h3 class="absolute text-8xl font-display font-bold text-white/5 group-hover:text-white/10 transition-colors">AURA</h3>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-between items-start">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-1 group-hover:text-lumina-accent transition-colors">Aura Perfume</h3>
+                            <p class="text-gray-400 text-sm">E-Commerce • Branding</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
+                            <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="group relative cursor-none hover-trigger gsap-fade-up">
+                    <div class="aspect-[4/3] overflow-hidden rounded-lg bg-gray-800 relative">
+                        <div class="absolute inset-0 bg-gray-800 flex items-center justify-center group-hover:scale-105 transition-transform duration-700 ease-out">
+                             <div class="w-full h-full bg-gradient-to-tr from-green-900 to-black opacity-80"></div>
+                             <h3 class="absolute text-8xl font-display font-bold text-white/5 group-hover:text-white/10 transition-colors">ECO</h3>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-between items-start">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-1 group-hover:text-lumina-accent transition-colors">Eco Architecture</h3>
+                            <p class="text-gray-400 text-sm">Real Estate • Web Development</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
+                            <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 4 -->
+                <div class="group relative cursor-none hover-trigger gsap-fade-up md:mt-24">
+                    <div class="aspect-[4/3] overflow-hidden rounded-lg bg-gray-800 relative">
+                        <div class="absolute inset-0 bg-gray-800 flex items-center justify-center group-hover:scale-105 transition-transform duration-700 ease-out">
+                             <div class="w-full h-full bg-gradient-to-br from-orange-900 to-black opacity-80"></div>
+                             <h3 class="absolute text-8xl font-display font-bold text-white/5 group-hover:text-white/10 transition-colors">SOL</h3>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-between items-start">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-1 group-hover:text-lumina-accent transition-colors">Solaris Energy</h3>
+                            <p class="text-gray-400 text-sm">Energy • 3D Motion</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
+                            <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="mt-12 text-center md:hidden">
+                <a href="#" class="inline-block text-white border-b border-white pb-1">View All Archive</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-24 px-6 relative overflow-hidden">
+        <!-- Background decorative blur -->
+        <div class="absolute top-1/4 right-0 w-96 h-96 bg-lumina-purple opacity-20 blur-[120px] rounded-full pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-16 gsap-fade-up">
+                <span class="text-lumina-accent uppercase tracking-widest text-sm font-bold mb-2 block">Our Expertise</span>
+                <h2 class="font-display text-4xl md:text-6xl font-bold">Services</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/10 border border-white/10">
+                <!-- Service 1 -->
+                <div class="bg-lumina-black p-10 hover:bg-gray-900 transition-colors duration-300 group hover-trigger">
+                    <i data-lucide="monitor" class="w-10 h-10 text-gray-400 group-hover:text-lumina-accent mb-6 transition-colors"></i>
+                    <h3 class="text-xl font-bold mb-3 font-display">Web Design & Dev</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                        Custom coded websites using React, WebGL, and modern frameworks optimized for speed and SEO.
+                    </p>
+                    <ul class="text-xs text-gray-500 space-y-2">
+                        <li>• UI/UX Design</li>
+                        <li>• Frontend Development</li>
+                        <li>• CMS Integration</li>
+                    </ul>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="bg-lumina-black p-10 hover:bg-gray-900 transition-colors duration-300 group hover-trigger">
+                    <i data-lucide="pen-tool" class="w-10 h-10 text-gray-400 group-hover:text-lumina-accent mb-6 transition-colors"></i>
+                    <h3 class="text-xl font-bold mb-3 font-display">Brand Identity</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                        Crafting unique visual identities that stand out. Logos, typography, and brand guidelines.
+                    </p>
+                    <ul class="text-xs text-gray-500 space-y-2">
+                        <li>• Logo Design</li>
+                        <li>• Brand Strategy</li>
+                        <li>• Marketing Collateral</li>
+                    </ul>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="bg-lumina-black p-10 hover:bg-gray-900 transition-colors duration-300 group hover-trigger">
+                    <i data-lucide="video" class="w-10 h-10 text-gray-400 group-hover:text-lumina-accent mb-6 transition-colors"></i>
+                    <h3 class="text-xl font-bold mb-3 font-display">Motion & 3D</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                        Adding depth and interactivity through 2D animation, 3D modeling, and visual effects.
+                    </p>
+                    <ul class="text-xs text-gray-500 space-y-2">
+                        <li>• Motion Graphics</li>
+                        <li>• 3D Modeling</li>
+                        <li>• Interactive WebGL</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA / Contact -->
+    <section id="contact" class="py-32 px-6 relative">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="font-display text-5xl md:text-8xl font-bold mb-8 hover-trigger">
+                HAVE AN IDEA?
+            </h2>
+            <p class="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
+                We are currently accepting new projects for Q4 2024. Let's build something extraordinary together.
+            </p>
+            
+            <a href="mailto:hello@lumina.agency" class="group relative inline-flex items-center justify-center px-12 py-6 overflow-hidden font-bold rounded-full border border-white hover:border-transparent transition-all duration-300 bg-transparent hover-trigger">
+                <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-80 group-hover:h-80 opacity-100"></span>
+                <span class="relative group-hover:text-black text-white text-lg font-display tracking-widest transition-colors duration-300 uppercase">Start a Project</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-lumina-black pt-16 pb-8 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
+            <div>
+                <a href="#" class="text-3xl font-display font-bold tracking-tighter block mb-4">
+                    LUMINA<span class="text-lumina-accent">.</span>
+                </a>
+                <p class="text-gray-500 text-sm">Designed & Developed in the Void.</p>
+            </div>
+            <div class="flex gap-6">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors hover-trigger">Instagram</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors hover-trigger">Twitter/X</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors hover-trigger">LinkedIn</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors hover-trigger">Dribbble</a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto text-center md:text-left text-gray-600 text-xs border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between">
+            <p>&copy; 2024 Lumina Agency. All Rights Reserved.</p>
+            <div class="flex gap-4 mt-4 md:mt-0 justify-center md:justify-end">
+                <a href="#" class="hover:text-gray-400">Privacy Policy</a>
+                <a href="#" class="hover:text-gray-400">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // --- Custom Cursor Logic ---
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        const hoverTriggers = document.querySelectorAll('.hover-trigger');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            // Dot follows instantly
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // Outline follows with slight delay (handled by CSS transition usually, but let's smooth it with JS frame)
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Hover effects for cursor
+        hoverTriggers.forEach(trigger => {
+            trigger.addEventListener('mouseenter', () => {
+                document.body.classList.add('hovering');
+            });
+            trigger.addEventListener('mouseleave', () => {
+                document.body.classList.remove('hovering');
+            });
+        });
+
+        // --- GSAP Animations ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero Reveal
+        const tl = gsap.timeline();
+        
+        tl.to('.reveal-h1', {
+            y: 0,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power4.out",
+            delay: 0.5
+        })
+        .to('.reveal-text', {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power2.out"
+        }, "-=0.5")
+        .to('.reveal-btn', {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: "back.out(1.7)"
+        }, "-=0.5");
+
+        // Scroll Animations for Sections
+        gsap.utils.toArray('.gsap-fade-up').forEach(element => {
+            gsap.fromTo(element, 
+                { opacity: 0, y: 50 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: element,
+                        start: "top 85%",
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+        });
+
+        // Navbar blur effect on scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-lumina-black/80', 'backdrop-blur-md', 'py-4');
+                navbar.classList.remove('py-6');
+            } else {
+                navbar.classList.remove('bg-lumina-black/80', 'backdrop-blur-md', 'py-4');
+                navbar.classList.add('py-6');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+        let isMenuOpen = false;
+
+        menuBtn.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+                mobileMenu.classList.remove('translate-x-full');
+            } else {
+                mobileMenu.classList.add('translate-x-full');
+            }
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                isMenuOpen = false;
+                mobileMenu.classList.add('translate-x-full');
+            });
+        });
+
+        // --- HTML5 Canvas Animation (Particle Net) ---
+        const canvas = document.getElementById('hero-canvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray;
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let mouse = {
+            x: null,
+            y: null,
+            radius: (canvas.height/80) * (canvas.width/80)
+        }
+
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = event.x;
+            mouse.y = event.y;
+        });
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            mouse.radius = (canvas.height/80) * (canvas.width/80);
+            init();
+        });
+
+        class Particle {
+            constructor(x, y, directionX, directionY, size, color) {
+                this.x = x;
+                this.y = y;
+                this.directionX = directionX;
+                this.directionY = directionY;
+                this.size = size;
+                this.color = color;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = '#CDF683';
+                ctx.fill();
+            }
+
+            update() {
+                if (this.x > canvas.width || this.x < 0) {
+                    this.directionX = -this.directionX;
+                }
+                if (this.y > canvas.height || this.y < 0) {
+                    this.directionY = -this.directionY;
+                }
+
+                // Mouse Interaction
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx*dx + dy*dy);
+
+                if (distance < mouse.radius + this.size) {
+                    if (mouse.x < this.x && this.x < canvas.width - this.size * 10) {
+                        this.x += 10;
+                    }
+                    if (mouse.x > this.x && this.x > this.size * 10) {
+                        this.x -= 10;
+                    }
+                    if (mouse.y < this.y && this.y < canvas.height - this.size * 10) {
+                        this.y += 10;
+                    }
+                    if (mouse.y > this.y && this.y > this.size * 10) {
+                        this.y -= 10;
+                    }
+                }
+
+                this.x += this.directionX;
+                this.y += this.directionY;
+                this.draw();
+            }
+        }
+
+        function init() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 9000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 2) + 1;
+                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                let directionX = (Math.random() * 0.4) - 0.2;
+                let directionY = (Math.random() * 0.4) - 0.2;
+                let color = '#CDF683';
+
+                particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+            }
+        }
+
+        function connect() {
+            let opacityValue = 1;
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a; b < particlesArray.length; b++) {
+                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x)) + 
+                                   ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                    
+                    if (distance < (canvas.width/7) * (canvas.height/7)) {
+                        opacityValue = 1 - (distance/20000);
+                        ctx.strokeStyle = 'rgba(205, 246, 131,' + opacityValue * 0.15 + ')';
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, innerWidth, innerHeight);
+
+            for (const element of particlesArray) {
+                element.update();
+            }
+            connect();
+        }
+
+        // Start Animation
+        init();
+        animate();
+
+    </script>
+</body>
+</html>

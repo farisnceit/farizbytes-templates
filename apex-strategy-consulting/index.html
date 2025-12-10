@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Strategy | Business Consulting</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#0f172a', // Slate 900
+                        accent: '#3b82f6', // Blue 500
+                        gold: '#fbbf24',   // Amber 400
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Hero pattern overlay */
+        .hero-pattern {
+            background-image: radial-gradient(#ffffff 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.1;
+        }
+        
+        /* Mobile menu transition */
+        #mobile-menu {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        #mobile-menu.open {
+            max-height: 400px;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="font-sans text-slate-800 antialiased overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-transparent text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+                    <i data-lucide="trending-up" class="h-8 w-8 text-blue-400"></i>
+                    <span class="font-bold text-2xl tracking-tight">Apex<span class="text-blue-400">Strategy</span></span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="hover:text-blue-400 transition-colors">Home</a>
+                    <a href="#about" class="hover:text-blue-400 transition-colors">About</a>
+                    <a href="#services" class="hover:text-blue-400 transition-colors">Services</a>
+                    <a href="#testimonials" class="hover:text-blue-400 transition-colors">Testimonials</a>
+                    <a href="#contact" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-medium transition-all shadow-lg hover:shadow-blue-500/30">
+                        Get Audit
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="outline-none">
+                        <i data-lucide="menu" class="h-8 w-8"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="md:hidden bg-white/95 backdrop-blur-md shadow-xl text-slate-800 absolute w-full left-0 top-20 border-t border-slate-100">
+            <div class="px-4 pt-4 pb-6 space-y-2">
+                <a href="#home" class="block px-3 py-2 rounded-md hover:bg-slate-50 font-medium">Home</a>
+                <a href="#about" class="block px-3 py-2 rounded-md hover:bg-slate-50 font-medium">About</a>
+                <a href="#services" class="block px-3 py-2 rounded-md hover:bg-slate-50 font-medium">Services</a>
+                <a href="#contact" class="block px-3 py-2 mt-4 text-center bg-blue-600 text-white rounded-lg">Get Audit</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden bg-primary">
+        <!-- Background Image -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
+                 alt="Modern Office" 
+                 class="w-full h-full object-cover opacity-20">
+            <div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/80 to-transparent"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20">
+            <div data-aos="fade-down" data-aos-duration="1000" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 mb-6 backdrop-blur-sm">
+                <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+                <span class="text-sm font-semibold tracking-wide uppercase">Leading Global Consultancy</span>
+            </div>
+            
+            <h1 data-aos="fade-up" data-aos-delay="200" class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+                We Architect <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-300">Sustainable Growth</span>
+            </h1>
+            
+            <p data-aos="fade-up" data-aos-delay="400" class="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
+                Helping market leaders and challengers bridge the gap between where they are and where they need to be through data-driven strategy.
+            </p>
+            
+            <div data-aos="zoom-in" data-aos-delay="600" class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#contact" class="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-semibold text-lg transition-all shadow-lg hover:shadow-blue-600/40 hover:-translate-y-1">
+                    Start Your Transformation
+                </a>
+                <a href="#services" class="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/10 text-white rounded-full font-semibold text-lg transition-all">
+                    Explore Services
+                </a>
+            </div>
+        </div>
+
+        <!-- Animated Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-slate-400">
+            <i data-lucide="chevron-down" class="h-8 w-8"></i>
+        </div>
+    </section>
+
+    <!-- Logo Cloud -->
+    <div class="bg-slate-50 py-10 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-sm font-semibold text-slate-400 uppercase tracking-widest mb-6">Trusted by industry leaders</p>
+            <div class="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+                <!-- Simple SVG Placeholders for Logos -->
+                <div class="h-8 flex items-center font-bold text-xl">ACME Corp</div>
+                <div class="h-8 flex items-center font-bold text-xl">GlobalTech</div>
+                <div class="h-8 flex items-center font-bold text-xl">Nebula</div>
+                <div class="h-8 flex items-center font-bold text-xl">Vertex</div>
+                <div class="h-8 flex items-center font-bold text-xl">Horizon</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 md:py-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <!-- Image Side -->
+                <div class="relative" data-aos="fade-right">
+                    <div class="absolute -top-4 -left-4 w-72 h-72 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+                    <div class="absolute -bottom-8 -right-4 w-72 h-72 bg-teal-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+                    
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+                        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Team Meeting" class="w-full h-full object-cover">
+                    </div>
+                    
+                    <!-- Floating Card -->
+                    <div class="absolute -bottom-6 -right-6 md:bottom-10 md:-right-10 bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow-xl max-w-xs border border-slate-100">
+                        <div class="flex items-center gap-4">
+                            <div class="p-3 bg-green-100 text-green-600 rounded-lg">
+                                <i data-lucide="trending-up" class="h-6 w-6"></i>
+                            </div>
+                            <div>
+                                <p class="text-slate-500 text-sm">Revenue Growth</p>
+                                <p class="text-xl font-bold text-slate-900">+127%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text Side -->
+                <div data-aos="fade-left">
+                    <h4 class="text-blue-600 font-bold uppercase tracking-wide mb-2">Who We Are</h4>
+                    <h2 class="text-3xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">Solving complex problems with <span class="text-blue-600">simple solutions.</span></h2>
+                    <p class="text-lg text-slate-600 mb-6">
+                        Apex Strategy was founded on the belief that data without insight is noise, and strategy without execution is hallucination. We partner with CEOs and senior executives to drive value across the enterprise.
+                    </p>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="check-circle-2" class="text-blue-500 h-5 w-5"></i>
+                            <span class="text-slate-700">Data-driven decision making frameworks</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="check-circle-2" class="text-blue-500 h-5 w-5"></i>
+                            <span class="text-slate-700">Global network of 200+ industry experts</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="check-circle-2" class="text-blue-500 h-5 w-5"></i>
+                            <span class="text-slate-700">Proven track record in digital transformation</span>
+                        </li>
+                    </ul>
+                    <a href="#about" class="text-blue-600 font-semibold hover:text-blue-800 inline-flex items-center gap-2 group">
+                        Learn more about us 
+                        <i data-lucide="arrow-right" class="h-4 w-4 transform group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16" data-aos="fade-up">
+                <h4 class="text-blue-600 font-bold uppercase tracking-wide mb-2">Our Expertise</h4>
+                <h2 class="text-3xl md:text-5xl font-bold text-slate-900 mb-4">Strategic solutions for every stage</h2>
+                <p class="text-slate-600">We don't just give advice; we work shoulder-to-shoulder with you to implement changes that last.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <i data-lucide="bar-chart-2" class="h-7 w-7"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Financial Advisory</h3>
+                    <p class="text-slate-600 mb-4">Optimize capital structure, manage risk, and identify high-value investment opportunities to ensure financial health.</p>
+                    <a href="#" class="text-sm font-semibold text-blue-600 group-hover:text-blue-700 flex items-center gap-1">
+                        Explore <i data-lucide="arrow-right" class="h-3 w-3"></i>
+                    </a>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-14 h-14 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600 mb-6 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                        <i data-lucide="layers" class="h-7 w-7"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Corporate Strategy</h3>
+                    <p class="text-slate-600 mb-4">Define your competitive edge. We help you navigate market shifts and build a roadmap for sustainable long-term growth.</p>
+                    <a href="#" class="text-sm font-semibold text-purple-600 group-hover:text-purple-700 flex items-center gap-1">
+                        Explore <i data-lucide="arrow-right" class="h-3 w-3"></i>
+                    </a>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="300">
+                    <div class="w-14 h-14 bg-teal-50 rounded-xl flex items-center justify-center text-teal-600 mb-6 group-hover:bg-teal-600 group-hover:text-white transition-colors">
+                        <i data-lucide="zap" class="h-7 w-7"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Digital Transformation</h3>
+                    <p class="text-slate-600 mb-4">Modernize your tech stack and workflows. We leverage AI and automation to increase operational efficiency.</p>
+                    <a href="#" class="text-sm font-semibold text-teal-600 group-hover:text-teal-700 flex items-center gap-1">
+                        Explore <i data-lucide="arrow-right" class="h-3 w-3"></i>
+                    </a>
+                </div>
+
+                <!-- Service 4 -->
+                <div class="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="400">
+                    <div class="w-14 h-14 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600 mb-6 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                        <i data-lucide="users" class="h-7 w-7"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Human Capital</h3>
+                    <p class="text-slate-600 mb-4">Attract, retain, and develop top talent. Build a culture that fosters innovation and high performance.</p>
+                    <a href="#" class="text-sm font-semibold text-orange-600 group-hover:text-orange-700 flex items-center gap-1">
+                        Explore <i data-lucide="arrow-right" class="h-3 w-3"></i>
+                    </a>
+                </div>
+
+                <!-- Service 5 -->
+                <div class="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="500">
+                    <div class="w-14 h-14 bg-pink-50 rounded-xl flex items-center justify-center text-pink-600 mb-6 group-hover:bg-pink-600 group-hover:text-white transition-colors">
+                        <i data-lucide="globe" class="h-7 w-7"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Mergers & Acquisitions</h3>
+                    <p class="text-slate-600 mb-4">Navigate complex deals with confidence. From due diligence to post-merger integration, we guide you through.</p>
+                    <a href="#" class="text-sm font-semibold text-pink-600 group-hover:text-pink-700 flex items-center gap-1">
+                        Explore <i data-lucide="arrow-right" class="h-3 w-3"></i>
+                    </a>
+                </div>
+
+                <!-- Service 6 -->
+                <div class="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="600">
+                    <div class="w-14 h-14 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i data-lucide="shield-check" class="h-7 w-7"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Risk Management</h3>
+                    <p class="text-slate-600 mb-4">Identify vulnerabilities before they become crises. We help build resilient organizations ready for any challenge.</p>
+                    <a href="#" class="text-sm font-semibold text-indigo-600 group-hover:text-indigo-700 flex items-center gap-1">
+                        Explore <i data-lucide="arrow-right" class="h-3 w-3"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section (Dark) -->
+    <section id="stats" class="py-20 bg-primary text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="p-6">
+                    <div class="text-4xl md:text-5xl font-bold text-blue-400 mb-2"><span class="counter" data-target="15">0</span>+</div>
+                    <div class="text-slate-400 font-medium">Years Experience</div>
+                </div>
+                <div class="p-6">
+                    <div class="text-4xl md:text-5xl font-bold text-blue-400 mb-2"><span class="counter" data-target="500">0</span>+</div>
+                    <div class="text-slate-400 font-medium">Projects Delivered</div>
+                </div>
+                <div class="p-6">
+                    <div class="text-4xl md:text-5xl font-bold text-blue-400 mb-2"><span class="counter" data-target="98">0</span>%</div>
+                    <div class="text-slate-400 font-medium">Client Retention</div>
+                </div>
+                <div class="p-6">
+                    <div class="text-4xl md:text-5xl font-bold text-blue-400 mb-2">$<span class="counter" data-target="2">0</span>B+</div>
+                    <div class="text-slate-400 font-medium">Value Created</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-20 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h4 class="text-blue-600 font-bold uppercase tracking-wide mb-2">Testimonials</h4>
+                <h2 class="text-3xl md:text-5xl font-bold text-slate-900">What our partners say</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-100" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex text-yellow-400 mb-4">
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                    </div>
+                    <p class="text-slate-600 mb-6 italic">"Apex Strategy completely transformed our operational model. The efficiency gains we saw within just 6 months were unprecedented in our company history."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" alt="CEO" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <h5 class="font-bold text-slate-900">Marcus Chen</h5>
+                            <span class="text-sm text-slate-500">CEO, TechFlow Inc.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-100" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex text-yellow-400 mb-4">
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                    </div>
+                    <p class="text-slate-600 mb-6 italic">"Their approach to risk management is robust and forward-thinking. They didn't just help us survive the downturn; they positioned us to thrive in it."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" alt="CFO" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <h5 class="font-bold text-slate-900">Sarah Jenkins</h5>
+                            <span class="text-sm text-slate-500">CFO, NorthStar Retail</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-100" data-aos="fade-up" data-aos-delay="300">
+                    <div class="flex text-yellow-400 mb-4">
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                    </div>
+                    <p class="text-slate-600 mb-6 italic">"The team at Apex is professional, insightful, and incredibly dedicated. They acted less like consultants and more like true partners in our success."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" alt="Director" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <h5 class="font-bold text-slate-900">David Ross</h5>
+                            <span class="text-sm text-slate-500">Director, Solaris Energy</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2">
+                    <!-- Contact Info -->
+                    <div class="bg-primary p-12 text-white flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-3xl font-bold mb-6">Let's discuss your future.</h3>
+                            <p class="text-slate-400 mb-8">Ready to optimize your business? Schedule a free 30-minute consultation with our senior strategy team.</p>
+                            
+                            <div class="space-y-6">
+                                <div class="flex items-start gap-4">
+                                    <div class="p-3 bg-white/10 rounded-lg">
+                                        <i data-lucide="map-pin" class="h-6 w-6 text-blue-400"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold mb-1">Headquarters</h5>
+                                        <p class="text-slate-400 text-sm">100 Innovation Dr, Suite 500<br>New York, NY 10001</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="p-3 bg-white/10 rounded-lg">
+                                        <i data-lucide="mail" class="h-6 w-6 text-blue-400"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold mb-1">Email Us</h5>
+                                        <p class="text-slate-400 text-sm">contact@apexstrategy.com</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="p-3 bg-white/10 rounded-lg">
+                                        <i data-lucide="phone" class="h-6 w-6 text-blue-400"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold mb-1">Call Us</h5>
+                                        <p class="text-slate-400 text-sm">+1 (555) 123-4567</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-12">
+                            <div class="flex gap-4">
+                                <a href="#" class="p-2 bg-white/10 rounded-full hover:bg-blue-600 transition-colors"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
+                                <a href="#" class="p-2 bg-white/10 rounded-full hover:bg-blue-600 transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                                <a href="#" class="p-2 bg-white/10 rounded-full hover:bg-blue-600 transition-colors"><i data-lucide="facebook" class="w-5 h-5"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="p-12 bg-white">
+                        <form onsubmit="event.preventDefault(); alert('Thank you for your interest! We will contact you shortly.');" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">First Name</label>
+                                    <input type="text" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="John">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Last Name</label>
+                                    <input type="text" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Doe">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
+                                <input type="email" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="john@company.com">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Service Interest</label>
+                                <select class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                                    <option>Strategic Planning</option>
+                                    <option>Financial Advisory</option>
+                                    <option>Digital Transformation</option>
+                                    <option>Mergers & Acquisitions</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Message</label>
+                                <textarea rows="4" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Tell us about your business goals..."></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all shadow-lg hover:shadow-blue-600/30">
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-primary border-t border-slate-800 text-slate-400 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-2">
+                <i data-lucide="trending-up" class="h-6 w-6 text-blue-400"></i>
+                <span class="font-bold text-xl text-white tracking-tight">Apex<span class="text-blue-400">Strategy</span></span>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-8 text-sm">
+                <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                <a href="#" class="hover:text-white transition-colors">Cookie Policy</a>
+            </div>
+            
+            <div class="text-sm">
+                &copy; 2023 Apex Strategy. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Initialize AOS
+        AOS.init({
+            once: true,
+            offset: 50,
+            duration: 800,
+        });
+
+        // Sticky Navbar Logic
+        const navbar = document.getElementById('navbar');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = mobileMenuBtn.querySelector('i');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('bg-white/90', 'backdrop-blur-md', 'shadow-md', 'text-slate-800');
+                navbar.classList.remove('bg-transparent', 'text-white');
+            } else {
+                if (!mobileMenu.classList.contains('open')) { // Only transparent if menu is closed
+                    navbar.classList.remove('bg-white/90', 'backdrop-blur-md', 'shadow-md', 'text-slate-800');
+                    navbar.classList.add('bg-transparent', 'text-white');
+                }
+            }
+        });
+
+        // Mobile Menu Toggle
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+            
+            // Adjust navbar styling when menu is open
+            if (mobileMenu.classList.contains('open')) {
+                navbar.classList.add('bg-white', 'text-slate-800');
+                navbar.classList.remove('bg-transparent', 'text-white');
+            } else if (window.scrollY <= 20) {
+                navbar.classList.remove('bg-white', 'text-slate-800');
+                navbar.classList.add('bg-transparent', 'text-white');
+            }
+        });
+
+        // Close mobile menu when a link is clicked
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+            });
+        });
+
+        // Number Counter Animation
+        const statsSection = document.getElementById('stats');
+        const counters = document.querySelectorAll('.counter');
+        let started = false;
+
+        const startCounting = () => {
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const increment = target / 100; // Speed
+
+                const updateCount = () => {
+                    const c = +counter.innerText;
+                    if (c < target) {
+                        counter.innerText = Math.ceil(c + increment);
+                        setTimeout(updateCount, 20);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCount();
+            });
+        };
+
+        // Intersection Observer for Stats
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && !started) {
+                startCounting();
+                started = true;
+            }
+        });
+
+        observer.observe(statsSection);
+
+    </script>
+</body>
+</html>
